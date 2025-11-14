@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Management - Top Autocare Garage</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- PWA Manifest and Mobile Optimization -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#d4af37">
+
+    <!-- Mobile/PWA Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Top Autocare">
+    <link rel="apple-touch-icon" href="assets/images/app-icon-512.png">
+
+    <!-- Favicon for Browsers -->
+    <link rel="icon" href="assets/images/app-icon-192.png" sizes="192x192" type="image/png">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            line-height: 1.6;
+            padding-bottom: 80px;
+            position: relative;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(4px);
+            z-index: -1;
+        }
+        /* Header Styles (Compact, Admin-Only) */
+        #header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 0.25rem 0;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1001;
+            transition: transform 0.3s ease;
+            height: 60px;
+        }
+        #header.hidden {
+            transform: translateY(-100%);
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 0 0.75rem;
+            color: #d4af37;
+        }
+        .logo-container:hover h1 {
+            text-decoration: underline;
+        }
+        .logo-container img {
+            height: 40px;
+            width: auto;
+            margin-right: 0.5rem;
+            border-radius: 50%;
+        }
+        .logo-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin: 0;
+            color: #d4af37;
+            text-decoration: none;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-right: 0.75rem;
+        }
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: color 0.3s ease;
+            z-index: 1002;
+        }
+        .menu-toggle:hover {
+            color: #d4af37;
+        }
+        @media (max-width: 768px) {
+            #header {
+                padding: 0.5rem;
+                flex-wrap: wrap;
+            }
+            .logo-container {
+                padding: 0 0.5rem;
+            }
+            .logo-title {
+                font-size: 1rem;
+            }
+            .header-actions {
+                padding-right: 0.5rem;
+                gap: 0.5rem;
+            }
+        }
+        /* Admin Navigation Menu (Slide-In from Right, Matching Photo Exactly) */
+        .admin-nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .admin-nav-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .admin-nav-menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100vh;
+            background: #1a1a1a;
+            padding: 1rem;
+            overflow-y: auto;
+            transition: right 0.3s ease;
+            z-index: 1001;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+        }
+        .admin-nav-menu.active {
+            right: 0;
+        }
+        .admin-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #333;
+            margin-bottom: 1rem;
+        }
+        .admin-nav-title {
+            font-size: 1.125rem;
+            color: #d4af37;
+            font-weight: 700;
+        }
+        .close-menu {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            transition: color 0.3s ease;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .close-menu:hover {
+            color: #d4af37;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        .admin-menu {
+            list-style: none;
+            padding: 0;
+        }
+        .admin-menu li {
+            margin-bottom: 0.5rem;
+        }
+        .admin-menu a {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #BDBDBD;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 6px;
+            margin: 0.25rem 0;
+        }
+        .admin-menu a:hover, .admin-menu a.active {
+            background: rgba(212, 175, 55, 0.2);
+            color: #d4af37;
+            border-right: 3px solid #d4af37;
+            transform: translateX(5px);
+        }
+        .admin-menu i {
+            width: 20px;
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+            opacity: 0.7;
+        }
+        .admin-menu a:hover i, .admin-menu a.active i {
+            opacity: 1;
+        }
+        .signout-btn {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            right: 1rem;
+            background: #ff6b6b;
+            color: #fff;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: background 0.3s ease;
+            width: calc(100% - 2rem);
+        }
+        .signout-btn:hover {
+            background: #ff5252;
+            transform: translateY(-1px);
+        }
+        /* Main Content */
+        .main-content {
+            padding: 1.5rem;
+            margin-top: 60px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #333;
+        }
+        .page-title h1 {
+            font-size: 1.75rem;
+            color: #d4af37;
+            margin-bottom: 0.25rem;
+        }
+        .page-title p {
+            color: #BDBDBD;
+            font-size: 0.875rem;
+        }
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-primary {
+            background: #d4af37;
+            color: #000;
+        }
+        .btn-primary:hover {
+            background: #b8962e;
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: #333;
+            color: #fff;
+        }
+        .btn-secondary:hover {
+            background: #444;
+            transform: translateY(-1px);
+        }
+        /* Professional Container Layout */
+        .appointment-management {
+            background: rgba(30, 30, 30, 0.9);
+            border-radius: 12px;
+            border: 1px solid #333;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        .management-header {
+            background: rgba(42, 42, 42, 0.9);
+            padding: 1.5rem;
+            border-bottom: 1px solid #333;
+        }
+        .management-header h2 {
+            color: #d4af37;
+            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .management-header p {
+            color: #BDBDBD;
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+        /* Filters Container (Sticky) */
+        .filters-container {
+            background: rgba(18, 18, 18, 0.8);
+            padding: 1.5rem;
+            border-bottom: 1px solid #333;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .filters {
+            display: grid;
+            grid-template-columns: 1fr auto auto auto;
+            gap: 1rem;
+            align-items: end;
+            max-width: 800px;
+        }
+        .search-box {
+            position: relative;
+        }
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #BDBDBD;
+            z-index: 2;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #121212;
+            color: #fff;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .search-box input:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+        }
+        .filter-select {
+            position: relative;
+        }
+        .filter-select select, .filter-select input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #121212;
+            color: #fff;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+        .filter-select select:focus, .filter-select input:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+        }
+        .filter-label {
+            color: #BDBDBD;
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+        /* Advanced Table Container */
+        .table-container {
+            overflow-x: auto;
+            max-height: 70vh;
+            scrollbar-width: thin;
+            scrollbar-color: #d4af37 #333;
+        }
+        .table-container::-webkit-scrollbar {
+            height: 8px;
+        }
+        .table-container::-webkit-scrollbar-track {
+            background: #333;
+        }
+        .table-container::-webkit-scrollbar-thumb {
+            background: #d4af37;
+            border-radius: 4px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: transparent;
+            min-width: 900px; /* Ensures horizontal scroll on small screens */
+        }
+        thead {
+            position: sticky;
+            top: 0;
+            background: rgba(26, 26, 26, 0.95);
+            z-index: 5;
+            backdrop-filter: blur(10px);
+        }
+        th {
+            text-align: left;
+            padding: 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #d4af37;
+            border-bottom: 2px solid #333;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            position: relative;
+        }
+        th:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+        th:after {
+            content: ' ↕';
+            font-size: 0.7rem;
+            opacity: 0.5;
+            margin-left: 0.25rem;
+        }
+        th.asc:after {
+            content: ' ↑';
+        }
+        th.desc:after {
+            content: ' ↓';
+        }
+        tbody tr {
+            transition: background 0.3s ease;
+            border-bottom: 1px solid #333;
+        }
+        tbody tr:hover {
+            background: rgba(212, 175, 55, 0.05);
+        }
+        tbody tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        td {
+            padding: 1rem;
+            font-size: 0.85rem;
+            vertical-align: middle;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #d4af37;
+        }
+        .user-info i {
+            font-size: 1.5rem;
+            color: #BDBDBD;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+        }
+        .user-info span {
+            color: #fff;
+            font-weight: 500;
+        }
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            min-width: fit-content;
+            border: 1px solid transparent;
+        }
+        .status-pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #FFC107;
+            border: 1px solid #FFC107;
+        }
+        .status-approved {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+        }
+        .status-completed {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196F3;
+            border: 1px solid #2196F3;
+        }
+        .status-cancelled {
+            background: rgba(128, 128, 128, 0.2);
+            color: #808080;
+            border: 1px solid #808080;
+        }
+        .status-rejected {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+        }
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            color: #BDBDBD;
+            font-size: 0.9rem;
+        }
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        .view-btn:hover {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196F3;
+        }
+        .approve-btn:hover {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+        }
+        .reject-btn:hover {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff6b6b;
+        }
+        .complete-btn:hover {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196F3;
+        }
+        .no-data {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #BDBDBD;
+            font-style: italic;
+        }
+        .no-data i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+            display: block;
+        }
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1.5rem;
+            background: rgba(42, 42, 42, 0.9);
+            border-top: 1px solid #333;
+        }
+        .pagination button {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid #444;
+            background: #121212;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .pagination button:hover:not(:disabled) {
+            background: #d4af37;
+            color: #000;
+            border-color: #d4af37;
+        }
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .pagination span {
+            color: #BDBDBD;
+            font-size: 0.9rem;
+        }
+        #messageContainer {
+            margin-bottom: 1rem;
+            z-index: 1000;
+            position: relative;
+        }
+        .message {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            max-width: 100%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        .message.success {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+        }
+        .message.error {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+        }
+        .message.info {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196F3;
+            border: 1px solid #2196F3;
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+            .filters {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .search-box input, .filter-select select, .filter-select input {
+                padding: 0.75rem;
+            }
+            .table-container {
+                max-height: none;
+            }
+            table {
+                min-width: none;
+                font-size: 0.75rem;
+            }
+            th, td {
+                padding: 0.75rem 0.5rem;
+            }
+            .user-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+            }
+            .actions {
+                justify-content: center;
+            }
+            .pagination {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .header-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .filters {
+                grid-template-columns: 1fr;
+            }
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header (Compact, Admin-Only) -->
+    <header id="header">
+        <a href="admin.html" class="logo-container">
+            <img src="images/logo.png" alt="Top Autocare Logo" style="height: 40px; width: auto;">
+            <h1 class="logo-title">Admin Panel</h1>
+        </a>
+        
+        <div class="header-actions">
+            <button class="menu-toggle" onclick="toggleAdminMenu()" title="Admin Menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Admin Navigation Menu (Updated: Full List with Profile, Active on Appointments) -->
+    <div class="admin-nav-overlay" onclick="toggleAdminMenu()">
+        <div class="admin-nav-menu" onclick="event.stopPropagation()">
+            <div class="admin-nav-header">
+                <h2 class="admin-nav-title">Admin Menu</h2>
+                <button class="close-menu" onclick="toggleAdminMenu()">&times;</button>
+            </div>
+            
+            <ul class="admin-menu">
+                <li><a href="admin.html" onclick="toggleAdminMenu()"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="admin-users.html" onclick="toggleAdminMenu()"><i class="fas fa-users"></i> Users</a></li>
+                <li><a href="admin-appointments.html" class="active" onclick="toggleAdminMenu()"><i class="fas fa-calendar-check"></i> Appointments</a></li>
+                <li><a href="admin-services.html" onclick="toggleAdminMenu()"><i class="fas fa-wrench"></i> Services</a></li>
+                <li><a href="admin-vehicles.html" onclick="toggleAdminMenu()"><i class="fas fa-car"></i> Vehicles</a></li>
+                <li><a href="admin-reports.html" onclick="toggleAdminMenu()"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                <li><a href="admin-settings.html" onclick="toggleAdminMenu()"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><a href="admin-profile.html" onclick="toggleAdminMenu()"><i class="fas fa-user-cog"></i> Admin Profile</a></li>
+                <li><a href="admin-notifications.html" onclick="toggleAdminMenu()"><i class="fas fa-bell"></i> Notifications</a></li>
+                <li><a href="admin-faq.html" onclick="toggleAdminMenu()"><i class="fas fa-question-circle"></i> FAQ Management</a></li>
+                <li><a href="admin-analytics.html" onclick="toggleAdminMenu()"><i class="fas fa-chart-pie"></i> Analytics</a></li>
+                <li><a href="admin-backup.html" onclick="toggleAdminMenu()"><i class="fas fa-database"></i> Backup & Restore</a></li>
+                <li><a href="admin.html" onclick="toggleAdminMenu()"><i class="fas fa-arrow-left"></i> Back to Site</a></li>
+            </ul>
+            
+            <!-- Working Sign Out Button (Bottom) -->
+            <button class="signout-btn" onclick="signOut()">
+                <i class="fas fa-sign-out-alt"></i> Sign Out
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header">
+            <div class="page-title">
+                <h1>Appointment Management</h1>
+                <p>View and manage all customer appointments</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-primary refresh-btn" onclick="refreshAppointments()">
+                    <i class="fas fa-sync-alt"></i> Refresh Data
+                </button>
+            </div>
+        </div>
+
+        <div id="messageContainer"></div>
+
+        <!-- Professional Container Layout -->
+        <div class="appointment-management">
+            <!-- Management Header Card -->
+            <div class="management-header">
+                <h2><i class="fas fa-calendar-check"></i> Scheduled Appointments</h2>
+                <p>Real-time overview of all bookings. Filter by status or date, and manage actions directly.</p>
+            </div>
+
+            <!-- Filters Container (Sticky) -->
+            <div class="filters-container">
+                <div class="filters">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search by customer name or service...">
+                    </div>
+                    <div class="filter-select">
+                        <label class="filter-label">Status</label>
+                        <select id="statusFilter">
+                            <option value="all">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                    <div class="filter-select">
+                        <label class="filter-label">Date</label>
+                        <input type="date" id="dateFilter">
+                    </div>
+                    <button class="btn btn-secondary" onclick="clearFilters()">
+                        <i class="fas fa-times"></i> Clear All
+                    </button>
+                </div>
+            </div>
+
+            <!-- Advanced Table Container -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable('customer', true)">Customer <span class="sort-indicator"></span></th>
+                            <th onclick="sortTable('service', true)">Service <span class="sort-indicator"></span></th>
+                            <th onclick="sortTable('price', false)">Price <span class="sort-indicator"></span></th>
+                            <th onclick="sortTable('date', false)">Date <span class="sort-indicator"></span></th>
+                            <th onclick="sortTable('time', true)">Time <span class="sort-indicator"></span></th>
+                            <th onclick="sortTable('status', true)">Status <span class="sort-indicator"></span></th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="appointmentsTable">
+                        <tr>
+                            <td colspan="7" class="no-data">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <div>Loading appointments...</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination Container -->
+            <div class="pagination" id="paginationContainer" style="display: none;">
+                <span id="paginationInfo">Showing 1-10 of 0 appointments</span>
+                <div>
+                    <button onclick="changePage(-1)" id="prevBtn" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+                    <button onclick="changePage(1)" id="nextBtn" disabled>Next <i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Global Navigation Script -->
+    <script>
+        // Global Navigation Functions
+        window.toggleAdminMenu = () => {
+            const overlay = document.querySelector('.admin-nav-overlay');
+            const menu = document.querySelector('.admin-nav-menu');
+            if (overlay && menu) {
+                overlay.classList.toggle('active');
+                menu.classList.toggle('active');
+            }
+        };
+
+        // Auto-hide Navigation on Scroll
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', () => {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const header = document.getElementById('header');
+            
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                if (header) header.classList.add('hidden');
+            } else {
+                if (header) header.classList.remove('hidden');
+            }
+            
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (event) => {
+            const overlay = document.querySelector('.admin-nav-overlay');
+            const menu = document.querySelector('.admin-nav-menu');
+            if (overlay && overlay.classList.contains('active') && 
+                !menu.contains(event.target) && 
+                !event.target.closest('.menu-toggle')) {
+                toggleAdminMenu();
+            }
+        });
+    </script>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, query, where, onSnapshot, doc, updateDoc, orderBy, getDocs, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBkVYS0CaKe1kHPp9GVnURiZz5WP5tE3iM",
+            authDomain: "top-autocare.firebaseapp.com",
+            projectId: "top-autocare",
+            storageBucket: "top-autocare.firebasestorage.app",
+            messagingSenderId: "879247821822",
+            appId: "1:879247821822:web:e6a418395d52aac99a4eaf",
+            measurementId: "G-T5NDM5M33Z"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let unsubscribeAppointments = null;
+        let usersMap = {}; // Cache for users
+        let allAppointments = []; // Cache for appointments
+
+        // DOM Elements
+        const appointmentsTable = document.getElementById('appointmentsTable');
+        const searchInput = document.getElementById('searchInput');
+        const statusFilter = document.getElementById('statusFilter');
+        const dateFilter = document.getElementById('dateFilter');
+        const messageContainer = document.getElementById('messageContainer');
+
+        // Utility Functions
+        function showMessage(message, type = 'info') {
+            if (!messageContainer) return;
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            messageContainer.innerHTML = `
+                <div class="message ${className}">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                    ${message}
+                </div>
+            `;
+            setTimeout(() => messageContainer.innerHTML = '', 3000);
+        }
+
+        function formatDate(date) {
+            if (!date) return 'N/A';
+            const dateObj = date.toDate ? date.toDate() : new Date(date);
+            return dateObj.toLocaleDateString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
+
+        function formatTime(time) {
+            return time || 'Flexible';
+        }
+
+        function getStatusBadge(status) {
+            const statusMap = {
+                'pending': { text: 'Pending', class: 'status-pending' },
+                'approved': { text: 'Approved', class: 'status-approved' },
+                'completed': { text: 'Completed', class: 'status-completed' },
+                'cancelled': { text: 'Cancelled', class: 'status-cancelled' },
+                'rejected': { text: 'Rejected', class: 'status-rejected' }
+            };
+            return statusMap[status] || { text: status.charAt(0).toUpperCase() + status.slice(1), class: 'status-pending' };
+        }
+
+        function getServicePrice(service) {
+            const prices = {
+                'Routine Maintenance': 'KES 12,000',
+                'Engine Overhaul': 'KES 40,000',
+                'Brake Service': 'KES 8,000',
+                'Oil Change': 'KES 5,000',
+                'Tire Rotation': 'KES 3,000'
+            };
+            return prices[service] || 'KES TBD';
+        }
+
+        // Working Sign Out Function (Global)
+        window.signOut = async () => {
+            if (confirm('Are you sure you want to sign out?')) {
+                try {
+                    await signOut(auth);
+                    showMessage('Signed out successfully!', 'success');
+                    setTimeout(() => window.location.href = 'signin.html', 1500);
+                } catch (error) {
+                    console.error('Sign out error:', error);
+                    showMessage('Error signing out. Please try again.', 'error');
+                }
+            }
+        };
+
+        // Load Users Cache (Once for Admin)
+        async function loadUsers() {
+            try {
+                const usersQuery = query(collection(db, 'users'), orderBy('displayName'));
+                const snapshot = await getDocs(usersQuery);
+                usersMap = {};
+                snapshot.forEach((doc) => {
+                    usersMap[doc.id] = doc.data();
+                });
+                console.log('User cache loaded with', Object.keys(usersMap).length, 'users');
+            } catch (error) {
+                console.error('Error loading users cache:', error);
+                showMessage('Error loading user data. Customer names may not display.', 'error');
+            }
+        }
+
+        // Load Appointments (Server-side status, client-side search/date)
+        function loadAppointments(baseSearch = '', baseStatus = 'all', baseDate = '') {
+            if (appointmentsTable) {
+                appointmentsTable.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="no-data">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <div>Loading appointments...</div>
+                        </td>
+                    </tr>
+                `;
+            }
+
+            let appointmentsQuery = query(
+                collection(db, 'appointments'),
+                orderBy('date', 'desc')
+            );
+
+            // Server-side status filter (efficient for large datasets)
+            if (baseStatus !== 'all') {
+                appointmentsQuery = query(appointmentsQuery, where('status', '==', baseStatus));
+            }
+
+            if (unsubscribeAppointments) unsubscribeAppointments();
+
+            unsubscribeAppointments = onSnapshot(appointmentsQuery, (snapshot) => {
+                allAppointments = [];
+                if (snapshot.empty) {
+                    if (appointmentsTable) {
+                        appointmentsTable.innerHTML = `
+                            <tr>
+                                <td colspan="7" class="no-data">
+                                    <i class="fas fa-calendar-times"></i>
+                                    <div>No appointments found matching filters.</div>
+                                </td>
+                            </tr>
+                        `;
+                    }
+                    currentPage = 1;
+                    paginateAppointments();
+                    return;
+                }
+
+                snapshot.forEach((doc) => {
+                    allAppointments.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Apply client-side filters and render
+                const currentSearch = searchInput ? searchInput.value.trim() : baseSearch;
+                const currentStatus = statusFilter ? statusFilter.value : baseStatus;
+                const currentDate = dateFilter ? dateFilter.value : baseDate;
+                filterAndRenderAppointments(currentSearch, currentStatus, currentDate);
+            }, (error) => {
+                console.error('Error loading appointments:', error);
+                if (appointmentsTable) {
+                    appointmentsTable.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="no-data">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <div>Error loading appointments. Please refresh.</div>
+                            </td>
+                        </tr>
+                    `;
+                }
+                showMessage('Error loading appointments. Please check permissions and try again.', 'error');
+            });
+        }
+
+        // Filter and Render Appointments
+        function filterAndRenderAppointments(searchTerm = '', statusFilterValue = 'all', dateFilterValue = '') {
+            let filteredAppointments = [...allAppointments];
+
+            // Status filter (if not already server-side)
+            if (statusFilterValue !== 'all') {
+                filteredAppointments = filteredAppointments.filter(appointment => appointment.status === statusFilterValue);
+            }
+
+            // Search filter
+            if (searchTerm.trim()) {
+                const lowerSearch = searchTerm.toLowerCase();
+                filteredAppointments = filteredAppointments.filter(appointment => {
+                    const customerName = (usersMap[appointment.userId]?.displayName || '').toLowerCase();
+                    return appointment.service.toLowerCase().includes(lowerSearch) || 
+                           customerName.includes(lowerSearch) ||
+                           (appointment.notes && appointment.notes.toLowerCase().includes(lowerSearch));
+                });
+            }
+
+            // Date filter
+            if (dateFilterValue) {
+                const filterDate = new Date(dateFilterValue + 'T00:00:00');
+                filteredAppointments = filteredAppointments.filter(appointment => {
+                    const appointmentDate = appointment.date.toDate ? appointment.date.toDate() : new Date(appointment.date);
+                    return appointmentDate.toDateString() === filterDate.toDateString();
+                });
+            }
+
+            // Apply sorting if active
+            if (currentSort.column) {
+                filteredAppointments.sort((a, b) => {
+                    let aVal, bVal;
+                    switch (currentSort.column) {
+                        case 'customer':
+                            aVal = (usersMap[a.userId]?.displayName || '').toLowerCase();
+                            bVal = (usersMap[b.userId]?.displayName || '').toLowerCase();
+                            return currentSort.direction === 'asc' ? 
+                                aVal.localeCompare(bVal, undefined, { sensitivity: 'base' }) : 
+                                bVal.localeCompare(aVal, undefined, { sensitivity: 'base' });
+                        case 'service':
+                            aVal = (a.service || '').toLowerCase();
+                            bVal = (b.service || '').toLowerCase();
+                            return currentSort.direction === 'asc' ? 
+                                aVal.localeCompare(bVal, undefined, { sensitivity: 'base' }) : 
+                                bVal.localeCompare(aVal, undefined, { sensitivity: 'base' });
+                        case 'price':
+                            aVal = parseFloat((a.price || 0));
+                            bVal = parseFloat((b.price || 0));
+                            return currentSort.direction === 'asc' ? aVal - bVal : bVal - aVal;
+                        case 'date':
+                            aVal = a.date.toDate ? a.date.toDate().getTime() : new Date(a.date).getTime();
+                            bVal = b.date.toDate ? b.date.toDate().getTime() : new Date(b.date).getTime();
+                            return currentSort.direction === 'asc' ? aVal - bVal : bVal - aVal;
+                        case 'time':
+                            aVal = (a.time || '').toLowerCase();
+                            bVal = (b.time || '').toLowerCase();
+                            return currentSort.direction === 'asc' ? 
+                                aVal.localeCompare(bVal, undefined, { sensitivity: 'base' }) : 
+                                bVal.localeCompare(aVal, undefined, { sensitivity: 'base' });
+                        case 'status':
+                            const statusOrder = { pending: 1, approved: 2, completed: 3, cancelled: 4, rejected: 5 };
+                            aVal = statusOrder[a.status] || 0;
+                            bVal = statusOrder[b.status] || 0;
+                            return currentSort.direction === 'asc' ? aVal - bVal : bVal - aVal;
+                        default:
+                            return 0;
+                    }
+                });
+            }
+
+            if (appointmentsTable) {
+                if (filteredAppointments.length === 0) {
+                    appointmentsTable.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="no-data">
+                                <i class="fas fa-calendar-times"></i>
+                                <div>${searchTerm ? 'No appointments match the search.' : dateFilterValue ? 'No appointments for selected date.' : statusFilterValue !== 'all' ? 'No appointments for selected status.' : 'No appointments found. Schedule your first appointment!'}</div>
+                            </td>
+                        </tr>
+                    `;
+                    currentPage = 1;
+                    paginateAppointments();
+                    return;
+                }
+
+                appointmentsTable.innerHTML = '';
+                filteredAppointments.forEach((appointment) => {
+                    const user = usersMap[appointment.userId] || { displayName: 'Unknown User', photoURL: null };
+                    renderAppointmentRow(appointment, user);
+                });
+
+                currentPage = 1;
+                paginateAppointments();
+            }
+        }
+
+        function renderAppointmentRow(appointment, user) {
+            if (!appointmentsTable) return;
+            const statusInfo = getStatusBadge(appointment.status);
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>
+                    <div class="user-info">
+                        ${user.photoURL ? 
+                            `<img src="${user.photoURL}" alt="${user.displayName}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">` : 
+                            `<i class="fas fa-user-circle"></i>`}
+                        <strong>${user.displayName || 'Unknown User'}</strong>
+                    </div>
+                </td>
+                <td>
+                    <strong>${appointment.service || 'N/A'}</strong>
+                    ${appointment.notes ? `<span style="color: #BDBDBD; font-size: 0.8rem; display: block;">${appointment.notes.substring(0, 50)}...</span>` : ''}
+                </td>
+                <td>${getServicePrice(appointment.service)}</td>
+                <td>${formatDate(appointment.date)}</td>
+                <td>${formatTime(appointment.time)}</td>
+                <td>${getStatusBadge(appointment.status)}</td>
+                <td class="actions">
+                    <button class="action-btn view-btn" onclick="viewAppointment('${appointment.id}')" title="View Details">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    ${appointment.status === 'pending' ? `
+                        <button class="action-btn approve-btn" onclick="approveAppointment('${appointment.id}')" title="Approve">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button class="action-btn reject-btn" onclick="rejectAppointment('${appointment.id}')" title="Reject">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    ` : ''}
+                    ${appointment.status === 'approved' ? `
+                        <button class="action-btn complete-btn" onclick="completeAppointment('${appointment.id}')" title="Mark Completed">
+                            <i class="fas fa-check-double"></i>
+                        </button>
+                    ` : ''}
+                </td>
+            `;
+            appointmentsTable.appendChild(row);
+        }
+
+        // Event Listeners
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value;
+                filterAndRenderAppointments(searchTerm, statusFilter ? statusFilter.value : 'all', dateFilter ? dateFilter.value : '');
+            });
+        }
+
+        if (statusFilter) {
+            statusFilter.addEventListener('change', (e) => {
+                const currentSearch = searchInput ? searchInput.value : '';
+                const currentDate = dateFilter ? dateFilter.value : '';
+                loadAppointments(currentSearch, e.target.value, currentDate); // Reload for server-side status filter
+            });
+        }
+
+        if (dateFilter) {
+            dateFilter.addEventListener('change', (e) => {
+                const currentSearch = searchInput ? searchInput.value : '';
+                const currentStatus = statusFilter ? statusFilter.value : 'all';
+                filterAndRenderAppointments(currentSearch, currentStatus, e.target.value);
+            });
+        }
+
+        // Global Action Functions
+        window.viewAppointment = (appointmentId) => {
+            if (appointmentId) {
+                window.location.href = `admin-appointment-details.html?id=${appointmentId}`;
+            } else {
+                showMessage('Invalid appointment ID.', 'error');
+            }
+        };
+
+        window.approveAppointment = async (appointmentId) => {
+            if (!appointmentId) {
+                showMessage('Invalid appointment ID.', 'error');
+                return;
+            }
+            if (confirm('Approve this appointment? The customer will be notified.')) {
+                try {
+                    await updateDoc(doc(db, 'appointments', appointmentId), {
+                        status: 'approved',
+                        updatedAt: new Date(),
+                        updatedBy: currentUser ? currentUser.uid : null
+                    });
+                    showMessage('Appointment approved successfully!', 'success');
+                    // Refresh current view
+                    const currentSearch = searchInput ? searchInput.value : '';
+                    const currentStatus = statusFilter ? statusFilter.value : 'all';
+                    const currentDate = dateFilter ? dateFilter.value : '';
+                    filterAndRenderAppointments(currentSearch, currentStatus, currentDate);
+                } catch (error) {
+                    console.error('Error approving appointment:', error);
+                    showMessage('Error approving appointment. Please try again.', 'error');
+                }
+            }
+        };
+
+        window.rejectAppointment = async (appointmentId) => {
+            if (!appointmentId) {
+                showMessage('Invalid appointment ID.', 'error');
+                return;
+            }
+            const reason = prompt('Reason for rejection (optional):');
+            if (confirm(`Reject this appointment?${reason ? `\nReason: ${reason}` : ''}`)) {
+                try {
+                    await updateDoc(doc(db, 'appointments', appointmentId), {
+                        status: 'rejected',
+                        rejectionReason: reason || '',
+                        updatedAt: new Date(),
+                        updatedBy: currentUser ? currentUser.uid : null
+                    });
+                    showMessage('Appointment rejected successfully!', 'success');
+                    const currentSearch = searchInput ? searchInput.value : '';
+                    const currentStatus = statusFilter ? statusFilter.value : 'all';
+                    const currentDate = dateFilter ? dateFilter.value : '';
+                    filterAndRenderAppointments(currentSearch, currentStatus, currentDate);
+                } catch (error) {
+                    console.error('Error rejecting appointment:', error);
+                    showMessage('Error rejecting appointment. Please try again.', 'error');
+                }
+            }
+        };
+
+        window.completeAppointment = async (appointmentId) => {
+            if (!appointmentId) {
+                showMessage('Invalid appointment ID.', 'error');
+                return;
+            }
+            if (confirm('Mark this appointment as completed? This will finalize the booking.')) {
+                try {
+                    await updateDoc(doc(db, 'appointments', appointmentId), {
+                        status: 'completed',
+                        completedAt: new Date(),
+                        updatedAt: new Date(),
+                        updatedBy: currentUser ? currentUser.uid : null
+                    });
+                    showMessage('Appointment marked as completed!', 'success');
+                    const currentSearch = searchInput ? searchInput.value : '';
+                    const currentStatus = statusFilter ? statusFilter.value : 'all';
+                    const currentDate = dateFilter ? dateFilter.value : '';
+                    filterAndRenderAppointments(currentSearch, currentStatus, currentDate);
+                } catch (error) {
+                    console.error('Error completing appointment:', error);
+                    showMessage('Error completing appointment. Please try again.', 'error');
+                }
+            }
+        };
+
+        window.clearFilters = () => {
+            if (searchInput) searchInput.value = '';
+            if (statusFilter) statusFilter.value = 'all';
+            if (dateFilter) dateFilter.value = '';
+            loadAppointments('', 'all', '');
+            currentPage = 1;
+            paginateAppointments();
+            showMessage('Filters cleared.', 'success');
+        };
+
+        window.refreshAppointments = () => {
+            const currentSearch = searchInput ? searchInput.value : '';
+            const currentStatus = statusFilter ? statusFilter.value : 'all';
+            const currentDate = dateFilter ? dateFilter.value : '';
+            loadAppointments(currentSearch, currentStatus, currentDate);
+            showMessage('Appointments refreshed.', 'success');
+        };
+
+        // Advanced Sorting and Pagination
+        let currentSort = { column: null, direction: 'asc' };
+        let currentPage = 1;
+        const itemsPerPage = 10;
+
+        window.sortTable = (column) => {
+            const direction = currentSort.column === column && currentSort.direction === 'asc' ? 'desc' : 'asc';
+            
+            // Update headers
+            document.querySelectorAll('th').forEach(th => th.classList.remove('asc', 'desc'));
+            const headers = ['customer', 'service', 'price', 'date', 'time', 'status'];
+            const headerIndex = headers.indexOf(column);
+            if (headerIndex !== -1) {
+                const header = document.querySelectorAll('th')[headerIndex];
+                if (header) header.classList.add(direction);
+            }
+
+            currentSort = { column, direction };
+
+            const currentSearch = searchInput ? searchInput.value : '';
+            const currentStatus = statusFilter ? statusFilter.value : 'all';
+            const currentDate = dateFilter ? dateFilter.value : '';
+            filterAndRenderAppointments(currentSearch, currentStatus, currentDate);
+            currentPage = 1;
+            paginateAppointments();
+            showMessage(`Sorted by ${column} (${direction}).`, 'info');
+        };
+
+        window.changePage = (direction) => {
+            const tableBody = document.getElementById('appointmentsTable');
+            if (!tableBody) return;
+
+            const rows = Array.from(tableBody.querySelectorAll('tr:not(.no-data)'));
+            const totalPages = Math.ceil(rows.length / itemsPerPage);
+
+            currentPage += direction;
+            currentPage = Math.max(1, Math.min(currentPage, totalPages));
+
+            paginateAppointments();
+        };
+
+        function paginateAppointments() {
+            const tableBody = document.getElementById('appointmentsTable');
+            if (!tableBody) return;
+
+            const rows = Array.from(tableBody.querySelectorAll('tr:not(.no-data)'));
+            const totalItems = rows.length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+            // Hide all rows
+            rows.forEach(row => row.style.display = 'none');
+
+            // Show current page
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            rows.slice(start, end).forEach(row => row.style.display = '');
+
+            // Update info
+            const paginationInfo = document.getElementById('paginationInfo');
+            if (paginationInfo) {
+                paginationInfo.textContent = totalItems === 0 ? 'No appointments to display' : 
+                    `Showing ${Math.min(start + 1, totalItems)}-${Math.min(end, totalItems)} of ${totalItems} appointments`;
+            }
+
+            // Update buttons
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            if (prevBtn) prevBtn.disabled = currentPage === 1;
+            if (nextBtn) nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+
+            // Show/hide pagination
+            const paginationContainer = document.getElementById('paginationContainer');
+            if (paginationContainer) {
+                paginationContainer.style.display = totalPages > 1 ? 'flex' : 'none';
+            }
+        }
+
+        // Initialize Page
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                
+                const userRef = doc(db, 'users', user.uid);
+                const userSnap = await getDoc(userRef);
+                
+                if (userSnap.exists() && userSnap.data().role === 'admin') {
+                    await loadUsers();
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', () => loadAppointments());
+                    } else {
+                        loadAppointments();
+                    }
+                } else {
+                    showMessage('Access denied. Admin privileges required.', 'error');
+                    setTimeout(() => window.location.href = 'dashboard.html', 2000);
+                }
+            } else {
+                window.location.href = 'signin.html';
+            }
+        });
+
+        // Cleanup
+        window.addEventListener('beforeunload', () => {
+            if (unsubscribeAppointments) unsubscribeAppointments();
+        });
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('Service Worker registered:', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.error('Service Worker registration failed:', registrationError);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

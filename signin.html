@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Top Autocare</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#d4af37">
+
+    <!-- Mobile/PWA Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Top Autocare">
+    <link rel="apple-touch-icon" href="assets/images/app-icon-512.png">
+
+    <!-- Favicon for Browsers -->
+    <link rel="icon" href="assets/images/app-icon-192.png" sizes="192x192" type="image/png">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            line-height: 1.6;
+            position: relative;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(0px);
+            z-index: -1;
+        }
+        /* Header Styles */
+        #header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        #header.hidden {
+            transform: translateY(-100%);
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 0 1rem;
+            color: #d4af37;
+        }
+        .logo-container:hover h1 {
+            text-decoration: underline;
+        }
+        .logo-container img {
+            height: 50px;
+            width: auto;
+            margin-right: 0.5rem;
+            border-radius: 50%;
+        }
+        .logo-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            color: #d4af37;
+            text-decoration: none;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding-right: 1rem;
+        }
+        .home-btn {
+            background: #d4af37;
+            color: #000;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .home-btn:hover {
+            background: #b8962e;
+            transform: translateY(-2px);
+        }
+        @media (max-width: 768px) {
+            #header {
+                padding: 0.5rem;
+                flex-wrap: wrap;
+            }
+            .logo-container {
+                padding: 0 0.5rem;
+            }
+            .logo-title {
+                font-size: 1.25rem;
+            }
+            .header-actions {
+                padding-right: 0.5rem;
+                gap: 0.5rem;
+            }
+            .home-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+        /* Signin Container */
+        .signin-container {
+            max-width: 500px;
+            margin: 120px auto 60px;
+            padding: 40px;
+            background: rgba(30, 30, 30, 0.85);
+            border-radius: 12px;
+            border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        @media (max-width: 768px) {
+            .signin-container {
+                margin: 100px auto 40px;
+                padding: 30px 20px;
+                border-radius: 8px;
+            }
+        }
+        @media (max-width: 480px) {
+            .signin-container {
+                margin: 90px auto 30px;
+                padding: 25px 15px;
+            }
+        }
+        .signin-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #d4af37;
+            margin-bottom: 2rem;
+            font-weight: 700;
+        }
+        @media (max-width: 768px) {
+            .signin-title {
+                font-size: 2rem;
+                margin-bottom: 1.5rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .signin-title {
+                font-size: 1.75rem;
+                margin-bottom: 1.25rem;
+            }
+        }
+        .signin-form {
+            display: grid;
+            gap: 1.25rem;
+        }
+        @media (max-width: 480px) {
+            .signin-form {
+                gap: 1rem;
+            }
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+        @media (max-width: 480px) {
+            .form-group label {
+                font-size: 0.9rem;
+                margin-bottom: 0.4rem;
+            }
+        }
+        .form-group input {
+            padding: 1rem 1rem 1rem 1rem;
+            border-radius: 6px;
+            border: 1px solid #333;
+            background: rgba(18, 18, 18, 0.85);
+            color: #fff;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        @media (max-width: 480px) {
+            .form-group input {
+                padding: 0.875rem;
+                font-size: 0.95rem;
+            }
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+            transform: translateY(-1px);
+        }
+        .form-group input::placeholder {
+            color: #ccc;
+        }
+        /* Password Eye */
+        .password-container {
+            position: relative;
+        }
+        .password-eye {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #ccc;
+            font-size: 1rem;
+            z-index: 1;
+            transition: color 0.3s ease;
+        }
+        .password-eye:hover {
+            color: #d4af37;
+        }
+        .signin-btn {
+            padding: 1rem 2rem;
+            border-radius: 6px;
+            background: #d4af37;
+            color: #000;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+            width: 100%;
+        }
+        @media (max-width: 480px) {
+            .signin-btn {
+                padding: 0.875rem 1.5rem;
+                font-size: 0.95rem;
+            }
+        }
+        .signin-btn:hover:not(:disabled) {
+            background: #b8962e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+        .signin-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            opacity: 0.7;
+        }
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1rem 0;
+            font-size: 0.875rem;
+        }
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .remember-me input[type="checkbox"] {
+            width: 1rem;
+            height: 1rem;
+            accent-color: #d4af37;
+        }
+        .remember-me label {
+            margin: 0;
+            font-weight: 500;
+            color: #ffffff;
+            cursor: pointer;
+        }
+        .forgot-password {
+            color: #d4af37;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+        .signup-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
+        }
+        .signup-link a {
+            color: #d4af37;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+        /* Messages */
+        .message {
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .message.success {
+            background: rgba(0, 255, 0, 0.15);
+            color: #00ff00;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+        .message.error {
+            background: rgba(255, 0, 0, 0.15);
+            color: #ff0000;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+        }
+        /* Footer Styles */
+        .footer {
+            background: rgba(0, 0, 0, 0.9);
+            color: #ffffff;
+            padding: 2rem 1rem;
+            text-align: center;
+            border-top: 1px solid #333;
+            margin-top: 3rem;
+        }
+        .footer .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        .footer p {
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: #ffffff;
+        }
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .social-links a {
+            color: #d4af37;
+            font-size: 1.25rem;
+            transition: all 0.3s ease;
+        }
+        .social-links a:hover {
+            color: #b8962e;
+            transform: translateY(-2px);
+        }
+        .footer-links {
+            font-size: 0.75rem;
+            color: #ffffff;
+            margin-top: 1rem;
+        }
+        .footer-links a {
+            color: #d4af37;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            margin: 0 0.5rem;
+        }
+        .footer-links a:hover {
+            color: #b8962e;
+        }
+        @media (max-width: 768px) {
+            .footer {
+                padding: 1.5rem 0.5rem;
+            }
+            .social-links {
+                gap: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        <a href="dashboard.html" class="logo-container">
+            <img src="images/logo.png" alt="Top Autocare Logo" style="height: 50px; width: auto;">
+            <h1 class="logo-title">Top Autocare</h1>
+        </a>
+        
+        <div class="header-actions">
+            <a href="index.html" class="home-btn">
+                <i class="fas fa-home"></i> Home
+            </a>
+        </div>
+    </header>
+
+    <!-- Sign In Container -->
+    <main class="signin-container">
+        <h1 class="signin-title">Welcome Back</h1>
+        
+        <div id="messageContainer"></div>
+        
+        <form class="signin-form" id="signinForm">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" required placeholder="Enter your email address">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="password-container">
+                    <input type="password" id="password" required placeholder="Enter your password">
+                    <i class="fas fa-eye-slash password-eye" id="passwordEye"></i>
+                </div>
+            </div>
+            
+            <div class="form-options">
+                <div class="remember-me">
+                    <input type="checkbox" id="rememberMe">
+                    <label for="rememberMe">Remember Me</label>
+                </div>
+                <a href="reset-password.html" class="forgot-password">Forgot Password?</a>
+            </div>
+            
+            <button type="submit" class="signin-btn">
+                <i class="fas fa-sign-in-alt"></i> Sign In
+            </button>
+        </form>
+        
+        <div class="signup-link">
+            Don't have an account? <a href="signup.html">Create Account</a>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Top Autocare Garage. All rights reserved. Professional automotive care in Nairobi, Kenya.</p>
+            <div class="social-links">
+                <a href="https://wa.me/254757562447" aria-label="WhatsApp" target="_blank" rel="noopener">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+                <a href="https://twitter.com/BrianVags" aria-label="Twitter" target="_blank" rel="noopener">
+                    <i class="fab fa-twitter"></i>
+                </a>
+            </div>
+            <div class="footer-links">
+                <a href="privacy-policy.html">Privacy Policy</a> | 
+                <a href="terms-of-service.html">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase Script - Self-Contained (Modular) -->
+    <script type="module">
+        // Firebase Imports
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword, 
+            onAuthStateChanged, 
+            signOut 
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc, 
+            collection, 
+            query,
+            where,
+            orderBy,
+            limitToLast,
+            updateDoc 
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBkVYS0CaKe1kHPp9GVnURiZz5WP5tE3iM",
+            authDomain: "top-autocare.firebaseapp.com",
+            projectId: "top-autocare",
+            storageBucket: "top-autocare.firebasestorage.app",
+            messagingSenderId: "879247821822",
+            appId: "1:879247821822:web:e6a418395d52aac99a4eaf",
+            measurementId: "G-T5NDM5M33Z"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // DOM Elements
+        const signinForm = document.getElementById('signinForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const rememberMe = document.getElementById('rememberMe');
+        const passwordEye = document.getElementById('passwordEye');
+        const submitBtn = document.querySelector('.signin-btn');
+        const messageContainer = document.getElementById('messageContainer');
+
+        // Utility Functions
+        function showMessage(message, type = 'info') {
+            const existingMessage = messageContainer.querySelector('.message');
+            if (existingMessage) existingMessage.remove();
+            
+            const div = document.createElement('div');
+            div.className = `message ${type}`;
+            div.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                ${message}
+            `;
+            messageContainer.appendChild(div);
+            setTimeout(() => {
+                if (div.parentNode) div.remove();
+            }, 5000);
+        }
+
+        // Get User Role from Firestore
+        async function getUserRole(userId) {
+            try {
+                const userDoc = await getDoc(doc(db, 'users', userId));
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    return userData.role || 'user';
+                }
+                return 'user';
+            } catch (error) {
+                console.error('Error getting user role:', error);
+                return 'user';
+            }
+        }
+
+        // Redirect based on role
+        function redirectUser(role) {
+            switch (role) {
+                case 'admin':
+                    window.location.href = 'admin.html';
+                    break;
+                case 'user':
+                default:
+                    window.location.href = 'dashboard.html';
+                    break;
+            }
+        }
+
+        // Form Submission Handler
+        signinForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            // Validation
+            if (!email || !password) {
+                showMessage('Please fill in all required fields.', 'error');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                if (!user.emailVerified) {
+                    showMessage('Please verify your email first. Check your inbox for the verification link.', 'error');
+                    await signOut(auth);
+                    return;
+                }
+
+                // Get role and update last login
+                const userRole = await getUserRole(user.uid);
+                await updateDoc(doc(db, 'users', user.uid), {
+                    lastLogin: new Date()
+                });
+
+                showMessage(`Welcome back! Redirecting to ${userRole === 'admin' ? 'Admin' : 'User'} Dashboard...`, 'success');
+
+                setTimeout(() => redirectUser(userRole), 2000);
+
+                // Save email if remember me checked
+                if (rememberMe.checked) {
+                    localStorage.setItem('rememberedEmail', email);
+                }
+
+            } catch (error) {
+                console.error('Signin error:', error);
+                
+                let errorMessage = 'An error occurred. Please try again.';
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        errorMessage = 'No account found with this email.';
+                        break;
+                    case 'auth/wrong-password':
+                        errorMessage = 'Incorrect password.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'Invalid email address.';
+                        break;
+                    case 'auth/user-disabled':
+                        errorMessage = 'Account disabled. Contact support.';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMessage = 'Too many attempts. Try later.';
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMessage = 'Network error. Check connection.';
+                        break;
+                    default:
+                        errorMessage = error.message;
+                }
+                showMessage(errorMessage, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+            }
+        });
+
+        // Remember Me Functionality
+        window.addEventListener('load', () => {
+            const savedEmail = localStorage.getItem('rememberedEmail');
+            if (savedEmail) {
+                emailInput.value = savedEmail;
+                rememberMe.checked = true;
+            }
+        });
+
+        rememberMe.addEventListener('change', () => {
+            if (rememberMe.checked) {
+                localStorage.setItem('rememberedEmail', emailInput.value);
+            } else {
+                localStorage.removeItem('rememberedEmail');
+            }
+        });
+
+        emailInput.addEventListener('input', () => {
+            if (rememberMe.checked) {
+                localStorage.setItem('rememberedEmail', emailInput.value);
+            }
+        });
+
+        // Password Eye Toggle
+        passwordEye.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            passwordEye.classList.toggle('fa-eye-slash');
+            passwordEye.classList.toggle('fa-eye');
+        });
+
+        // Check if already signed in
+        onAuthStateChanged(auth, async (user) => {
+            if (user && user.emailVerified) {
+                const userRole = await getUserRole(user.uid);
+                showMessage(`Welcome back! Redirecting...`, 'success');
+                setTimeout(() => redirectUser(userRole), 1500);
+            }
+        });
+
+        console.log('🔐 Sign In page loaded with Firebase');
+    </script>
+
+    <!-- Auto-hide Header Script -->
+    <script>
+        let lastScrollTop = 0;
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                header.classList.add('hidden');
+            } else {
+                header.classList.remove('hidden');
+            }
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('✅ Service Worker registered');
+                    })
+                    .catch((error) => {
+                        console.error('❌ Service Worker error:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

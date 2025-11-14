@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Management - Top Autocare Garage</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- PWA Manifest and Mobile Optimization -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#d4af37">
+
+    <!-- Mobile/PWA Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Top Autocare">
+    <link rel="apple-touch-icon" href="assets/images/app-icon-512.png">
+
+    <!-- Favicon for Browsers -->
+    <link rel="icon" href="assets/images/app-icon-192.png" sizes="192x192" type="image/png">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            line-height: 1.6;
+            padding-bottom: 80px;
+            position: relative;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(4px);
+            z-index: -1;
+        }
+        /* Header Styles (Compact, Admin-Only) */
+        #header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 0.25rem 0;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1001;
+            transition: transform 0.3s ease;
+            height: 60px;
+        }
+        #header.hidden {
+            transform: translateY(-100%);
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 0 0.75rem;
+            color: #d4af37;
+        }
+        .logo-container:hover h1 {
+            text-decoration: underline;
+        }
+        .logo-container img {
+            height: 40px;
+            width: auto;
+            margin-right: 0.5rem;
+            border-radius: 50%;
+        }
+        .logo-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin: 0;
+            color: #d4af37;
+            text-decoration: none;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-right: 0.75rem;
+        }
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: color 0.3s ease;
+            z-index: 1002;
+        }
+        .menu-toggle:hover {
+            color: #d4af37;
+        }
+        @media (max-width: 768px) {
+            #header {
+                padding: 0.5rem;
+                flex-wrap: wrap;
+            }
+            .logo-container {
+                padding: 0 0.5rem;
+            }
+            .logo-title {
+                font-size: 1rem;
+            }
+            .header-actions {
+                padding-right: 0.5rem;
+                gap: 0.5rem;
+            }
+        }
+        /* Admin Navigation Menu (Slide-In from Right, Matching Photo Exactly) */
+        .admin-nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .admin-nav-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .admin-nav-menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100vh;
+            background: #1a1a1a;
+            padding: 1rem;
+            overflow-y: auto;
+            transition: right 0.3s ease;
+            z-index: 1001;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+        }
+        .admin-nav-menu.active {
+            right: 0;
+        }
+        .admin-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #333;
+            margin-bottom: 1rem;
+        }
+        .admin-nav-title {
+            font-size: 1.125rem;
+            color: #d4af37;
+            font-weight: 700;
+        }
+        .close-menu {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            transition: color 0.3s ease;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .close-menu:hover {
+            color: #d4af37;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        .admin-menu {
+            list-style: none;
+            padding: 0;
+        }
+        .admin-menu li {
+            margin-bottom: 0.5rem;
+        }
+        .admin-menu a {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #BDBDBD;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 6px;
+            margin: 0.25rem 0;
+        }
+        .admin-menu a:hover, .admin-menu a.active {
+            background: rgba(212, 175, 55, 0.2);
+            color: #d4af37;
+            border-right: 3px solid #d4af37;
+            transform: translateX(5px);
+        }
+        .admin-menu i {
+            width: 20px;
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+            opacity: 0.7;
+        }
+        .admin-menu a:hover i, .admin-menu a.active i {
+            opacity: 1;
+        }
+        .signout-btn {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            right: 1rem;
+            background: #ff6b6b;
+            color: #fff;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: background 0.3s ease;
+            width: calc(100% - 2rem);
+        }
+        .signout-btn:hover {
+            background: #ff5252;
+            transform: translateY(-1px);
+        }
+        /* Main Content */
+        .main-content {
+            padding: 1.5rem;
+            margin-top: 60px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #333;
+        }
+        .page-title h1 {
+            font-size: 1.75rem;
+            color: #d4af37;
+            margin-bottom: 0.25rem;
+        }
+        .page-title p {
+            color: #BDBDBD;
+            font-size: 0.875rem;
+        }
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-primary {
+            background: #d4af37;
+            color: #000;
+        }
+        .btn-primary:hover {
+            background: #b8962e;
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: #333;
+            color: #fff;
+        }
+        .btn-secondary:hover {
+            background: #444;
+            transform: translateY(-1px);
+        }
+        /* Professional Container Layout */
+        .service-management {
+            background: rgba(30, 30, 30, 0.9);
+            border-radius: 12px;
+            border: 1px solid #333;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        .management-header {
+            background: rgba(42, 42, 42, 0.9);
+            padding: 1.5rem;
+            border-bottom: 1px solid #333;
+        }
+        .management-header h2 {
+            color: #d4af37;
+            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .management-header p {
+            color: #BDBDBD;
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+        /* Add Service Form Container */
+        .add-service-container {
+            background: rgba(18, 18, 18, 0.8);
+            padding: 1.5rem;
+            border-bottom: 1px solid #333;
+            position: relative;
+        }
+        .add-service-form {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        .add-service-form h3 {
+            color: #d4af37;
+            margin-bottom: 1rem;
+            font-size: 1.125rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            grid-column: 1 / -1;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .form-group label {
+            font-size: 0.875rem;
+            color: #d4af37;
+            font-weight: 500;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #121212;
+            color: #fff;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+        }
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        .form-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #333;
+            grid-column: span 3;
+        }
+        .form-actions .btn {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9rem;
+        }
+        /* Filters Container (Sticky) */
+        .filters-container {
+            background: rgba(42, 42, 42, 0.9);
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #333;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .filters {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            max-width: 600px;
+        }
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #BDBDBD;
+            z-index: 2;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #121212;
+            color: #fff;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .search-box input:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+        }
+        .filter-label {
+            color: #BDBDBD;
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+        /* Advanced Table Container */
+        .table-container {
+            overflow-x: auto;
+            max-height: 60vh;
+            scrollbar-width: thin;
+            scrollbar-color: #d4af37 #333;
+        }
+        .table-container::-webkit-scrollbar {
+            height: 8px;
+        }
+        .table-container::-webkit-scrollbar-track {
+            background: #333;
+        }
+        .table-container::-webkit-scrollbar-thumb {
+            background: #d4af37;
+            border-radius: 4px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: transparent;
+            min-width: 700px;
+        }
+        thead {
+            position: sticky;
+            top: 0;
+            background: rgba(26, 26, 26, 0.95);
+            z-index: 5;
+            backdrop-filter: blur(10px);
+        }
+        th {
+            text-align: left;
+            padding: 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #d4af37;
+            border-bottom: 2px solid #333;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            position: relative;
+        }
+        th:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+        th:after {
+            content: ' ↕';
+            font-size: 0.7rem;
+            opacity: 0.5;
+            margin-left: 0.25rem;
+        }
+        th.asc:after {
+            content: ' ↑';
+        }
+        th.desc:after {
+            content: ' ↓';
+        }
+        tbody tr {
+            transition: background 0.3s ease;
+            border-bottom: 1px solid #333;
+        }
+        tbody tr:hover {
+            background: rgba(212, 175, 55, 0.05);
+        }
+        tbody tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        td {
+            padding: 1rem;
+            font-size: 0.85rem;
+            vertical-align: middle;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        .service-info {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+        .service-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #d4af37;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .service-info div strong {
+            display: block;
+            color: #fff;
+            font-size: 1rem;
+        }
+        .service-info div p {
+            color: #BDBDBD;
+            font-size: 0.8rem;
+            margin: 0.25rem 0 0 0;
+            line-height: 1.4;
+            max-width: 250px;
+        }
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            min-width: fit-content;
+            border: 1px solid transparent;
+        }
+        .status-active {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+        }
+        .status-inactive {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+        }
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            color: #BDBDBD;
+            font-size: 0.9rem;
+        }
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        .edit-btn:hover {
+            background: rgba(255, 193, 7, 0.2);
+            color: #FFC107;
+        }
+        .delete-btn:hover {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff6b6b;
+        }
+        .no-data {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #BDBDBD;
+            font-style: italic;
+            grid-column: 1 / -1;
+        }
+        .no-data i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+            display: block;
+        }
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1.5rem;
+            background: rgba(42, 42, 42, 0.9);
+            border-top: 1px solid #333;
+        }
+        .pagination button {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid #444;
+            background: #121212;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .pagination button:hover:not(:disabled) {
+            background: #d4af37;
+            color: #000;
+            border-color: #d4af37;
+        }
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .pagination span {
+            color: #BDBDBD;
+            font-size: 0.9rem;
+        }
+        #messageContainer {
+            margin-bottom: 1rem;
+            z-index: 1000;
+            position: relative;
+        }
+        .message {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            max-width: 100%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        .message.success {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+        }
+        .message.error {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+        }
+        .message.info {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196F3;
+            border: 1px solid #2196F3;
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .form-actions {
+                grid-column: span 1;
+                justify-content: center;
+                flex-direction: column;
+            }
+            .filters {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .search-box input {
+                padding: 0.75rem;
+            }
+            .table-container {
+                max-height: none;
+            }
+            table {
+                min-width: none;
+                font-size: 0.75rem;
+            }
+            th, td {
+                padding: 0.75rem 0.5rem;
+            }
+            .service-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+            }
+            .actions {
+                justify-content: center;
+            }
+            .pagination {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .header-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .filters {
+                grid-template-columns: 1fr;
+            }
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+        /* Auto-hide Navigation Script */
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', () => {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const header = document.getElementById('header');
+            
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                if (header) header.classList.add('hidden');
+            } else {
+                if (header) header.classList.remove('hidden');
+            }
+            
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+    </style>
+</head>
+<body>
+    <!-- Header (Compact, Admin-Only) -->
+    <header id="header">
+        <a href="admin.html" class="logo-container">
+            <img src="images/logo.png" alt="Top Autocare Logo" style="height: 40px; width: auto;">
+            <h1 class="logo-title">Admin Panel</h1>
+        </a>
+        
+        <div class="header-actions">
+            <button class="menu-toggle" onclick="toggleAdminMenu()" title="Admin Menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Admin Navigation Menu (Updated: Exact List with Profile, Active on Services) -->
+    <div class="admin-nav-overlay" onclick="toggleAdminMenu()">
+        <div class="admin-nav-menu" onclick="event.stopPropagation()">
+            <div class="admin-nav-header">
+                <h2 class="admin-nav-title">Admin Menu</h2>
+                <button class="close-menu" onclick="toggleAdminMenu()">&times;</button>
+            </div>
+            
+            <ul class="admin-menu">
+                <li><a href="admin.html" onclick="toggleAdminMenu()"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="admin-users.html" onclick="toggleAdminMenu()"><i class="fas fa-users"></i> Users</a></li>
+                <li><a href="admin-appointments.html" onclick="toggleAdminMenu()"><i class="fas fa-calendar-check"></i> Appointments</a></li>
+                <li><a href="admin-services.html" class="active" onclick="toggleAdminMenu()"><i class="fas fa-wrench"></i> Services</a></li>
+                <li><a href="admin-vehicles.html" onclick="toggleAdminMenu()"><i class="fas fa-car"></i> Vehicles</a></li>
+                <li><a href="admin-reports.html" onclick="toggleAdminMenu()"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                <li><a href="admin-settings.html" onclick="toggleAdminMenu()"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><a href="admin-profile.html" onclick="toggleAdminMenu()"><i class="fas fa-user-cog"></i> Admin Profile</a></li>
+                <li><a href="admin-notifications.html" onclick="toggleAdminMenu()"><i class="fas fa-bell"></i> Notifications</a></li>
+                <li><a href="admin-faq.html" onclick="toggleAdminMenu()"><i class="fas fa-question-circle"></i> FAQ Management</a></li>
+                <li><a href="admin-analytics.html" onclick="toggleAdminMenu()"><i class="fas fa-chart-pie"></i> Analytics</a></li>
+                <li><a href="admin-backup.html" onclick="toggleAdminMenu()"><i class="fas fa-database"></i> Backup & Restore</a></li>
+                <li><a href="admin.html" onclick="toggleAdminMenu()"><i class="fas fa-arrow-left"></i> Back to Site</a></li>
+            </ul>
+            
+            <!-- Working Sign Out Button (Bottom) -->
+            <button class="signout-btn" onclick="signOut()">
+                <i class="fas fa-sign-out-alt"></i> Sign Out
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header">
+            <div class="page-title">
+                <h1>Service Management</h1>
+                <p>Add, edit, and manage garage services</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="scrollToForm()">
+                    <i class="fas fa-plus"></i> Add Service
+                </button>
+            </div>
+        </div>
+
+        <div id="messageContainer"></div>
+
+        <!-- Professional Container Layout -->
+        <div class="service-management">
+            <!-- Management Header Card -->
+            <div class="management-header">
+                <h2><i class="fas fa-tools"></i> Garage Services</h2>
+                <p>Manage all automotive services offered. Use the form to add new services and table to edit existing ones.</p>
+            </div>
+
+            <!-- Add Service Form Container -->
+            <div class="add-service-container">
+                <form id="addServiceForm" class="add-service-form">
+                    <h3><i class="fas fa-plus-circle"></i> Add New Service</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="serviceName">Service Name <span style="color: #ff6b6b;">*</span></label>
+                            <input type="text" id="serviceName" placeholder="E.g., Routine Maintenance" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="servicePrice">Price (KES) <span style="color: #ff6b6b;">*</span></label>
+                            <input type="number" id="servicePrice" placeholder="12000" min="0" step="0.01" required>
+                            <small style="color: #BDBDBD; font-size: 0.8rem;">Enter price in Kenyan Shillings</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="serviceDescription">Description</label>
+                            <textarea id="serviceDescription" placeholder="Brief description of the service, duration, and what it includes..."></textarea>
+                            <small style="color: #BDBDBD; font-size: 0.8rem;">Optional: Describe what this service entails</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="serviceDuration">Estimated Duration (hours)</label>
+                            <input type="number" id="serviceDuration" placeholder="2" min="0.5" step="0.5">
+                            <small style="color: #BDBDBD; font-size: 0.8rem;">E.g., 2 hours for oil change</small>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Add Service
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Filters Container (Sticky) -->
+            <div class="filters-container">
+                <div class="filters">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search services by name or description...">
+                    </div>
+                    <button class="btn btn-secondary" onclick="clearFilters()">
+                        <i class="fas fa-times"></i> Clear Filters
+                    </button>
+                </div>
+            </div>
+
+            <!-- Advanced Table Container -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable('name', true)">Service <span class="sort-indicator"></span></th>
+                            <th onclick="sortTable('price', false)">Price (KES) <span class="sort-indicator"></span></th>
+                            <th onclick="sortTable('description', true)">Description <span class="sort-indicator"></span></th>
+                            <th onclick="sortTable('status', false)">Status <span class="sort-indicator"></span></th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="servicesTable">
+                        <tr>
+                            <td colspan="5" class="no-data">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <div>Loading services...</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination Container -->
+            <div class="pagination" id="paginationContainer" style="display: none;">
+                <span id="paginationInfo">Showing 1-10 of 0 services</span>
+                <div>
+                    <button onclick="changePage(-1)" id="prevBtn" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+                    <button onclick="changePage(1)" id="nextBtn" disabled>Next <i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, query, onSnapshot, doc, addDoc, updateDoc, deleteDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBkVYS0CaKe1kHPp9GVnURiZz5WP5tE3iM",
+            authDomain: "top-autocare.firebaseapp.com",
+            projectId: "top-autocare",
+            storageBucket: "top-autocare.firebasestorage.app",
+            messagingSenderId: "879247821822",
+            appId: "1:879247821822:web:e6a418395d52aac99a4eaf",
+            measurementId: "G-T5NDM5M33Z"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let unsubscribeServices = null;
+        let allServices = []; // Cache for client-side filtering/sorting
+
+        // DOM Elements
+        const servicesTable = document.getElementById('servicesTable');
+        const searchInput = document.getElementById('searchInput');
+        const addServiceForm = document.getElementById('addServiceForm');
+        const serviceNameInput = document.getElementById('serviceName');
+        const servicePriceInput = document.getElementById('servicePrice');
+        const serviceDescriptionInput = document.getElementById('serviceDescription');
+        const serviceDurationInput = document.getElementById('serviceDuration');
+        const messageContainer = document.getElementById('messageContainer');
+
+        // Utility Functions
+        function showMessage(message, type = 'info') {
+            if (!messageContainer) return;
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            messageContainer.innerHTML = `
+                <div class="message ${className}">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                    ${message}
+                </div>
+            `;
+            setTimeout(() => messageContainer.innerHTML = '', 3000);
+        }
+
+        function formatCurrency(price) {
+            return new Intl.NumberFormat('en-KE', {
+                style: 'currency',
+                currency: 'KES'
+            }).format(price || 0);
+        }
+
+        // FIXED: Global Navigation Toggle
+        window.toggleAdminMenu = () => {
+            const overlay = document.querySelector('.admin-nav-overlay');
+            const menu = document.querySelector('.admin-nav-menu');
+            if (overlay && menu) {
+                overlay.classList.toggle('active');
+                menu.classList.toggle('active');
+            }
+        };
+
+        // Working Sign Out (Global)
+        window.signOut = async () => {
+            if (confirm('Are you sure you want to sign out?')) {
+                try {
+                    await signOut(auth);
+                    showMessage('Signed out successfully!', 'success');
+                    setTimeout(() => window.location.href = 'signin.html', 1500);
+                } catch (error) {
+                    console.error('Sign out error:', error);
+                    showMessage('Error signing out. Please try again.', 'error');
+                }
+            }
+        };
+
+        window.scrollToForm = () => {
+            const form = document.getElementById('addServiceForm');
+            if (form) form.scrollIntoView({ behavior: 'smooth' });
+        };
+
+        window.resetForm = () => {
+            if (addServiceForm) addServiceForm.reset();
+            showMessage('Form reset.', 'info');
+        };
+
+        // Load Services from Firestore (Real-time, Admin full access)
+        function loadServices(searchTerm = '') {
+            if (!servicesTable) return;
+            servicesTable.innerHTML = `
+                <tr>
+                    <td colspan="5" class="no-data">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <div>Loading services...</div>
+                    </td>
+                </tr>
+            `;
+
+            let servicesQuery = collection(db, 'services');
+            servicesQuery = query(servicesQuery, orderBy('name', 'asc'));
+
+            if (unsubscribeServices) {
+                unsubscribeServices();
+            }
+
+            unsubscribeServices = onSnapshot(servicesQuery, (snapshot) => {
+                allServices = [];
+                if (snapshot.empty) {
+                    servicesTable.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="no-data">
+                                <i class="fas fa-wrench"></i>
+                                <div>No services found. Add your first service above!</div>
+                            </td>
+                        </tr>
+                    `;
+                    currentPage = 1;
+                    paginateServices();
+                    return;
+                }
+
+                snapshot.forEach((doc) => {
+                    let serviceData = { id: doc.id, ...doc.data() };
+                    // Ensure defaults
+                    if (!serviceData.status) serviceData.status = 'active';
+                    if (!serviceData.duration) serviceData.duration = 0;
+                    allServices.push(serviceData);
+                });
+
+                filterAndRenderServices(searchTerm);
+            }, (error) => {
+                console.error('Error loading services:', error);
+                servicesTable.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="no-data">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <div>Error loading services. Please refresh.</div>
+                        </td>
+                    </tr>
+                `;
+                showMessage('Error loading services. Please check permissions and try again.', 'error');
+            });
+        }
+
+        // Filter and Render Services (Client-side)
+        function filterAndRenderServices(searchTerm = '') {
+            if (!servicesTable) return;
+            let filteredServices = [...allServices];
+
+            if (searchTerm.trim()) {
+                const lowerSearch = searchTerm.toLowerCase();
+                filteredServices = filteredServices.filter(service => 
+                    service.name.toLowerCase().includes(lowerSearch) ||
+                    (service.description && service.description.toLowerCase().includes(lowerSearch)) ||
+                    service.price.toString().includes(searchTerm)
+                );
+            }
+
+            // Apply sort if active
+            if (currentSort.column) {
+                filteredServices.sort((a, b) => {
+                    let aVal = a[currentSort.column];
+                    let bVal = b[currentSort.column];
+                    if (currentSort.column === 'name' || currentSort.column === 'description') {
+                        aVal = (aVal || '').toLowerCase();
+                        bVal = (bVal || '').toLowerCase();
+                        return currentSort.direction === 'asc' ? 
+                            aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+                    } else if (currentSort.column === 'price' || currentSort.column === 'status') {
+                        const aNum = typeof aVal === 'string' ? parseFloat(aVal) || 0 : aVal ? 1 : 0;
+                        const bNum = typeof bVal === 'string' ? parseFloat(bVal) || 0 : bVal ? 1 : 0;
+                        return currentSort.direction === 'asc' ? aNum - bNum : bNum - aNum;
+                    }
+                    return 0;
+                });
+            }
+
+            if (filteredServices.length === 0) {
+                servicesTable.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="no-data">
+                            <i class="fas fa-search"></i>
+                            <div>${searchTerm ? 'No services match your search' : 'No services found'}</div>
+                        </td>
+                    </tr>
+                `;
+                currentPage = 1;
+                paginateServices();
+                return;
+            }
+
+            servicesTable.innerHTML = '';
+            filteredServices.forEach((service) => renderServiceRow(service));
+            
+            currentPage = 1;
+            paginateServices();
+        }
+
+        function renderServiceRow(service) {
+            if (!servicesTable) return;
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>
+                    <div class="service-info">
+                        <div class="service-icon">
+                            <i class="fas fa-${getServiceIcon(service.name)}"></i>
+                        </div>
+                        <div>
+                            <strong>${service.name}</strong>
+                            <p>${service.description || 'No description available'}</p>
+                        </div>
+                    </div>
+                </td>
+                <td style="font-weight: 600; color: #d4af37;">${formatCurrency(service.price)}</td>
+                <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${service.description || 'N/A'}</td>
+                <td>${getStatusBadge(service.status)}</td>
+                <td class="actions">
+                    <button class="action-btn edit-btn" onclick="editService('${service.id}')" title="Edit Service">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="action-btn delete-btn" onclick="deleteService('${service.id}')" title="Delete Service">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            servicesTable.appendChild(row);
+        }
+
+        function getServiceIcon(name) {
+            const icons = {
+                'Routine Maintenance': 'tools',
+                'Engine Overhaul': 'cog',
+                'Brake Service': 'hard-hat',
+                'Oil Change': 'oil-can',
+                'Tire Rotation': 'cog',
+                default: 'wrench'
+            };
+            return icons[name] || 'wrench';
+        }
+
+        function getStatusBadge(status) {
+            const isActive = status === 'active';
+            return `
+                <span class="status-badge ${isActive ? 'status-active' : 'status-inactive'}">
+                    ${isActive ? 'Active' : 'Inactive'}
+                </span>
+            `;
+        }
+
+        // Add New Service
+        if (addServiceForm) {
+            addServiceForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (!currentUser) {
+                    showMessage('User not authenticated.', 'error');
+                    return;
+                }
+
+                const name = serviceNameInput.value.trim();
+                const price = parseFloat(servicePriceInput.value);
+                const description = serviceDescriptionInput.value.trim();
+                const duration = parseFloat(serviceDurationInput.value) || 0;
+
+                if (!name || isNaN(price) || price <= 0) {
+                    showMessage('Please fill in all required fields with valid data (name and price > 0).', 'error');
+                    return;
+                }
+
+                try {
+                    await addDoc(collection(db, 'services'), {
+                        name,
+                        price,
+                        description,
+                        duration,
+                        status: 'active',
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                        createdBy: currentUser.uid
+                    });
+
+                    showMessage(`Service "${name}" added successfully for ${formatCurrency(price)}!`, 'success');
+                    addServiceForm.reset();
+                    const currentSearch = searchInput ? searchInput.value.trim() : '';
+                    filterAndRenderServices(currentSearch);
+                } catch (error) {
+                    console.error('Error adding service:', error);
+                    showMessage('Error adding service. Please try again.', 'error');
+                }
+            });
+        }
+
+        // Search Filter
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.trim();
+                filterAndRenderServices(searchTerm);
+            });
+        }
+
+        // Edit Service (Global, Enhanced Prompt)
+        window.editService = async (serviceId) => {
+            if (!serviceId) {
+                showMessage('Invalid service ID.', 'error');
+                return;
+            }
+
+            try {
+                const serviceRef = doc(db, 'services', serviceId);
+                const serviceSnap = await getDoc(serviceRef);
+                
+                if (!serviceSnap.exists()) {
+                    showMessage('Service not found.', 'error');
+                    return;
+                }
+
+                const service = serviceSnap.data();
+                const newName = prompt('Edit Service Name:', service.name || '');
+                if (newName === null) return;
+                const name = newName.trim();
+                if (!name) {
+                    showMessage('Service name cannot be empty.', 'error');
+                    return;
+                }
+
+                const newDescription = prompt('Edit Description (optional, max 200 chars):', service.description || '');
+                const description = newDescription ? newDescription.trim().substring(0, 200) : service.description || '';
+
+                const newPrice = prompt('Edit Price (KES, e.g., 12000):', service.price || '');
+                if (newPrice === null) return;
+                const price = parseFloat(newPrice);
+                if (isNaN(price) || price <= 0) {
+                    showMessage('Invalid price. Must be a number greater than 0.', 'error');
+                    return;
+                }
+
+                const newDuration = prompt('Edit Duration (hours, optional, e.g., 2.5):', service.duration || '');
+                const duration = newDuration !== null ? parseFloat(newDuration) || 0 : service.duration || 0;
+
+                const keepActive = confirm('Keep service active? (Cancel to deactivate)');
+                if (confirm(`Save updates to "${name}" at ${formatCurrency(price)}?`)) {
+                    await updateDoc(serviceRef, {
+                        name,
+                        description,
+                        price,
+                        duration,
+                        status: keepActive ? 'active' : 'inactive',
+                        updatedAt: new Date(),
+                        updatedBy: currentUser ? currentUser.uid : null
+                    });
+                    showMessage(`Service "${name}" updated successfully!`, 'success');
+                    const currentSearch = searchInput ? searchInput.value.trim() : '';
+                    filterAndRenderServices(currentSearch);
+                }
+            } catch (error) {
+                console.error('Error editing service:', error);
+                showMessage('Error editing service. Please try again.', 'error');
+            }
+        };
+
+        // Delete Service (Global)
+        window.deleteService = async (serviceId) => {
+            if (!serviceId) {
+                showMessage('Invalid service ID.', 'error');
+                return;
+            }
+
+            if (confirm('Are you sure you want to delete this service?\n\nThis cannot be undone and may affect pending appointments.')) {
+                try {
+                    await deleteDoc(doc(db, 'services', serviceId));
+                    showMessage('Service deleted successfully!', 'success');
+                    const currentSearch = searchInput ? searchInput.value.trim() : '';
+                    filterAndRenderServices(currentSearch);
+                } catch (error) {
+                    console.error('Error deleting service:', error);
+                    showMessage('Error deleting service. Please try again.', 'error');
+                }
+            }
+        };
+
+        // Clear Filters (Global)
+        window.clearFilters = () => {
+            if (searchInput) searchInput.value = '';
+            filterAndRenderServices('');
+            currentPage = 1;
+            paginateServices();
+            showMessage('Filters cleared.', 'success');
+        };
+
+        // Advanced Sorting (Global)
+        let currentSort = { column: null, direction: 'asc' };
+        window.sortTable = (column, isString = true) => {
+            const direction = currentSort.column === column && currentSort.direction === 'asc' ? 'desc' : 'asc';
+            
+            document.querySelectorAll('th').forEach(th => th.classList.remove('asc', 'desc'));
+            
+            const headers = ['name', 'price', 'description', 'status'];
+            const headerIndex = headers.indexOf(column);
+            if (headerIndex !== -1) {
+                const header = document.querySelectorAll('th')[headerIndex];
+                if (header) header.classList.add(direction);
+            }
+
+            currentSort = { column, direction };
+
+            const currentSearch = searchInput ? searchInput.value.trim() : '';
+            filterAndRenderServices(currentSearch);
+        };
+
+        // Pagination (Global)
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        window.changePage = (direction) => {
+            const tableBody = document.getElementById('servicesTable');
+            if (!tableBody) return;
+
+            const rows = Array.from(tableBody.querySelectorAll('tr:not(.no-data)'));
+            const totalPages = Math.ceil(rows.length / itemsPerPage);
+
+            currentPage += direction;
+            currentPage = Math.max(1, Math.min(currentPage, totalPages));
+
+            paginateServices();
+        };
+
+        function paginateServices() {
+            const tableBody = document.getElementById('servicesTable');
+            if (!tableBody) return;
+
+            const rows = Array.from(tableBody.querySelectorAll('tr:not(.no-data)'));
+            const totalItems = rows.length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+            rows.forEach(row => row.style.display = 'none');
+
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            rows.slice(start, end).forEach(row => row.style.display = '');
+
+            const paginationInfo = document.getElementById('paginationInfo');
+            if (paginationInfo) {
+                paginationInfo.textContent = totalItems === 0 ? 'No services to display' : 
+                    `Showing ${Math.min(start + 1, totalItems)}-${Math.min(end, totalItems)} of ${totalItems} services`;
+            }
+
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            if (prevBtn) prevBtn.disabled = currentPage === 1;
+            if (nextBtn) nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+
+            const paginationContainer = document.getElementById('paginationContainer');
+            if (paginationContainer) {
+                paginationContainer.style.display = totalPages > 1 ? 'flex' : 'none';
+            }
+        }
+
+        // Integrate pagination with render
+        const originalFilterAndRender = filterAndRenderServices;
+        filterAndRenderServices = (searchTerm) => {
+            originalFilterAndRender(searchTerm);
+            currentPage = 1;
+            paginateServices();
+        };
+
+        // Initialize Page
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                
+                const userRef = doc(db, 'users', user.uid);
+                const userSnap = await getDoc(userRef);
+                
+                if (userSnap.exists() && userSnap.data().role === 'admin') {
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', () => loadServices());
+                    } else {
+                        loadServices();
+                    }
+                } else {
+                    showMessage('Access denied. Admin privileges required.', 'error');
+                    setTimeout(() => window.location.href = 'dashboard.html', 2000);
+                }
+            } else {
+                window.location.href = 'signin.html';
+            }
+        });
+
+        // Cleanup
+        window.addEventListener('beforeunload', () => {
+            if (unsubscribeServices) unsubscribeServices();
+        });
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => console.log('Service Worker registered:', registration))
+                    .catch((error) => console.error('Service Worker registration failed:', error));
+            });
+        }
+    </script>
+</body>
+</html>

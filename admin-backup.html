@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backup & Restore - Admin Dashboard</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- PWA Manifest and Mobile Optimization -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#d4af37">
+
+    <!-- Mobile/PWA Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Top Autocare">
+    <link rel="apple-touch-icon" href="assets/images/app-icon-512.png">
+
+    <!-- Favicon for Browsers -->
+    <link rel="icon" href="assets/images/app-icon-192.png" sizes="192x192" type="image/png">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            line-height: 1.6;
+            padding-bottom: 80px;
+            position: relative;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(4px);
+            z-index: -1;
+        }
+        /* Header Styles */
+        #header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 0.25rem 0;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1001;
+            transition: transform 0.3s ease;
+            height: 60px;
+        }
+        #header.hidden {
+            transform: translateY(-100%);
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 0 0.75rem;
+            color: #d4af37;
+        }
+        .logo-container:hover h1 {
+            text-decoration: underline;
+        }
+        .logo-container img {
+            height: 40px;
+            width: auto;
+            margin-right: 0.5rem;
+            border-radius: 50%;
+        }
+        .logo-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin: 0;
+            color: #d4af37;
+            text-decoration: none;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-right: 0.75rem;
+        }
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: color 0.3s ease;
+            z-index: 1002;
+        }
+        .menu-toggle:hover {
+            color: #d4af37;
+        }
+        @media (max-width: 768px) {
+            #header {
+                padding: 0.5rem;
+                flex-wrap: wrap;
+            }
+            .logo-container {
+                padding: 0 0.5rem;
+            }
+            .logo-title {
+                font-size: 1rem;
+            }
+            .header-actions {
+                padding-right: 0.5rem;
+                gap: 0.5rem;
+            }
+        }
+        /* Admin Navigation Menu */
+        .admin-nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .admin-nav-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .admin-nav-menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100vh;
+            background: #1a1a1a;
+            padding: 1rem;
+            overflow-y: auto;
+            transition: right 0.3s ease;
+            z-index: 1001;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+        }
+        .admin-nav-menu.active {
+            right: 0;
+        }
+        .admin-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #333;
+            margin-bottom: 1rem;
+        }
+        .admin-nav-title {
+            font-size: 1.125rem;
+            color: #d4af37;
+            font-weight: 700;
+        }
+        .close-menu {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            transition: color 0.3s ease;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .close-menu:hover {
+            color: #d4af37;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        .admin-menu {
+            list-style: none;
+            padding: 0;
+        }
+        .admin-menu li {
+            margin-bottom: 0.5rem;
+        }
+        .admin-menu a {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #BDBDBD;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 6px;
+            margin: 0.25rem 0;
+        }
+        .admin-menu a:hover, .admin-menu a.active {
+            background: rgba(212, 175, 55, 0.2);
+            color: #d4af37;
+            border-right: 3px solid #d4af37;
+            transform: translateX(5px);
+        }
+        .admin-menu i {
+            width: 20px;
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+        }
+        .signout-btn {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            right: 1rem;
+            background: #ff6b6b;
+            color: #fff;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: background 0.3s ease;
+            width: calc(100% - 2rem);
+        }
+        .signout-btn:hover {
+            background: #ff5252;
+            transform: translateY(-1px);
+        }
+        /* Main Content */
+        .main-content {
+            padding: 1.5rem;
+            margin-top: 60px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #333;
+        }
+        .welcome h1 {
+            font-size: 1.75rem;
+            color: #d4af37;
+            margin-bottom: 0.25rem;
+        }
+        .welcome p {
+            color: #BDBDBD;
+            font-size: 0.875rem;
+        }
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-primary {
+            background: #d4af37;
+            color: #000;
+        }
+        .btn-primary:hover {
+            background: #b8962e;
+        }
+        .btn-secondary {
+            background: #333;
+            color: #fff;
+        }
+        .btn-secondary:hover {
+            background: #444;
+        }
+        .btn-danger {
+            background: #ff6b6b;
+            color: #fff;
+        }
+        .btn-danger:hover {
+            background: #ff5252;
+        }
+        .btn-warning {
+            background: #ff9800;
+            color: #fff;
+        }
+        .btn-warning:hover {
+            background: #f57c00;
+        }
+        /* Backup Section */
+        .backup-section {
+            background: rgba(30, 30, 30, 0.9);
+            border-radius: 8px;
+            border: 1px solid #333;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #333;
+        }
+        .section-title {
+            font-size: 1.25rem;
+            color: #d4af37;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .backup-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .backup-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .backup-card:hover {
+            border-color: #d4af37;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+        }
+        .backup-card .fa-stack {
+            color: #d4af37;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .backup-card h3 {
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+        .backup-card p {
+            color: #BDBDBD;
+            font-size: 0.875rem;
+        }
+        /* Restore Section */
+        .restore-section {
+            background: rgba(30, 30, 30, 0.9);
+            border-radius: 8px;
+            border: 1px solid #333;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .file-input-wrapper {
+            border: 2px dashed #444;
+            border-radius: 6px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        .file-input-wrapper:hover {
+            border-color: #d4af37;
+            background: rgba(212, 175, 55, 0.1);
+        }
+        .file-input-wrapper.dragover {
+            border-color: #d4af37;
+            background: rgba(212, 175, 55, 0.2);
+        }
+        .file-input {
+            display: none;
+        }
+        .file-input-label {
+            color: #BDBDBD;
+            cursor: pointer;
+            display: block;
+            margin-bottom: 1rem;
+        }
+        .file-input-label:hover {
+            color: #d4af37;
+        }
+        .file-preview {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            display: none;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 1rem;
+            display: none;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #d4af37;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        /* Backup History */
+        .backup-history-section {
+            background: rgba(30, 30, 30, 0.9);
+            border-radius: 8px;
+            border: 1px solid #333;
+            padding: 1.5rem;
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .backup-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            border: 1px solid #444;
+        }
+        .backup-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .backup-date {
+            font-weight: 500;
+            color: #fff;
+            margin-bottom: 0.25rem;
+        }
+        .backup-size {
+            color: #BDBDBD;
+            font-size: 0.875rem;
+        }
+        .backup-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .download-btn {
+            padding: 0.25rem 0.75rem;
+            background: #d4af37;
+            color: #000;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+        .download-btn:hover {
+            background: #b8962e;
+        }
+        .no-history {
+            text-align: center;
+            padding: 2rem;
+            color: #BDBDBD;
+            font-style: italic;
+        }
+        .no-history i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+            opacity: 0.5;
+        }
+        /* Message Container */
+        #messageContainer {
+            margin-bottom: 1rem;
+        }
+        .message {
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            max-width: 100%;
+        }
+        .message.success {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+        }
+        .message.error {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff0000;
+            border: 1px solid #ff0000;
+        }
+        .message.info {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196F3;
+            border: 1px solid #2196F3;
+        }
+        .message.warning {
+            background: rgba(255, 193, 7, 0.2);
+            color: #FFC107;
+            border: 1px solid #FFC107;
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+            .header-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .backup-options {
+                grid-template-columns: 1fr;
+            }
+            .backup-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        <a href="admin.html" class="logo-container">
+            <img src="images/logo.png" alt="Top Autocare Logo" style="height: 40px; width: auto;">
+            <h1 class="logo-title">Admin Panel</h1>
+        </a>
+        
+        <div class="header-actions">
+            <button class="menu-toggle" onclick="toggleAdminMenu()" title="Admin Menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Admin Navigation Menu -->
+    <div class="admin-nav-overlay" onclick="toggleAdminMenu()">
+        <div class="admin-nav-menu" onclick="event.stopPropagation()">
+            <div class="admin-nav-header">
+                <h2 class="admin-nav-title">Admin Menu</h2>
+                <button class="close-menu" onclick="toggleAdminMenu()">&times;</button>
+            </div>
+            
+            <ul class="admin-menu">
+                <li><a href="admin.html" onclick="toggleAdminMenu()"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="admin-users.html" onclick="toggleAdminMenu()"><i class="fas fa-users"></i> Users</a></li>
+                <li><a href="admin-appointments.html" onclick="toggleAdminMenu()"><i class="fas fa-calendar-check"></i> Appointments</a></li>
+                <li><a href="admin-services.html" onclick="toggleAdminMenu()"><i class="fas fa-wrench"></i> Services</a></li>
+                <li><a href="admin-vehicles.html" onclick="toggleAdminMenu()"><i class="fas fa-car"></i> Vehicles</a></li>
+                <li><a href="admin-reports.html" onclick="toggleAdminMenu()"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                <li><a href="admin-settings.html" onclick="toggleAdminMenu()"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><a href="admin-profile.html" onclick="toggleAdminMenu()"><i class="fas fa-user-cog"></i> Admin Profile</a></li>
+                <li><a href="admin-notifications.html" onclick="toggleAdminMenu()"><i class="fas fa-bell"></i> Notifications</a></li>
+                <li><a href="admin-faq.html" onclick="toggleAdminMenu()"><i class="fas fa-question-circle"></i> FAQ Management</a></li>
+                <li><a href="admin-analytics.html" onclick="toggleAdminMenu()"><i class="fas fa-chart-pie"></i> Analytics</a></li>
+                <li><a href="admin-backup.html" class="active" onclick="toggleAdminMenu()"><i class="fas fa-database"></i> Backup & Restore</a></li>
+                <li><a href="admin.html" onclick="toggleAdminMenu()"><i class="fas fa-arrow-left"></i> Back to Site</a></li>
+            </ul>
+            
+            <button class="signout-btn" onclick="signOut()">
+                <i class="fas fa-sign-out-alt"></i> Sign Out
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header">
+            <div class="welcome">
+                <h1>Backup & Restore</h1>
+                <p>Manage data backups and restore from previous backups</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="createFullBackup()">
+                    <i class="fas fa-download"></i> Create Full Backup
+                </button>
+            </div>
+        </div>
+
+        <div id="messageContainer"></div>
+
+        <!-- Backup Section -->
+        <div class="backup-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-download"></i> Create Backup
+                </h2>
+            </div>
+            <div class="backup-options">
+                <div class="backup-card">
+                    <div class="fa-stack fa-2x">
+                        <i class="fas fa-circle fa-stack-2x"></i>
+                        <i class="fas fa-database fa-stack-1x fa-inverse"></i>
+                    </div>
+                    <h3>Full Backup</h3>
+                    <p>Backup all collections: Users, Appointments, Vehicles, Services, FAQ</p>
+                    <button class="btn btn-primary" onclick="createFullBackup()">Generate Backup</button>
+                </div>
+                <div class="backup-card">
+                    <div class="fa-stack fa-2x">
+                        <i class="fas fa-circle fa-stack-2x"></i>
+                        <i class="fas fa-users fa-stack-1x fa-inverse"></i>
+                    </div>
+                    <h3>Users Backup</h3>
+                    <p>Backup only user data</p>
+                    <button class="btn btn-secondary" onclick="createUsersBackup()">Backup Users</button>
+                </div>
+                <div class="backup-card">
+                    <div class="fa-stack fa-2x">
+                        <i class="fas fa-circle fa-stack-2x"></i>
+                        <i class="fas fa-calendar-check fa-stack-1x fa-inverse"></i>
+                    </div>
+                    <h3>Appointments Backup</h3>
+                    <p>Backup only appointment data</p>
+                    <button class="btn btn-secondary" onclick="createAppointmentsBackup()">Backup Appointments</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Restore Section -->
+        <div class="restore-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-upload"></i> Restore Backup
+                </h2>
+                <div class="warning-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Warning:</strong> Restore will overwrite existing data. Create a backup first!
+                </div>
+            </div>
+            <div class="file-input-wrapper" id="fileInputWrapper">
+                <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: #BDBDBD; margin-bottom: 1rem;"></i>
+                <p>Drag and drop JSON backup file here, or click to browse</p>
+                <label for="backupFile" class="file-input-label btn btn-secondary">
+                    <i class="fas fa-file-upload"></i> Choose File
+                </label>
+                <input type="file" id="backupFile" class="file-input" accept=".json" onchange="handleFileSelect(event)">
+            </div>
+            <div class="file-preview" id="filePreview">
+                <p id="fileName"></p>
+                <p id="fileSize"></p>
+                <button class="btn btn-warning" onclick="confirmRestore()">Restore from this file</button>
+            </div>
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <!-- Backup History Section -->
+        <div class="backup-history-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-history"></i> Recent Backups
+                </h2>
+            </div>
+            <div class="history-list" id="backupHistory">
+                <div class="no-history">
+                    <i class="fas fa-archive"></i>
+                    <p>No backup history found</p>
+                    <p class="small">Create your first backup above</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Simple JavaScript for Menu Toggle -->
+    <script>
+        // Menu Toggle Function
+        function toggleAdminMenu() {
+            const overlay = document.querySelector('.admin-nav-overlay');
+            const menu = document.querySelector('.admin-nav-menu');
+            if (overlay && menu) {
+                overlay.classList.toggle('active');
+                menu.classList.toggle('active');
+            }
+        }
+
+        // Auto-hide Navigation Script
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', () => {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const header = document.getElementById('header');
+            
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                if (header) header.classList.add('hidden');
+            } else {
+                if (header) header.classList.remove('hidden');
+            }
+            
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+
+        // Drag and drop file handling
+        const fileInputWrapper = document.getElementById('fileInputWrapper');
+        const fileInput = document.getElementById('backupFile');
+
+        fileInputWrapper.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileInputWrapper.classList.add('dragover');
+        });
+
+        fileInputWrapper.addEventListener('dragleave', () => {
+            fileInputWrapper.classList.remove('dragover');
+        });
+
+        fileInputWrapper.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileInputWrapper.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                handleFileSelect({ target: { files: files } });
+            }
+        });
+    </script>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { 
+            getFirestore, 
+            collection, 
+            getDocs,
+            doc, 
+            getDoc,
+            addDoc,
+            writeBatch,
+            serverTimestamp
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBkVYS0CaKe1kHPp9GVnURiZz5WP5tE3iM",
+            authDomain: "top-autocare.firebaseapp.com",
+            projectId: "top-autocare",
+            storageBucket: "top-autocare.firebasestorage.app",
+            messagingSenderId: "879247821822",
+            appId: "1:879247821822:web:e6a418395d52aac99a4eaf",
+            measurementId: "G-T5NDM5M33Z"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let selectedBackupFile = null;
+        let backupHistory = [];
+
+        // Utility Functions
+        function showMessage(message, type = 'info') {
+            const messageContainer = document.getElementById('messageContainer');
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
+            messageContainer.innerHTML = `
+                <div class="message ${className}">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'}"></i>
+                    ${message}
+                </div>
+            `;
+            setTimeout(() => messageContainer.innerHTML = '', 5000);
+        }
+
+        function updateProgress(percent) {
+            const progressFill = document.getElementById('progressFill');
+            const progressBar = document.getElementById('progressBar');
+            progressFill.style.width = `${percent}%`;
+            progressBar.style.display = 'block';
+        }
+
+        function hideProgress() {
+            document.getElementById('progressBar').style.display = 'none';
+        }
+
+        // Check if user is admin
+        async function checkAdminStatus(userId) {
+            try {
+                const userRef = doc(db, 'users', userId);
+                const userSnap = await getDoc(userRef);
+                return userSnap.exists() && userSnap.data().role === 'admin';
+            } catch (error) {
+                console.error('Error checking admin status:', error);
+                return false;
+            }
+        }
+
+        // Create full backup
+        window.createFullBackup = async () => {
+            if (!confirm('Create a full backup of all data? This may take a while.')) return;
+
+            showMessage('Creating full backup...', 'info');
+            updateProgress(0);
+
+            try {
+                const collections = ['users', 'appointments', 'vehicles', 'services', 'faq', 'notifications'];
+                const backupData = {};
+                let totalItems = 0;
+
+                for (let i = 0; i < collections.length; i++) {
+                    const collectionName = collections[i];
+                    updateProgress((i / collections.length) * 50);
+
+                    const querySnapshot = await getDocs(collection(db, collectionName));
+                    backupData[collectionName] = [];
+
+                    querySnapshot.forEach((doc) => {
+                        backupData[collectionName].push({
+                            id: doc.id,
+                            ...doc.data()
+                        });
+                        totalItems++;
+                    });
+                }
+
+                backupData.metadata = {
+                    createdAt: new Date().toISOString(),
+                    totalItems,
+                    appVersion: '1.0'
+                };
+
+                updateProgress(100);
+                downloadBackup(backupData, `top-autocare-full-backup-${new Date().toISOString().split('T')[0]}.json`);
+
+                // Save to history (local for simplicity; could use Firestore/Storage)
+                saveBackupToHistory(backupData);
+
+                showMessage('Full backup created successfully!', 'success');
+                hideProgress();
+            } catch (error) {
+                console.error('Error creating backup:', error);
+                showMessage('Error creating backup: ' + error.message, 'error');
+                hideProgress();
+            }
+        };
+
+        // Create users backup
+        window.createUsersBackup = async () => {
+            if (!confirm('Backup users data?')) return;
+            await backupCollection('users', 'users-backup');
+        };
+
+        // Create appointments backup
+        window.createAppointmentsBackup = async () => {
+            if (!confirm('Backup appointments data?')) return;
+            await backupCollection('appointments', 'appointments-backup');
+        };
+
+        // Helper for single collection backup
+        async function backupCollection(collectionName, filename) {
+            showMessage(`Backing up ${collectionName}...`, 'info');
+            
+            try {
+                const querySnapshot = await getDocs(collection(db, collectionName));
+                const backupData = {
+                    collection: collectionName,
+                    items: [],
+                    metadata: {
+                        createdAt: new Date().toISOString(),
+                        totalItems: querySnapshot.size
+                    }
+                };
+
+                querySnapshot.forEach((doc) => {
+                    backupData.items.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+
+                downloadBackup(backupData, `top-autocare-${filename}-${new Date().toISOString().split('T')[0]}.json`);
+                saveBackupToHistory(backupData);
+
+                showMessage(`${collectionName} backup created successfully!`, 'success');
+            } catch (error) {
+                console.error('Error creating backup:', error);
+                showMessage('Error creating backup: ' + error.message, 'error');
+            }
+        }
+
+        // Download backup file
+        function downloadBackup(data, filename) {
+            const jsonString = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Save backup to history (localStorage for simplicity)
+        function saveBackupToHistory(backupData) {
+            backupHistory.unshift({
+                name: `Auto-backup - ${new Date().toLocaleString()}`,
+                size: JSON.stringify(backupData).length,
+                date: new Date().toISOString(),
+                data: backupData // Store reference (caution: large data)
+            });
+
+            // Limit to last 10 backups
+            backupHistory = backupHistory.slice(0, 10);
+
+            localStorage.setItem('backupHistory', JSON.stringify(backupHistory));
+            displayBackupHistory();
+        }
+
+        // Display backup history
+        function displayBackupHistory() {
+            const historyEl = document.getElementById('backupHistory');
+            if (backupHistory.length === 0) {
+                historyEl.innerHTML = `
+                    <div class="no-history">
+                        <i class="fas fa-archive"></i>
+                        <p>No backup history found</p>
+                        <p class="small">Create your first backup above</p>
+                    </div>
+                `;
+                return;
+            }
+
+            historyEl.innerHTML = backupHistory.map(backup => `
+                <div class="backup-item">
+                    <div class="backup-info">
+                        <div class="backup-date">${backup.name}</div>
+                        <div class="backup-size">${formatFileSize(backup.size)} - Created: ${new Date(backup.date).toLocaleDateString()}</div>
+                    </div>
+                    <div class="backup-actions">
+                        <button class="download-btn" onclick="downloadFromHistory(${backupHistory.indexOf(backup)})">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Download from history
+        window.downloadFromHistory = (index) => {
+            const backup = backupHistory[index];
+            if (backup) {
+                downloadBackup(backup.data, `backup-${index + 1}-${new Date().toISOString().split('T')[0]}.json`);
+            }
+        };
+
+        // File selection handler
+        window.handleFileSelect = (event) => {
+            const file = event.target.files[0];
+            if (file && file.type === 'application/json') {
+                selectedBackupFile = file;
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('fileSize').textContent = formatFileSize(file.size);
+                document.getElementById('filePreview').style.display = 'block';
+                showMessage('Backup file selected. Review and confirm restore.', 'info');
+            } else {
+                showMessage('Please select a valid JSON file.', 'error');
+            }
+        };
+
+        // Confirm and perform restore
+        window.confirmRestore = async () => {
+            if (!selectedBackupFile) {
+                showMessage('No file selected.', 'error');
+                return;
+            }
+
+            if (!confirm('This will overwrite existing data! Are you sure? Backup current data first.')) return;
+
+            showMessage('Restoring backup...', 'warning');
+            updateProgress(0);
+
+            try {
+                const text = await selectedBackupFile.text();
+                const backupData = JSON.parse(text);
+
+                if (backupData.metadata && backupData.metadata.appVersion) {
+                    // Full backup restore
+                    const collections = Object.keys(backupData);
+                    let restoredCount = 0;
+
+                    for (let i = 0; i < collections.length; i++) {
+                        if (collections[i] === 'metadata') continue;
+
+                        const collectionName = collections[i];
+                        const items = backupData[collectionName];
+                        updateProgress((i / collections.length) * 100);
+
+                        const batch = writeBatch(db);
+                        items.forEach((item, index) => {
+                            if (index > 0 && index % 500 === 0) {
+                                // Firestore batch limit
+                                executeBatch(batch);
+                                batch = writeBatch(db);
+                            }
+                            const docRef = doc(db, collectionName, item.id);
+                            batch.set(docRef, item, { merge: true });
+                        });
+                        await executeBatch(batch);
+                        restoredCount += items.length;
+                    }
+
+                    updateProgress(100);
+                    showMessage(`Restore completed! ${restoredCount} items restored.`, 'success');
+                    hideProgress();
+                    selectedBackupFile = null;
+                    document.getElementById('filePreview').style.display = 'none';
+                    fileInput.value = ''; // Reset file input
+                } else {
+                    showMessage('Invalid backup format.', 'error');
+                }
+            } catch (error) {
+                console.error('Error restoring backup:', error);
+                showMessage('Error restoring backup: ' + error.message, 'error');
+                hideProgress();
+            }
+        };
+
+        // Helper to execute batch
+        async function executeBatch(batch) {
+            try {
+                await batch.commit();
+            } catch (error) {
+                console.error('Batch commit error:', error);
+                throw error;
+            }
+        }
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Load backup history on page load
+        const storedHistory = localStorage.getItem('backupHistory');
+        if (storedHistory) {
+            backupHistory = JSON.parse(storedHistory);
+            displayBackupHistory();
+        }
+
+        // Sign Out Function
+        window.signOut = async () => {
+            if (confirm('Are you sure you want to sign out?')) {
+                try {
+                    await signOut(auth);
+                    showMessage('Signed out successfully!', 'success');
+                    setTimeout(() => window.location.href = 'signin.html', 1500);
+                } catch (error) {
+                    console.error('Sign out error:', error);
+                    showMessage('Error signing out. Please try again.', 'error');
+                }
+            }
+        };
+
+        // Initialize Page
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                
+                const isAdmin = await checkAdminStatus(user.uid);
+                if (isAdmin) {
+                    showMessage('Backup & Restore ready. Create a backup before making changes.', 'info');
+                } else {
+                    showMessage('Access denied. Admin privileges required.', 'error');
+                    setTimeout(() => window.location.href = 'admin.html', 2000);
+                }
+            } else {
+                window.location.href = 'signin.html';
+            }
+        });
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('Service Worker registered:', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.error('Service Worker registration failed:', registrationError);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

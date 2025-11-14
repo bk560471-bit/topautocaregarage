@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing - Top Autocare Garage</title>
+    <meta name="description" content="Transparent pricing for automotive services at Top Autocare Garage in Nairobi. View costs for maintenance, repairs, and more. Book now for a quote!">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#d4af37">
+
+    <!-- Mobile/PWA Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Top Autocare">
+    <link rel="apple-touch-icon" href="assets/images/app-icon-512.png">
+
+    <!-- Favicon for Browsers -->
+    <link rel="icon" href="assets/images/app-icon-192.png" sizes="192x192" type="image/png">
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        <a href="dashboard.html" class="logo-container">
+            <img src="images/logo.png" alt="Top Autocare Logo" style="height: 50px; width: auto;">
+            <h1 class="logo-title">Top Autocare</h1>
+        </a>
+        
+        <div class="header-actions">
+            <a href="book-appointment.html" class="book-service-btn">
+                <i class="fas fa-calendar-check"></i> Book Now
+            </a>
+            
+            <div class="notification-bell" onclick="window.location.href='notifications.html'">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" style="display: none;">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="pricing-hero">
+                <h1>Transparent Pricing</h1>
+                <p>At Top Autocare Garage, we believe in fair and upfront pricing. Below are our standard rates for common services. All prices include 16% VAT and are estimates – get a personalized quote during booking. No hidden fees!</p>
+            </section>
+
+            <div id="messageContainer"></div>
+
+            <!-- Services Grid -->
+            <div class="pricing-grid" id="servicesContainer">
+                <!-- Dynamic content loaded here -->
+            </div>
+
+            <div id="loadingIndicator">
+                <div class="spinner"></div>
+                <p>Loading pricing...</p>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="pricing-cta">
+                <h2>Ready for Service?</h2>
+                <p>Prices are competitive and tailored to your vehicle's needs. Book now or contact us for a custom quote based on inspection.</p>
+                <a href="book-appointment.html" class="btn-pricing">
+                    <i class="fas fa-calendar-check"></i> Get a Quote & Book
+                </a>
+                <p>
+                    Need help? <a href="contact.html">Contact us</a> or call +254 757 562 447.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Top Autocare Garage. All rights reserved. Fair pricing for quality service in Nairobi.</p>
+            <div class="social-links">
+                <a href="https://wa.me/254757562447" aria-label="WhatsApp" target="_blank" rel="noopener">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+                <a href="https://twitter.com/BrianVags" aria-label="Twitter" target="_blank" rel="noopener">
+                    <i class="fab fa-twitter"></i>
+                </a>
+            </div>
+            <div class="footer-links">
+                <a href="privacy-policy.html">Privacy Policy</a> | 
+                <a href="terms-of-service.html">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-nav">
+        <ul class="nav-grid">
+            <li>
+                <a class="nav-item-mobile" href="myvehicles.html">
+                    <i class="fas fa-car"></i>
+                    <span>Vehicles</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile active" href="services.html">
+                    <i class="fas fa-wrench"></i>
+                    <span>Services</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="dashboard.html">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="book-appointment.html">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Appointments</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="profile.html">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Firebase Script - Self-Contained -->
+    <script type="module">
+        // Firebase Imports
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { 
+            getFirestore, 
+            collection, 
+            query, 
+            orderBy, 
+            getDocs 
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBkVYS0CaKe1kHPp9GVnURiZz5WP5tE3iM",
+            authDomain: "top-autocare.firebaseapp.com",
+            projectId: "top-autocare",
+            storageBucket: "top-autocare.firebasestorage.app",
+            messagingSenderId: "879247821822",
+            appId: "1:879247821822:web:e6a418395d52aac99a4eaf",
+            measurementId: "G-T5NDM5M33Z"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // DOM Elements
+        const servicesContainer = document.getElementById('servicesContainer');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const messageContainer = document.getElementById('messageContainer');
+
+        // Utility Functions
+        function showMessage(message, type = 'info') {
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            messageContainer.innerHTML = `
+                <div class="message ${className}">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                    ${message}
+                </div>
+            `;
+            setTimeout(() => messageContainer.innerHTML = '', 5000);
+        }
+
+        function displayServices(services) {
+            loadingIndicator.style.display = 'none';
+            
+            if (services.length === 0) {
+                servicesContainer.innerHTML = `
+                    <div class="no-services">
+                        <i class="fas fa-tools" style="font-size: 3rem; color: #d4af37; margin-bottom: 1rem;"></i>
+                        <p style="color: #ffffff;">No services available at the moment. Please <a href="contact.html" style="color: #d4af37;">contact us</a> for current pricing and offerings.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            servicesContainer.innerHTML = services.map(service => `
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-${service.icon || 'wrench'}"></i>
+                    </div>
+                    <h3>${service.name}</h3>
+                    <p class="service-description">${service.description || 'Professional service to keep your vehicle running smoothly.'}</p>
+                    <div class="service-price">
+                        <span class="price">KSh ${service.price ? service.price.toLocaleString() : 'On Quote'}</span>
+                        ${service.duration ? `<span class="duration">~${service.duration} hours</span>` : ''}
+                    </div>
+                    <a href="book-appointment.html" class="service-cta">Book This Service</a>
+                </div>
+            `).join('');
+            
+            showMessage(`Loaded ${services.length} services. Prices effective immediately.`, 'success');
+        }
+
+        // Load Services from Firestore
+        async function loadServices() {
+            try {
+                loadingIndicator.style.display = 'block';
+                servicesContainer.innerHTML = '';
+                
+                const servicesQuery = query(collection(db, 'services'), orderBy('name'));
+                const querySnapshot = await getDocs(servicesQuery);
+                
+                const services = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    services.push({
+                        id: doc.id,
+                        name: data.name,
+                        description: data.description,
+                        price: data.price, // Number in KSh
+                        duration: data.duration, // e.g., "2-4"
+                        icon: data.icon // Font Awesome class, e.g., "oil-can"
+                    });
+                });
+                
+                displayServices(services);
+            } catch (error) {
+                console.error('Error loading services:', error);
+                loadingIndicator.style.display = 'none';
+                servicesContainer.innerHTML = `
+                    <div class="error-state">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #ff6b6b; margin-bottom: 1rem;"></i>
+                        <p style="color: #ffffff;">Unable to load pricing. Please <a href="contact.html" style="color: #d4af37;">contact us</a> for a quote.</p>
+                    </div>
+                `;
+                showMessage('Error fetching prices. Using contact for quotes.', 'error');
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', loadServices);
+    </script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            line-height: 1.6;
+            padding-bottom: 80px;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(4px);
+            z-index: -1;
+        }
+        /* Header Styles */
+        #header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        #header.hidden {
+            transform: translateY(-100%);
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 0 1rem;
+            color: #d4af37;
+        }
+        .logo-container:hover h1 {
+            text-decoration: underline;
+        }
+        .logo-container img {
+            height: 50px;
+            width: auto;
+            margin-right: 0.5rem;
+            border-radius: 50%;
+        }
+        .logo-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            color: #d4af37;
+            text-decoration: none;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding-right: 1rem;
+        }
+        .notification-bell {
+            position: relative;
+            color: #ffffff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .notification-bell:hover {
+            color: #d4af37;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #d4af37;
+            color: #000;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .book-service-btn {
+            background: #d4af37;
+            color: #000;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .book-service-btn:hover {
+            background: #b8962e;
+            transform: translateY(-2px);
+        }
+        @media (max-width: 768px) {
+            #header {
+                padding: 0.5rem;
+                flex-wrap: wrap;
+            }
+            .logo-container {
+                padding: 0 0.5rem;
+            }
+            .logo-title {
+                font-size: 1.25rem;
+            }
+            .header-actions {
+                padding-right: 0.5rem;
+                gap: 0.5rem;
+            }
+            .book-service-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+        .container {
+            max-width: 1200px;
+            margin: 80px auto 20px;
+            padding: 20px;
+        }
+        .pricing-hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 3rem 2rem;
+            background: rgba(30, 30, 30, 0.85);
+            border-radius: 12px;
+            border: 1px solid #333;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .pricing-hero h1 {
+            color: #d4af37;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        .pricing-hero p {
+            color: #ffffff;
+            font-size: 1.25rem;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        .service-card {
+            background: rgba(30, 30, 30, 0.85);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid #333;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: #d4af37;
+        }
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+        }
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+            color: #d4af37;
+        }
+        .service-card h3 {
+            color: #d4af37;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        .service-description {
+            color: #ffffff;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+        .service-price {
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem;
+        }
+        .price {
+            color: #d4af37;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        .duration {
+            color: #ffffff;
+            font-size: 1rem;
+            margin-left: 1rem;
+            font-weight: 500;
+        }
+        .service-cta {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            background: #d4af37;
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .service-cta:hover {
+            background: #b8962e;
+            transform: translateY(-2px);
+        }
+        #loadingIndicator {
+            text-align: center;
+            padding: 2rem;
+            display: none;
+        }
+        .no-services, .error-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            background: rgba(42, 42, 42, 0.85);
+            border-radius: 12px;
+            border: 1px solid #333;
+            margin: 2rem 0;
+        }
+        .no-services i, .error-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #d4af37;
+        }
+        .no-services p, .error-state p {
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        .no-services a, .error-state a {
+            color: #d4af37;
+            text-decoration: none;
+        }
+        .no-services a:hover, .error-state a:hover {
+            text-decoration: underline;
+        }
+        .pricing-cta {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 2rem;
+            background: rgba(30, 30, 30, 0.85);
+            border-radius: 12px;
+            border: 1px solid #333;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .pricing-cta h2 {
+            color: #d4af37;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .pricing-cta p {
+            color: #ffffff;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        .btn-pricing {
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+            background: #d4af37;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-pricing:hover {
+            background: #b8962e;
+            transform: translateY(-2px);
+        }
+        .pricing-cta a {
+            color: #d4af37;
+            text-decoration: none;
+        }
+        .pricing-cta a:hover {
+            text-decoration: underline;
+        }
+        /* Message */
+        .message {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+        .message.success {
+            background: rgba(0, 255, 0, 0.15);
+            color: #00ff00;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+        .message.error {
+            background: rgba(255, 107, 107, 0.15);
+            color: #ff6b6b;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+        .message.info {
+            background: rgba(212, 175, 55, 0.15);
+            color: #d4af37;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        .spinner {
+            border: 4px solid #333;
+            border-top: 4px solid #d4af37;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #loadingIndicator p {
+            color: #ffffff;
+            font-weight: 500;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            .pricing-hero h1 {
+                font-size: 2.5rem;
+            }
+            .pricing-hero {
+                padding: 2rem 1rem;
+            }
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .service-card {
+                padding: 1.5rem;
+            }
+            .pricing-cta {
+                padding: 1.5rem;
+            }
+        }
+        /* Mobile Bottom Nav */
+        .mobile-nav { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            z-index: 40; 
+            background: rgba(30, 30, 30, 0.85); 
+            border-top: 1px solid #333; 
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.2); 
+            display: none;
+            transition: transform 0.3s ease;
+        }
+        .mobile-nav.hidden {
+            transform: translateY(100%);
+        }
+        @media (max-width: 768px) { .mobile-nav { display: block; } }
+        .nav-grid { 
+            display: grid; 
+            grid-template-columns: repeat(5, 1fr); 
+            padding: 0.5rem 0; 
+            list-style: none;
+        }
+        .nav-item-mobile { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 0.5rem; 
+            text-decoration: none; 
+            color: #ffffff; 
+            font-size: 0.75rem; 
+            transition: all 0.3s ease; 
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .nav-item-mobile:hover {
+            color: #d4af37;
+        }
+        .nav-item-mobile.active { 
+            color: #d4af37; 
+            text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+        }
+        .nav-item-mobile i { 
+            font-size: 1.25rem; 
+            margin-bottom: 0.25rem; 
+            opacity: 0.8; 
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        .nav-item-mobile:hover i {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        .nav-item-mobile.active i { 
+            opacity: 1; 
+            text-shadow: 0 0 6px rgba(212, 175, 55, 0.8);
+            filter: drop-shadow(0 2px 6px rgba(212, 175, 55, 0.4));
+        }
+    </style>
+
+    <!-- Auto-hide Navigation Script -->
+    <script>
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', () => {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const header = document.getElementById('header');
+            const mobileNav = document.querySelector('.mobile-nav');
+            
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                if (header) header.classList.add('hidden');
+                if (mobileNav) mobileNav.classList.add('hidden');
+            } else {
+                if (header) header.classList.remove('hidden');
+                if (mobileNav) mobileNav.classList.remove('hidden');
+            }
+            
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('✅ Service Worker registered');
+                    })
+                    .catch((error) => {
+                        console.error('❌ Service Worker error:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

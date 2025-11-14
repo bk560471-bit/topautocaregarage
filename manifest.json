@@ -1,0 +1,164 @@
+{
+  "name": "Top Autocare Garage",
+  "short_name": "Top Autocare",
+  "description": "Professional automotive services in Nairobi, Kenya. Book appointments, manage vehicles, and get transparent pricing for maintenance and repairs.",
+  "scope": "/",
+  "start_url": "index.html",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#d4af37",
+  "background_color": "#1E1E1E",
+  "categories": [
+    "automotive",
+    "business",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "assets/images/app-icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/app-icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/app-icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/app-icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/app-icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/app-icon-167.png",
+      "sizes": "167x167",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/app-icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/app-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "Access your dashboard",
+      "url": "dashboard.html",
+      "icons": [
+        {
+          "src": "assets/images/app-icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Book Appointment",
+      "short_name": "Book",
+      "description": "Book a service appointment",
+      "url": "book-appointment.html",
+      "icons": [
+        {
+          "src": "assets/images/app-icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "My Vehicles",
+      "short_name": "Vehicles",
+      "description": "Manage your registered vehicles",
+      "url": "myvehicles.html",
+      "icons": [
+        {
+          "src": "assets/images/app-icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Services & Pricing",
+      "short_name": "Services",
+      "description": "View our services and pricing",
+      "url": "services.html",
+      "icons": [
+        {
+          "src": "assets/images/app-icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "short_name": "Profile",
+      "description": "Update your profile",
+      "url": "profile.html",
+      "icons": [
+        {
+          "src": "assets/images/app-icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Sign In",
+      "short_name": "Sign In",
+      "description": "Access your account",
+      "url": "signin.html",
+      "icons": [
+        {
+          "src": "assets/images/app-icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "lang": "en",
+  "dir": "ltr",
+  "screenshots": [
+    {
+      "src": "assets/images/screenshot-1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "assets/images/screenshot-2.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": []
+}

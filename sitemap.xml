@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+
+  <!-- Core/Public Pages (High Priority - Entry Points) -->
+  <url>
+    <loc>https://topautocare.com/index.html</loc>
+    <lastmod>2024-01-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://topautocare.com/images/logo.png</image:loc>
+      <image:title>Top Autocare Logo</image:title>
+      <image:caption>Professional automotive services in Nairobi</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://topautocare.com/services.html</loc>
+    <lastmod>2024-01-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://topautocare.com/images/logo.png</image:loc>
+      <image:title>Top Autocare Services</image:title>
+      <image:caption>Explore automotive repair and maintenance services</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://topautocare.com/pricing.html</loc>
+    <lastmod>2024-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://topautocare.com/images/logo.png</image:loc>
+      <image:title>Top Autocare Pricing</image:title>
+      <image:caption>Transparent pricing for vehicle services</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://topautocare.com/book-appointment.html</loc>
+    <lastmod>2024-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://topautocare.com/images/logo.png</image:loc>
+      <image:title>Top Autocare Appointment Booking</image:title>
+      <image:caption>Schedule your automotive service online</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://topautocare.com/contact.html</loc>
+    <lastmod>2024-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://topautocare.com/images/logo.png</image:loc>
+      <image:title>Top Autocare Contact</image:title>
+      <image:caption>Get in touch with our Nairobi garage</image:caption>
+    </image:image>
+  </url>
+
+  <!-- User Dashboard Pages (Medium Priority - Authenticated/Authoritative) -->
+  <url>
+    <loc>https://topautocare.com/dashboard.html</loc>
+    <lastmod>2024-01-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://topautocare.com/myvehicles.html</loc>
+    <lastmod>2024-01-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://topautocare.com/profile.html</loc>
+    <lastmod>2024-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://topautocare.com/notifications.html</loc>
+    <lastmod>2024-01-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Auth/Entry Pages (Low Priority - Functional, Not for Heavy Indexing) -->
+  <url>
+    <loc>https://topautocare.com/signin.html</loc>
+    <lastmod>2024-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://topautocare.com/signup.html</loc>
+    <lastmod>2024-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://topautocare.com/forgot-password.html</loc>
+    <lastmod>2024-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://topautocare.com/verify-email.html</loc>
+    <lastmod>2024-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://topautocare.com/reset-password.html</loc>
+    <lastmod>2024-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Legal/Static Pages (Medium-Low Priority - Compliance/Info) -->
+  <url>
+    <loc>https://topautocare.com/privacy-policy.html</loc>
+    <lastmod>2024-01-01</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://topautocare.com/images/logo.png</image:loc>
+      <image:title>Top Autocare Privacy Policy</image:title>
+      <image:caption>Our commitment to protecting your data</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://topautocare.com/terms-of-service.html</loc>
+    <lastmod>2024-01-01</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://topautocare.com/images/logo.png</image:loc>
+      <image:title>Top Autocare Terms of Service</image:title>
+      <image:caption>Terms governing use of our automotive services</image:caption>
+    </image:image>
+  </url>
+
+</urlset>

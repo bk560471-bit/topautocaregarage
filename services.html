@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services - Top Autocare Garage</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#d4af37">
+
+    <!-- Mobile/PWA Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Top Autocare">
+    <link rel="apple-touch-icon" href="assets/images/app-icon-512.png">
+
+    <!-- Favicon for Browsers -->
+    <link rel="icon" href="assets/images/app-icon-192.png" sizes="192x192" type="image/png">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            line-height: 1.6;
+            padding-bottom: 80px;
+            position: relative;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(4px);
+            z-index: -1;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 80px auto 20px;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #d4af37;
+            text-align: center;
+        }
+        .service-card {
+            display: flex;
+            align-items: center;
+            background: rgba(30, 30, 30, 0.85);
+            border-radius: 12px;
+            border: 1px solid #333;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .service-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.2);
+            border-color: #d4af37;
+        }
+        .service-icon {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 8px;
+            margin-right: 1.5rem;
+            font-size: 1.5rem;
+            color: #d4af37;
+            flex-shrink: 0;
+        }
+        .service-info {
+            flex: 1;
+        }
+        .service-info h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+        }
+        .service-info .description {
+            font-size: 0.875rem;
+            color: #ffffff;
+            margin-bottom: 1rem;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+        .service-price {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .price {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #d4af37;
+        }
+        .duration {
+            font-size: 0.875rem;
+            color: #ffffff;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+        .book-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            background: #d4af37;
+            color: #000;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+        .book-btn:hover {
+            background: #b8962e;
+            transform: translateY(-2px);
+            color: #000;
+        }
+        .message {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .message.success {
+            background: rgba(0, 255, 0, 0.15);
+            color: #00ff00;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+        .message.error {
+            background: rgba(255, 0, 0, 0.15);
+            color: #ff0000;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #ffffff;
+            background: rgba(30, 30, 30, 0.85);
+            border-radius: 12px;
+            border: 1px solid #333;
+        }
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.7;
+            color: #d4af37;
+        }
+        .empty-state p {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+        .empty-state a {
+            color: #d4af37;
+            text-decoration: none;
+        }
+        .empty-state a:hover {
+            text-decoration: underline;
+        }
+        .loading-skeleton {
+            background: linear-gradient(90deg, #333 25%, #222 50%, #333 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 12px;
+            height: 120px;
+            margin-bottom: 1.5rem;
+            opacity: 0.5;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        /* Updated Header Styles (Compact Version) */
+        #header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 0.25rem 0;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            height: 60px;
+        }
+        #header.hidden {
+            transform: translateY(-100%);
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 0 0.75rem;
+            color: #d4af37;
+        }
+        .logo-container:hover h1 {
+            text-decoration: underline;
+        }
+        .logo-container img {
+            height: 40px;
+            width: auto;
+            margin-right: 0.5rem;
+            border-radius: 50%;
+        }
+        .logo-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin: 0;
+            color: #d4af37;
+            text-decoration: none;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-right: 0.75rem;
+        }
+        .notification-bell {
+            position: relative;
+            color: #ffffff;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .notification-bell:hover {
+            color: #d4af37;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #d4af37;
+            color: #000;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            display: none;
+        }
+        .book-service-btn {
+            background: #d4af37;
+            color: #000;
+            padding: 0.375rem 0.75rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 0.8rem;
+        }
+        .book-service-btn:hover {
+            background: #b8962e;
+            transform: translateY(-1px);
+        }
+        .book-service-btn.active-page {
+            background: #d4af37;
+            box-shadow: 0 1px 4px rgba(212, 175, 55, 0.3);
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin: 70px auto 20px;
+            }
+            h1 {
+                font-size: 1.75rem;
+            }
+            .service-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.25rem;
+            }
+            .service-icon {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+            .service-price {
+                justify-content: center;
+            }
+            .book-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        /* Mobile Bottom Nav */
+        .mobile-nav { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            z-index: 40; 
+            background: rgba(30, 30, 30, 0.85); 
+            border-top: 1px solid #333; 
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.2); 
+            display: none;
+            transition: transform 0.3s ease;
+        }
+        .mobile-nav.hidden {
+            transform: translateY(100%);
+        }
+        @media (max-width: 768px) { .mobile-nav { display: block; } }
+        .nav-grid { 
+            display: grid; 
+            grid-template-columns: repeat(5, 1fr); 
+            padding: 0.5rem 0; 
+            list-style: none;
+        }
+        .nav-item-mobile { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 0.5rem; 
+            text-decoration: none; 
+            color: #ffffff; 
+            font-size: 0.75rem; 
+            transition: all 0.3s ease; 
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .nav-item-mobile:hover {
+            color: #d4af37;
+        }
+        .nav-item-mobile.active { 
+            color: #d4af37; 
+            text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+        }
+        .nav-item-mobile i { 
+            font-size: 1.25rem; 
+            margin-bottom: 0.25rem; 
+            opacity: 0.8; 
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        .nav-item-mobile:hover i {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        .nav-item-mobile.active i { 
+            opacity: 1; 
+            text-shadow: 0 0 6px rgba(212, 175, 55, 0.8);
+            filter: drop-shadow(0 2px 6px rgba(212, 175, 55, 0.4));
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        <a href="dashboard.html" class="logo-container">
+            <img src="images/logo.png" alt="Top Autocare Logo" style="height: 40px; width: auto;">
+            <h1 class="logo-title">Top Autocare</h1>
+        </a>
+        
+        <div class="header-actions">
+            <a href="book-appointment.html" class="book-service-btn">
+                <i class="fas fa-calendar-plus"></i> Book Service
+            </a>
+            
+            <div class="notification-bell" onclick="window.location.href='notifications.html'">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" style="display: none;">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h1>Our Services</h1>
+        <div id="messageContainer"></div>
+        <div id="servicesContainer">
+            <!-- Loading skeletons -->
+            <div class="service-card loading-skeleton"></div>
+            <div class="service-card loading-skeleton"></div>
+            <div class="service-card loading-skeleton"></div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-nav">
+        <ul class="nav-grid">
+            <li>
+                <a class="nav-item-mobile" href="myvehicles.html">
+                    <i class="fas fa-car"></i>
+                    <span>Vehicles</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile active" href="services.html">
+                    <i class="fas fa-wrench"></i>
+                    <span>Services</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="dashboard.html">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="book-appointment.html">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Appointments</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="profile.html">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Firebase Script - Self-Contained -->
+    <script type="module">
+        // Firebase Imports
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { 
+            getFirestore, 
+            collection, 
+            query, 
+            where, 
+            orderBy, 
+            onSnapshot, 
+            limit,
+            getDoc,
+            doc
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBkVYS0CaKe1kHPp9GVnURiZz5WP5tE3iM",
+            authDomain: "top-autocare.firebaseapp.com",
+            projectId: "top-autocare",
+            storageBucket: "top-autocare.firebasestorage.app",
+            messagingSenderId: "879247821822",
+            appId: "1:879247821822:web:e6a418395d52aac99a4eaf",
+            measurementId: "G-T5NDM5M33Z"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let isAdmin = false;
+        let unsubscribeNotifications = null;
+
+        // DOM Elements
+        const servicesContainer = document.getElementById('servicesContainer');
+        const messageContainer = document.getElementById('messageContainer');
+
+        // Utility Functions
+        function showMessage(message, type = 'info') {
+            const existingMessage = messageContainer.querySelector('.message');
+            if (existingMessage) existingMessage.remove();
+            
+            const div = document.createElement('div');
+            div.className = `message ${type}`;
+            div.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                ${message}
+            `;
+            messageContainer.appendChild(div);
+            setTimeout(() => {
+                if (div.parentNode) div.remove();
+            }, 3000);
+        }
+
+        // Check if user is admin
+        async function checkAdminStatus(user) {
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                if (userDoc.exists() && userDoc.data().role === 'admin') {
+                    isAdmin = true;
+                    console.log('👑 Admin access granted');
+                }
+            } catch (error) {
+                console.error('Admin check error:', error);
+            }
+        }
+
+        // Load Notifications for Badge (only for authenticated users)
+        function loadNotifications() {
+            if (!currentUser || unsubscribeNotifications) return;
+
+            const notificationsQuery = query(
+                collection(db, 'notifications'),
+                where('userId', '==', currentUser.uid),
+                where('read', '==', false),
+                orderBy('timestamp', 'desc'),
+                limit(3)
+            );
+
+            unsubscribeNotifications = onSnapshot(notificationsQuery, (snapshot) => {
+                const unreadCount = snapshot.size;
+                const notificationBadge = document.querySelector('.notification-badge');
+                if (notificationBadge) {
+                    notificationBadge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+                    notificationBadge.style.display = unreadCount === 0 ? 'none' : 'flex';
+                }
+            }, (error) => {
+                console.error('Notifications error:', error);
+            });
+        }
+
+        // Load Services from Firestore (Real-time, public access)
+        function loadServices() {
+            // Services are public - no userId filter for admin/users
+            const servicesQuery = query(collection(db, 'services'), orderBy('name'));
+
+            onSnapshot(servicesQuery, (snapshot) => {
+                // Clear skeletons
+                const skeletons = servicesContainer.querySelectorAll('.loading-skeleton');
+                skeletons.forEach(skeleton => skeleton.remove());
+
+                if (snapshot.empty) {
+                    servicesContainer.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-wrench"></i>
+                            <p>No services available at the moment. Please <a href="contact.html">contact us</a> for current offerings.</p>
+                            ${isAdmin ? '<p><a href="admin.html">Admin: Add services</a></p>' : ''}
+                        </div>
+                    `;
+                    return;
+                }
+
+                servicesContainer.innerHTML = '';
+                let serviceCount = 0;
+                snapshot.forEach((doc) => {
+                    const service = { id: doc.id, ...doc.data() };
+                    renderService(service);
+                    serviceCount++;
+                });
+
+                if (serviceCount > 0) {
+                    showMessage(`Loaded ${serviceCount} services successfully.`, 'success');
+                }
+            }, (error) => {
+                console.error('Error loading services:', error);
+                servicesContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Unable to load services. Please check your connection or <a href="contact.html">contact us</a>.</p>
+                        ${isAdmin ? '<p><a href="admin.html">Admin panel</a></p>' : ''}
+                    </div>
+                `;
+                showMessage('Error loading services. Please refresh or try again later.', 'error');
+            });
+        }
+
+        // Render Single Service Card
+        function renderService(service) {
+            const serviceCard = document.createElement('div');
+            serviceCard.className = 'service-card';
+            serviceCard.innerHTML = `
+                <div class="service-icon">
+                    <i class="fas fa-${service.icon || 'wrench'}"></i>
+                </div>
+                <div class="service-info">
+                    <h3>${service.name}</h3>
+                    <p class="description">${service.description || 'Professional service to keep your vehicle running smoothly.'}</p>
+                    <div class="service-price">
+                        <span class="price">KSh ${service.price ? service.price.toLocaleString() : 'On Quote'}</span>
+                        ${service.duration ? `<span class="duration">~${service.duration} hours</span>` : ''}
+                    </div>
+                </div>
+                <a href="book-appointment.html?service=${encodeURIComponent(service.name)}" class="book-btn">
+                    <i class="fas fa-calendar-check"></i> Book Now
+                </a>
+                ${isAdmin ? `<button onclick="adminEditService('${service.id}')" style="margin-left: 0.5rem; background: #666; color: white; padding: 0.5rem; border: none; border-radius: 4px; cursor: pointer;" title="Admin: Edit Service">Edit</button>` : ''}
+            `;
+            servicesContainer.appendChild(serviceCard);
+        }
+
+        // Admin function for editing (placeholder - connects to admin panel)
+        function adminEditService(serviceId) {
+            if (confirm('Redirect to admin panel to edit this service?')) {
+                window.location.href = `admin-services.html?id=${serviceId}`;
+            }
+        }
+
+        // Authentication Check and Init
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                await checkAdminStatus(user); // Check admin role
+                console.log('👤 User authenticated for services:', user.uid, isAdmin ? '(Admin)' : '');
+                loadServices();
+                loadNotifications();
+            } else {
+                // Allow anonymous access for services (public view)
+                console.log('📖 Anonymous access - loading public services');
+                signInAnonymously(auth).catch(err => console.log('Anonymous signin optional for services'));
+                loadServices();
+            }
+        });
+
+        // Cleanup
+        window.addEventListener('beforeunload', () => {
+            if (unsubscribeNotifications) unsubscribeNotifications();
+        });
+    </script>
+
+    <!-- Auto-hide Navigation Script -->
+    <script>
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', () => {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const header = document.getElementById('header');
+            const mobileNav = document.querySelector('.mobile-nav');
+            
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                if (header) header.classList.add('hidden');
+                if (mobileNav) mobileNav.classList.add('hidden');
+            } else {
+                if (header) header.classList.remove('hidden');
+                if (mobileNav) mobileNav.classList.remove('hidden');
+            }
+            
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('✅ Service Worker registered');
+                    })
+                    .catch((error) => {
+                        console.error('❌ Service Worker error:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

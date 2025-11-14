@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Details - Top Autocare Garage</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- PWA Manifest and Mobile Optimization -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#d4af37">
+
+    <!-- Mobile/PWA Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Top Autocare">
+    <link rel="apple-touch-icon" href="assets/images/app-icon-512.png">
+
+    <!-- Favicon for Browsers -->
+    <link rel="icon" href="assets/images/app-icon-192.png" sizes="192x192" type="image/png">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            line-height: 1.6;
+            padding-bottom: 80px;
+            position: relative;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(4px);
+            z-index: -1;
+        }
+        /* Header Styles (Compact, Admin-Only) */
+        #header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 0.25rem 0;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1001;
+            transition: transform 0.3s ease;
+            height: 60px;
+        }
+        #header.hidden {
+            transform: translateY(-100%);
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 0 0.75rem;
+            color: #d4af37;
+        }
+        .logo-container:hover h1 {
+            text-decoration: underline;
+        }
+        .logo-container img {
+            height: 40px;
+            width: auto;
+            margin-right: 0.5rem;
+            border-radius: 50%;
+        }
+        .logo-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin: 0;
+            color: #d4af37;
+            text-decoration: none;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-right: 0.75rem;
+        }
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: color 0.3s ease;
+            z-index: 1002;
+        }
+        .menu-toggle:hover {
+            color: #d4af37;
+        }
+        @media (max-width: 768px) {
+            #header {
+                padding: 0.5rem;
+                flex-wrap: wrap;
+            }
+            .logo-container {
+                padding: 0 0.5rem;
+            }
+            .logo-title {
+                font-size: 1rem;
+            }
+            .header-actions {
+                padding-right: 0.5rem;
+                gap: 0.5rem;
+            }
+        }
+        /* Admin Navigation Menu (Slide-In from Right, Matching Photo Exactly) */
+        .admin-nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .admin-nav-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .admin-nav-menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100vh;
+            background: #1a1a1a;
+            padding: 1rem;
+            overflow-y: auto;
+            transition: right 0.3s ease;
+            z-index: 1001;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+        }
+        .admin-nav-menu.active {
+            right: 0;
+        }
+        .admin-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #333;
+            margin-bottom: 1rem;
+        }
+        .admin-nav-title {
+            font-size: 1.125rem;
+            color: #d4af37;
+            font-weight: 700;
+        }
+        .close-menu {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            transition: color 0.3s ease;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .close-menu:hover {
+            color: #d4af37;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        .admin-menu {
+            list-style: none;
+            padding: 0;
+        }
+        .admin-menu li {
+            margin-bottom: 0.5rem;
+        }
+        .admin-menu a {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #BDBDBD;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 6px;
+            margin: 0.25rem 0;
+        }
+        .admin-menu a:hover, .admin-menu a.active {
+            background: rgba(212, 175, 55, 0.2);
+            color: #d4af37;
+            border-right: 3px solid #d4af37;
+            transform: translateX(5px);
+        }
+        .admin-menu i {
+            width: 20px;
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+            opacity: 0.7;
+        }
+        .admin-menu a:hover i, .admin-menu a.active i {
+            opacity: 1;
+        }
+        .signout-btn {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            right: 1rem;
+            background: #ff6b6b;
+            color: #fff;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: background 0.3s ease;
+            width: calc(100% - 2rem);
+        }
+        .signout-btn:hover {
+            background: #ff5252;
+            transform: translateY(-1px);
+        }
+        /* Main Content */
+        .main-content {
+            padding: 1.5rem;
+            margin-top: 60px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #333;
+        }
+        .page-title h1 {
+            font-size: 1.75rem;
+            color: #d4af37;
+            margin-bottom: 0.25rem;
+        }
+        .page-title p {
+            color: #BDBDBD;
+            font-size: 0.875rem;
+        }
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+        .btn-primary {
+            background: #d4af37;
+            color: #000;
+        }
+        .btn-primary:hover {
+            background: #b8962e;
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: #333;
+            color: #fff;
+        }
+        .btn-secondary:hover {
+            background: #444;
+            transform: translateY(-1px);
+        }
+        /* Professional Container Layout for Details */
+        .appointment-details-content {
+            background: rgba(30, 30, 30, 0.9);
+            border-radius: 12px;
+            border: 1px solid #333;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .details-header {
+            background: rgba(42, 42, 42, 0.9);
+            padding: 1.5rem;
+            border-bottom: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .details-header h2 {
+            font-size: 1.5rem;
+            color: #d4af37;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .status-badge {
+            padding: 0.6rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            min-width: fit-content;
+            border: 1px solid transparent;
+        }
+        .status-pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #FFC107;
+            border-color: #FFC107;
+        }
+        .status-approved {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border-color: #4CAF50;
+        }
+        .status-completed {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196F3;
+            border-color: #2196F3;
+        }
+        .status-cancelled {
+            background: rgba(128, 128, 128, 0.2);
+            color: #808080;
+            border-color: #808080;
+        }
+        .status-rejected {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff6b6b;
+            border-color: #ff6b6b;
+        }
+        .appointment-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(18, 18, 18, 0.8);
+        }
+        .info-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .info-group label {
+            font-size: 0.875rem;
+            color: #d4af37;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        .info-group div {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #333;
+            transition: all 0.3s ease;
+        }
+        .info-group div:hover {
+            background: rgba(212, 175, 55, 0.05);
+            border-color: #d4af37;
+        }
+        .customer-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .customer-info img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #d4af37;
+        }
+        .customer-info i {
+            font-size: 2rem;
+            color: #BDBDBD;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+        }
+        .customer-info strong {
+            color: #fff;
+            font-size: 1rem;
+            display: block;
+        }
+        .customer-info span {
+            color: #BDBDBD;
+            font-size: 0.9rem;
+        }
+        .service-info strong {
+            color: #d4af37;
+            font-weight: 600;
+        }
+        .service-info span {
+            color: #BDBDBD;
+            font-size: 0.9rem;
+        }
+        .date-time {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .date-time span {
+            font-size: 1rem;
+            color: #fff;
+        }
+        .vehicle-info {
+            font-size: 1rem;
+            color: #BDBDBD;
+            padding: 0.5rem 0;
+        }
+        /* Notes Section */
+        .notes-section {
+            padding: 1.5rem;
+            background: rgba(42, 42, 42, 0.9);
+            border-top: 1px solid #333;
+        }
+        .notes-section label {
+            font-size: 0.875rem;
+            color: #d4af37;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+        .notes-section textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #121212;
+            color: #fff;
+            font-size: 0.9rem;
+            resize: vertical;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .notes-section textarea:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+        }
+        /* Status Update Section */
+        .status-update-section {
+            padding: 1.5rem;
+            background: rgba(18, 18, 18, 0.8);
+            border-top: 1px solid #333;
+        }
+        .status-update-section h3 {
+            font-size: 1.25rem;
+            color: #d4af37;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .status-update-form {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .status-update-form select {
+            flex: 1;
+            min-width: 150px;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #121212;
+            color: #fff;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+        .status-update-form select:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+        }
+        .status-update-form .btn {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        /* Error/Loading States */
+        .error-state, .loading-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #BDBDBD;
+        }
+        .error-state i, .loading-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+            display: block;
+        }
+        .error-state h3 {
+            font-size: 1.25rem;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+        .loading-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+        }
+        .loading-state i {
+            font-size: 2rem;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #messageContainer {
+            margin-bottom: 1rem;
+            z-index: 1000;
+            position: relative;
+        }
+        .message {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            max-width: 100%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        .message.success {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+        }
+        .message.error {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+        }
+        .message.info {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196F3;
+            border: 1px solid #2196F3;
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+            .appointment-info-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .status-update-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .status-update-form select {
+                min-width: auto;
+            }
+            .customer-info {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.5rem;
+            }
+            .details-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            .header-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header (Compact, Admin-Only) -->
+    <header id="header">
+        <a href="admin.html" class="logo-container">
+            <img src="images/logo.png" alt="Top Autocare Logo" style="height: 40px; width: auto;">
+            <h1 class="logo-title">Admin Panel</h1>
+        </a>
+        
+        <div class="header-actions">
+            <button class="menu-toggle" onclick="toggleAdminMenu()" title="Admin Menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Admin Navigation Menu (Updated: Exact List with Profile, Active on Appointments) -->
+    <div class="admin-nav-overlay" onclick="toggleAdminMenu()">
+        <div class="admin-nav-menu" onclick="event.stopPropagation()">
+            <div class="admin-nav-header">
+                <h2 class="admin-nav-title">Admin Menu</h2>
+                <button class="close-menu" onclick="toggleAdminMenu()">&times;</button>
+            </div>
+            
+            <ul class="admin-menu">
+                <li><a href="admin.html" onclick="toggleAdminMenu()"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="admin-users.html" onclick="toggleAdminMenu()"><i class="fas fa-users"></i> Users</a></li>
+                <li><a href="admin-appointments.html" class="active" onclick="toggleAdminMenu()"><i class="fas fa-calendar-check"></i> Appointments</a></li>
+                <li><a href="admin-services.html" onclick="toggleAdminMenu()"><i class="fas fa-wrench"></i> Services</a></li>
+                <li><a href="admin-vehicles.html" onclick="toggleAdminMenu()"><i class="fas fa-car"></i> Vehicles</a></li>
+                <li><a href="admin-reports.html" onclick="toggleAdminMenu()"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                <li><a href="admin-settings.html" onclick="toggleAdminMenu()"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><a href="admin-profile.html" onclick="toggleAdminMenu()"><i class="fas fa-user-cog"></i> Admin Profile</a></li>
+                <li><a href="admin-notifications.html" onclick="toggleAdminMenu()"><i class="fas fa-bell"></i> Notifications</a></li>
+                <li><a href="admin-faq.html" onclick="toggleAdminMenu()"><i class="fas fa-question-circle"></i> FAQ Management</a></li>
+                <li><a href="admin-analytics.html" onclick="toggleAdminMenu()"><i class="fas fa-chart-pie"></i> Analytics</a></li>
+                <li><a href="admin-backup.html" onclick="toggleAdminMenu()"><i class="fas fa-database"></i> Backup & Restore</a></li>
+                <li><a href="admin.html" onclick="toggleAdminMenu()"><i class="fas fa-arrow-left"></i> Back to Site</a></li>
+            </ul>
+            
+            <!-- Working Sign Out Button (Bottom) -->
+            <button class="signout-btn" onclick="signOut()">
+                <i class="fas fa-sign-out-alt"></i> Sign Out
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header">
+            <div class="page-title">
+                <h1>Appointment Details</h1>
+                <p>View and manage specific appointment information</p>
+            </div>
+            <div class="header-actions">
+                <a href="admin-appointments.html" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Appointments
+                </a>
+            </div>
+        </div>
+
+        <div id="messageContainer"></div>
+
+        <!-- Professional Container Layout -->
+        <div class="appointment-details-content">
+            <!-- Details Header -->
+            <div class="details-header">
+                <h2><i class="fas fa-calendar-check"></i> Appointment #<span id="appointmentNumber"></span></h2>
+                <span class="status-badge" id="statusBadge">Loading...</span>
+            </div>
+
+            <!-- Loading/Error Placeholder -->
+            <div id="appointmentDetailsContainer" class="loading-state">
+                <i class="fas fa-spinner fa-spin"></i>
+                <div>Loading appointment details...</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Global Navigation Script (MUST BE BEFORE FIREBASE) -->
+    <script>
+        // Global Navigation Functions
+        window.toggleAdminMenu = function() {
+            console.log('Toggle menu called');
+            const overlay = document.querySelector('.admin-nav-overlay');
+            const menu = document.querySelector('.admin-nav-menu');
+            if (overlay && menu) {
+                overlay.classList.toggle('active');
+                menu.classList.toggle('active');
+                console.log('Menu toggled - overlay active:', overlay.classList.contains('active'));
+            }
+        };
+
+        // Auto-hide Navigation on Scroll
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', () => {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const header = document.getElementById('header');
+            
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                if (header) header.classList.add('hidden');
+            } else {
+                if (header) header.classList.remove('hidden');
+            }
+            
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (event) => {
+            const overlay = document.querySelector('.admin-nav-overlay');
+            const menu = document.querySelector('.admin-nav-menu');
+            if (overlay && overlay.classList.contains('active') && 
+                !menu.contains(event.target) && 
+                !event.target.closest('.menu-toggle')) {
+                toggleAdminMenu();
+            }
+        });
+    </script>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBkVYS0CaKe1kHPp9GVnURiZz5WP5tE3iM",
+            authDomain: "top-autocare.firebaseapp.com",
+            projectId: "top-autocare",
+            storageBucket: "top-autocare.firebasestorage.app",
+            messagingSenderId: "879247821822",
+            appId: "1:879247821822:web:e6a418395d52aac99a4eaf",
+            measurementId: "G-T5NDM5M33Z"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let appointmentId = null;
+
+        // Utility Functions
+        function showMessage(message, type = 'info') {
+            const messageContainer = document.getElementById('messageContainer');
+            if (!messageContainer) return;
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            messageContainer.innerHTML = `
+                <div class="message ${className}">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                    ${message}
+                </div>
+            `;
+            setTimeout(() => messageContainer.innerHTML = '', 3000);
+        }
+
+        function formatDate(date) {
+            if (!date) return 'Not specified';
+            return new Date(date.toDate()).toLocaleDateString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
+
+        function formatTime(time) {
+            return time ? `${time} (Preferred)` : 'Flexible Time';
+        }
+
+        function getStatusBadge(status) {
+            const statusMap = {
+                'pending': { text: 'Pending', class: 'status-pending' },
+                'approved': { text: 'Approved', class: 'status-approved' },
+                'completed': { text: 'Completed', class: 'status-completed' },
+                'cancelled': { text: 'Cancelled', class: 'status-cancelled' },
+                'rejected': { text: 'Rejected', class: 'status-rejected' }
+            };
+            return statusMap[status] || { text: status.charAt(0).toUpperCase() + status.slice(1), class: 'status-pending' };
+        }
+
+        function getServicePrice(service) {
+            const prices = {
+                'Routine Maintenance': 'KES 12,000',
+                'Engine Overhaul': 'KES 40,000',
+                'Brake Service': 'KES 8,000',
+                'Oil Change': 'KES 5,000',
+                'Tire Rotation': 'KES 3,000'
+            };
+            return prices[service] || 'Price TBD';
+        }
+
+        // Working Sign Out (Global)
+        window.signOut = async () => {
+            if (confirm('Are you sure you want to sign out?')) {
+                try {
+                    await signOut(auth);
+                    showMessage('Signed out successfully!', 'success');
+                    setTimeout(() => window.location.href = 'signin.html', 1500);
+                } catch (error) {
+                    console.error('Sign out error:', error);
+                    showMessage('Error signing out. Please try again.', 'error');
+                }
+            }
+        };
+
+        // Load Appointment Details
+        async function loadAppointmentDetails() {
+            const appointmentDetailsContainer = document.getElementById('appointmentDetailsContainer');
+            const appointmentNumberEl = document.getElementById('appointmentNumber');
+            const statusBadgeEl = document.getElementById('statusBadge');
+
+            if (!appointmentId) {
+                if (appointmentDetailsContainer) {
+                    appointmentDetailsContainer.innerHTML = `
+                        <div class="error-state">
+                            <i class="fas fa-calendar-times"></i>
+                            <h3>Appointment Not Found</h3>
+                            <p>No appointment ID provided. Please return to the appointments list.</p>
+                            <a href="admin-appointments.html" class="btn btn-primary" style="margin-top: 1rem;">
+                                <i class="fas fa-arrow-left"></i> Back to Appointments
+                            </a>
+                        </div>
+                    `;
+                }
+                showMessage('No appointment ID provided.', 'error');
+                return;
+            }
+
+            if (appointmentDetailsContainer) {
+                appointmentDetailsContainer.innerHTML = `
+                    <div class="loading-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <div>Loading appointment details...</div>
+                    </div>
+                `;
+            }
+
+            try {
+                const appointmentRef = doc(db, 'appointments', appointmentId);
+                const appointmentSnap = await getDoc(appointmentRef);
+                if (!appointmentSnap.exists()) {
+                    if (appointmentDetailsContainer) {
+                        appointmentDetailsContainer.innerHTML = `
+                            <div class="error-state">
+                                <i class="fas fa-calendar-times"></i>
+                                <h3>Appointment Not Found</h3>
+                                <p>The requested appointment does not exist or has been deleted.</p>
+                                <a href="admin-appointments.html" class="btn btn-primary" style="margin-top: 1rem;">
+                                    <i class="fas fa-arrow-left"></i> Back to Appointments
+                                </a>
+                            </div>
+                        `;
+                    }
+                    showMessage('Appointment not found.', 'error');
+                    return;
+                }
+
+                const appointment = { id: appointmentId, ...appointmentSnap.data() };
+                // Fetch customer details
+                let customer = { displayName: 'Unknown User', email: 'N/A', photoURL: null, phone: null };
+                if (appointment.userId) {
+                    const customerRef = doc(db, 'users', appointment.userId);
+                    const customerSnap = await getDoc(customerRef);
+                    if (customerSnap.exists()) {
+                        customer = { ...customerSnap.data(), photoURL: customerSnap.data().photoURL };
+                    }
+                }
+
+                // Update header
+                if (appointmentNumberEl) appointmentNumberEl.textContent = appointment.id.substring(0, 8).toUpperCase();
+                const statusInfo = getStatusBadge(appointment.status || 'pending');
+                if (statusBadgeEl) {
+                    statusBadgeEl.textContent = statusInfo.text;
+                    statusBadgeEl.className = `status-badge ${statusInfo.class}`;
+                }
+
+                displayAppointmentDetails(appointmentDetailsContainer, appointment, customer);
+                showMessage('Appointment loaded successfully.', 'success');
+            } catch (error) {
+                console.error('Error loading appointment details:', error);
+                if (appointmentDetailsContainer) {
+                    appointmentDetailsContainer.innerHTML = `
+                        <div class="error-state">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>Error Loading Details</h3>
+                            <p>Unable to load appointment details. Please try again or contact support.</p>
+                            <a href="admin-appointments.html" class="btn btn-primary" style="margin-top: 1rem;">
+                                <i class="fas fa-arrow-left"></i> Back to Appointments
+                            </a>
+                        </div>
+                    `;
+                }
+                showMessage('Error loading appointment details. Please try again.', 'error');
+            }
+        }
+
+        // Display Appointment Details
+        function displayAppointmentDetails(container, appointment, customer) {
+            const statusInfo = getStatusBadge(appointment.status || 'pending');
+            
+            container.innerHTML = `
+                <div class="appointment-info-grid">
+                    <div class="info-group">
+                        <label><i class="fas fa-user" style="color: #d4af37; margin-right: 0.5rem;"></i> Customer Information</label>
+                        <div class="customer-info">
+                            ${customer.photoURL ? 
+                                `<img src="${customer.photoURL}" alt="${customer.displayName || 'User'}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">` : 
+                                `<i class="fas fa-user-circle"></i>`}
+                            <div>
+                                <strong>${customer.displayName || 'Unknown User'}</strong>
+                                <span>${customer.email || 'N/A'}</span>
+                                ${customer.phone ? `<span style="color: #d4af37; font-size: 0.85rem;"><i class="fas fa-phone" style="margin-right: 0.25rem;"></i>${customer.phone}</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-group">
+                        <label><i class="fas fa-wrench" style="color: #d4af37; margin-right: 0.5rem;"></i> Requested Service</label>
+                        <div class="service-info">
+                            <strong>${appointment.service || 'Not specified'}</strong>
+                            <span>${getServicePrice(appointment.service)}</span>
+                            ${appointment.duration ? `<span style="color: #BDBDBD; font-size: 0.85rem;"><i class="fas fa-clock" style="margin-right: 0.25rem;"></i>Est. ${appointment.duration} hrs</span>` : ''}
+                        </div>
+                    </div>
+
+                    <div class="info-group">
+                        <label><i class="fas fa-calendar-day" style="color: #d4af37; margin-right: 0.5rem;"></i> Appointment Date & Time</label>
+                        <div class="date-time">
+                            <span><i class="fas fa-calendar" style="margin-right: 0.5rem; color: #d4af37;"></i>${formatDate(appointment.date)}</span>
+                            <span><i class="fas fa-clock" style="margin-right: 0.5rem; color: #d4af37;"></i>${formatTime(appointment.time)}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-group">
+                        <label><i class="fas fa-car" style="color: #d4af37; margin-right: 0.5rem;"></i> Vehicle Details</label>
+                        <div class="vehicle-info">
+                            ${appointment.vehicle ? `<i class="fas fa-car-side" style="color: #d4af37; margin-right: 0.5rem;"></i>${appointment.vehicle}` : '<span style="color: #BDBDBD;">No vehicle specified</span>'}
+                            ${appointment.vin ? `<br><span style="font-size: 0.85rem; color: #BDBDBD;">VIN: ${appointment.vin}</span>` : ''}
+                            ${appointment.licensePlate ? `<br><span style="font-size: 0.85rem; color: #BDBDBD;">License: ${appointment.licensePlate}</span>` : ''}
+                        </div>
+                    </div>
+
+                    ${appointment.notes ? `
+                    <div class="info-group" style="grid-column: 1 / -1;">
+                        <label><i class="fas fa-sticky-note" style="color: #d4af37; margin-right: 0.5rem;"></i> Customer Notes</label>
+                        <div style="background: rgba(255, 255, 255, 0.05); padding: 1rem; border-radius: 8px; border: 1px solid #333;">
+                            <p style="margin: 0; color: #BDBDBD; line-height: 1.5;">${appointment.notes}</p>
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    ${appointment.adminNotes ? `
+                     <div class="info-group" style="grid-column: 1 / -1;">
+                        <label><i class="fas fa-edit" style="color: #d4af37; margin-right: 0.5rem;"></i> Admin Notes</label>
+                        <div style="background: rgba(255, 255, 255, 0.05); padding: 1rem; border-radius: 8px; border: 1px solid #333;">
+                            <p style="margin: 0; color: #BDBDBD; line-height: 1.5; font-style: italic;">${appointment.adminNotes}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="notes-section">
+                    <label><i class="fas fa-edit" style="color: #d4af37; margin-right: 0.5rem;"></i> Update Admin Notes</label>
+                    <textarea id="notesInput" placeholder="Add or update admin notes for this appointment...">${appointment.adminNotes || ''}</textarea>
+                </div>
+
+                <div class="status-update-section">
+                    <h3><i class="fas fa-sync-alt" style="color: #d4af37; margin-right: 0.5rem;"></i> Update Appointment Status</h3>
+                    <div class="status-update-form">
+                        <select id="statusSelect">
+                            <option value="pending" ${appointment.status === 'pending' ? 'selected' : ''}>Pending</option>
+                            <option value="approved" ${appointment.status === 'approved' ? 'selected' : ''}>Approved</option>
+                            <option value="completed" ${appointment.status === 'completed' ? 'selected' : ''}>Completed</option>
+                            <option value="cancelled" ${appointment.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                            <option value="rejected" ${appointment.status === 'rejected' ? 'selected' : ''}>Rejected</option>
+                        </select>
+                        <button class="btn btn-primary" id="saveStatusBtn">
+                            <i class="fas fa-save"></i> Update Status & Notes
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            // Save Event Listener
+            const saveStatusBtn = container.querySelector('#saveStatusBtn');
+            const statusSelect = container.querySelector('#statusSelect');
+            const notesInput = container.querySelector('#notesInput');
+
+            if (saveStatusBtn && statusSelect && notesInput && currentUser) {
+                saveStatusBtn.addEventListener('click', async () => {
+                    const newStatus = statusSelect.value;
+                    const adminNotes = notesInput.value.trim();
+
+                    if (!confirm(`Update status to "${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}" and save notes?`)) return;
+
+                    saveStatusBtn.disabled = true;
+                    saveStatusBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+                    try {
+                        await updateDoc(doc(db, 'appointments', appointmentId), {
+                            status: newStatus,
+                            adminNotes: adminNotes || '',
+                            updatedAt: new Date(),
+                            updatedBy: currentUser.uid
+                        });
+                        showMessage(`Status updated to "${newStatus}" and notes saved!`, 'success');
+                        setTimeout(() => loadAppointmentDetails(), 1500);
+                    } catch (error) {
+                        console.error('Error updating appointment:', error);
+                        showMessage('Error updating appointment. Please try again.', 'error');
+                        saveStatusBtn.disabled = false;
+                        saveStatusBtn.innerHTML = '<i class="fas fa-save"></i> Update Status & Notes';
+                    }
+                });
+            }
+        }
+
+        // Initialize Page
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                
+                const userRef = doc(db, 'users', user.uid);
+                const userSnap = await getDoc(userRef);
+                
+                if (userSnap.exists() && userSnap.data().role === 'admin') {
+                    appointmentId = new URLSearchParams(window.location.search).get('id');
+                    if (!appointmentId) {
+                        showMessage('No appointment ID provided.', 'error');
+                        setTimeout(() => window.location.href = 'admin-appointments.html', 2000);
+                        return;
+                    }
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', loadAppointmentDetails);
+                    } else {
+                        loadAppointmentDetails();
+                    }
+                } else {
+                    showMessage('Access denied. Admin privileges required.', 'error');
+                    setTimeout(() => window.location.href = 'dashboard.html', 2000);
+                }
+            } else {
+                window.location.href = 'signin.html';
+            }
+        });
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('Service Worker registered:', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.error('Service Worker registration failed:', registrationError);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

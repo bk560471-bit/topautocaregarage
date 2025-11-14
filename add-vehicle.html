@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Vehicle - Top Autocare Garage</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#d4af37">
+
+    <!-- Mobile/PWA Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Top Autocare">
+    <link rel="apple-touch-icon" href="assets/images/app-icon-512.png"> <!-- Update if icon path differs -->
+
+    <!-- Favicon for Browsers -->
+    <link rel="icon" href="assets/images/app-icon-192.png" sizes="192x192" type="image/png">
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, onSnapshot, orderBy, limit } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBkVYS0CaKe1kHPp9GVnURiZz5WP5tE3iM",
+            authDomain: "top-autocare.firebaseapp.com",
+            projectId: "top-autocare",
+            storageBucket: "top-autocare.firebasestorage.app",
+            messagingSenderId: "879247821822",
+            appId: "1:879247821822:web:e6a418395d52aac99a4eaf",
+            measurementId: "G-T5NDM5M33Z"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let editingVehicleId = null;
+        let isEditMode = false;
+        let unsubscribeNotifications = null;
+
+        // Utility Functions (global, no DOM dependency)
+        function showMessage(message, type = 'info') {
+            const messageContainer = document.getElementById('messageContainer');
+            if (!messageContainer) return;
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            messageContainer.innerHTML = `
+                <div class="message ${className}">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                    ${message}
+                </div>
+            `;
+            setTimeout(() => messageContainer.innerHTML = '', 5000);
+        }
+
+        function showProgress(show = true) {
+            const progressIndicator = document.getElementById('progressIndicator');
+            const submitBtn = document.getElementById('submitBtn');
+            if (!progressIndicator || !submitBtn) return;
+            progressIndicator.style.display = show ? 'block' : 'none';
+            submitBtn.disabled = show;
+            if (show) {
+                submitBtn.innerHTML = isEditMode ? '<i class="fas fa-spinner fa-spin"></i> Updating...' : '<i class="fas fa-spinner fa-spin"></i> Adding Vehicle...';
+            } else {
+                submitBtn.innerHTML = isEditMode ? '<i class="fas fa-save"></i> Update Vehicle' : '<i class="fas fa-plus"></i> Add Vehicle';
+            }
+        }
+
+        // Load Notifications for Badge (if authenticated)
+        function loadNotifications() {
+            if (!currentUser) return;
+
+            const notificationsQuery = query(
+                collection(db, 'notifications'),
+                where('userId', '==', currentUser.uid),
+                where('read', '==', false),
+                orderBy('timestamp', 'desc'),
+                limit(3)
+            );
+
+            unsubscribeNotifications = onSnapshot(notificationsQuery, (snapshot) => {
+                const unreadCount = snapshot.size;
+                const notificationBadge = document.querySelector('.notification-badge');
+                if (notificationBadge) {
+                    notificationBadge.textContent = unreadCount > 99 ? '99+' : unreadCount.toString();
+                    if (unreadCount === 0) {
+                        notificationBadge.style.display = 'none';
+                    } else {
+                        notificationBadge.style.display = 'flex';
+                    }
+                }
+            }, (error) => {
+                console.error('Error loading notifications for badge:', error);
+            });
+        }
+
+        function validateForm() {
+            const make = document.getElementById('make').value.trim();
+            const model = document.getElementById('model').value.trim();
+            const year = parseInt(document.getElementById('year').value);
+            const vin = document.getElementById('vin').value.trim().toUpperCase();
+            const plate = document.getElementById('plate').value.trim().toUpperCase();
+            const color = document.getElementById('color').value.trim();
+
+            if (!make || !model || !plate) {
+                showMessage('Make, model, and plate are required.', 'error');
+                return false;
+            }
+
+            if (isNaN(year) || year < 1900 || year > 2030) {
+                showMessage('Please enter a valid year (1900-2030).', 'error');
+                return false;
+            }
+
+            if (vin && vin.length !== 17) {
+                showMessage('VIN should be 17 characters long.', 'error');
+                return false;
+            }
+
+            const normalizedPlate = plate.replace(/\s/g, '');
+            if (!/^[A-Z]{3}\d{3}[A-Z]$/.test(normalizedPlate)) {
+                showMessage('Please enter a valid Kenyan license plate (e.g., KAA 123A).', 'error');
+                return false;
+            }
+
+            return { make, model, year, vin: vin || '', color: color || '', plate };
+        }
+
+        // Load Vehicle for Editing
+        async function loadVehicleForEdit(vehicleId) {
+            try {
+                const vehicleRef = doc(db, 'vehicles', vehicleId);
+                const vehicleSnap = await getDoc(vehicleRef);
+                
+                if (vehicleSnap.exists()) {
+                    const vehicleData = vehicleSnap.data();
+                    if (vehicleData.userId === currentUser.uid) {
+                        document.getElementById('make').value = vehicleData.make || '';
+                        document.getElementById('model').value = vehicleData.model || '';
+                        document.getElementById('year').value = vehicleData.year || '';
+                        document.getElementById('vin').value = vehicleData.vin || '';
+                        document.getElementById('color').value = vehicleData.color || '';
+                        document.getElementById('plate').value = vehicleData.plate || '';
+                        showMessage('Vehicle loaded for editing.', 'success');
+                        return true;
+                    } else {
+                        showMessage('Access denied. You can only edit your own vehicles.', 'error');
+                        setTimeout(() => window.location.href = 'myvehicles.html', 2000);
+                        return false;
+                    }
+                } else {
+                    showMessage('Vehicle not found.', 'error');
+                    setTimeout(() => window.location.href = 'myvehicles.html', 2000);
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error loading vehicle:', error);
+                showMessage('Error loading vehicle details.', 'error');
+                return false;
+            }
+        }
+
+        // Initialize DOM and Event Listeners (called after DOM ready)
+        function initializeDOM() {
+            const form = document.getElementById('vehicleForm');
+            if (!form) return;
+
+            const submitBtn = document.getElementById('submitBtn');
+            const titleEl = document.getElementById('pageTitle');
+            const backBtn = document.getElementById('backBtn');
+
+            // Submit Form
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const vehicleData = validateForm();
+                if (!vehicleData) return;
+
+                showProgress(true);
+
+                try {
+                    const updateData = {
+                        make: vehicleData.make,
+                        model: vehicleData.model,
+                        year: vehicleData.year,
+                        color: vehicleData.color,
+                        plate: vehicleData.plate,
+                        updatedAt: new Date(),
+                        active: true
+                    };
+                    if (vehicleData.vin) {
+                        updateData.vin = vehicleData.vin;
+                    }
+
+                    if (isEditMode) {
+                        const vehicleRef = doc(db, 'vehicles', editingVehicleId);
+                        await updateDoc(vehicleRef, updateData);
+                        showMessage('Vehicle updated successfully!', 'success');
+                        setTimeout(() => window.location.href = 'myvehicles.html', 1500);
+                    } else {
+                        const vehicle = {
+                            ...vehicleData,
+                            userId: currentUser.uid,
+                            createdAt: new Date(),
+                            updatedAt: new Date(),
+                            active: true
+                        };
+                        const vehicleRef = doc(collection(db, 'vehicles'));
+                        await setDoc(vehicleRef, vehicle);
+                        showMessage('Vehicle added successfully!', 'success');
+                        form.reset();
+                    }
+                } catch (error) {
+                    console.error('Error saving vehicle:', error);
+                    showMessage('Error saving vehicle. Please try again.', 'error');
+                } finally {
+                    showProgress(false);
+                }
+            });
+
+            // Real-time form validation
+            const makeInput = document.getElementById('make');
+            const modelInput = document.getElementById('model');
+            const yearInput = document.getElementById('year');
+            const vinInput = document.getElementById('vin');
+            const plateInput = document.getElementById('plate');
+
+            if (makeInput) {
+                makeInput.addEventListener('blur', () => {
+                    if (!makeInput.value.trim()) {
+                        makeInput.classList.add('invalid');
+                    } else {
+                        makeInput.classList.remove('invalid');
+                    }
+                });
+            }
+
+            if (modelInput) {
+                modelInput.addEventListener('blur', () => {
+                    if (!modelInput.value.trim()) {
+                        modelInput.classList.add('invalid');
+                    } else {
+                        modelInput.classList.remove('invalid');
+                    }
+                });
+            }
+
+            if (yearInput) {
+                yearInput.addEventListener('input', () => {
+                    const year = parseInt(yearInput.value);
+                    if (year < 1900 || year > 2030 || isNaN(year)) {
+                        yearInput.classList.add('invalid');
+                    } else {
+                        yearInput.classList.remove('invalid');
+                    }
+                });
+            }
+
+            if (vinInput) {
+                vinInput.addEventListener('blur', () => {
+                    const vin = vinInput.value.trim().toUpperCase();
+                    if (vin && vin.length !== 17) {
+                        vinInput.classList.add('invalid');
+                    } else {
+                        vinInput.classList.remove('invalid');
+                    }
+                });
+            }
+
+            if (plateInput) {
+                plateInput.addEventListener('blur', () => {
+                    const plate = plateInput.value.trim().toUpperCase();
+                    const normalized = plate.replace(/\s/g, '');
+                    if (plate && !/^[A-Z]{3}\d{3}[A-Z]$/.test(normalized)) {
+                        plateInput.classList.add('invalid');
+                    } else {
+                        plateInput.classList.remove('invalid');
+                    }
+                });
+            }
+
+            // Initial button states (will be updated in onAuthStateChanged if edit mode)
+            if (submitBtn) {
+                submitBtn.innerHTML = '<i class="fas fa-plus"></i> Add Vehicle';
+            }
+
+            // Cleanup
+            window.addEventListener('beforeunload', () => {
+                if (unsubscribeNotifications) {
+                    unsubscribeNotifications();
+                }
+            });
+        }
+
+        // Wait for DOM to be ready before initializing DOM-dependent code
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeDOM);
+        } else {
+            initializeDOM();
+        }
+
+        // Initialize Page (user auth handling)
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                loadNotifications(); // Load notifications for badge
+                
+                const urlParams = new URLSearchParams(window.location.search);
+                editingVehicleId = urlParams.get('id');
+                isEditMode = !!editingVehicleId;
+                
+                const titleEl = document.getElementById('pageTitle');
+                const submitBtn = document.getElementById('submitBtn');
+                const backBtn = document.getElementById('backBtn');
+                
+                if (isEditMode) {
+                    if (titleEl) titleEl.textContent = 'Edit Vehicle';
+                    if (submitBtn) submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Vehicle';
+                    await loadVehicleForEdit(editingVehicleId);
+                } else {
+                    if (submitBtn) submitBtn.innerHTML = '<i class="fas fa-plus"></i> Add Vehicle';
+                }
+                
+                // Always show back button for navigation to vehicles list
+                if (backBtn) {
+                    backBtn.style.display = 'flex';
+                }
+                
+            } else {
+                showMessage('Please sign in to manage your vehicles.', 'error');
+                setTimeout(() => window.location.href = 'signin.html', 2000);
+            }
+        });
+    </script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            line-height: 1.6;
+            padding-bottom: 80px;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(4px);
+            z-index: -1;
+        }
+        /* Updated Header Styles (Standardized to App Pattern) */
+        #header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        #header.hidden {
+            transform: translateY(-100%);
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 0 1rem;
+            color: #d4af37;
+        }
+        .logo-container:hover h1 {
+            text-decoration: underline;
+        }
+        .logo-container img {
+            height: 50px;
+            width: auto;
+            margin-right: 0.5rem;
+            border-radius: 50%;
+        }
+        .logo-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            color: #d4af37;
+            text-decoration: none;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding-right: 1rem;
+        }
+        .notification-bell {
+            position: relative;
+            color: #ffffff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .notification-bell:hover {
+            color: #d4af37;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #d4af37;
+            color: #000;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .book-service-btn {
+            background: #d4af37;
+            color: #000;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .book-service-btn:hover {
+            background: #b8962e;
+            transform: translateY(-2px);
+        }
+        @media (max-width: 768px) {
+            #header {
+                padding: 0.5rem;
+                flex-wrap: wrap;
+            }
+            .logo-container {
+                padding: 0 0.5rem;
+            }
+            .logo-title {
+                font-size: 1.25rem;
+            }
+            .header-actions {
+                padding-right: 0.5rem;
+                gap: 0.5rem;
+            }
+            .book-service-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+        /* Main Content */
+        .main-content {
+            margin-top: 80px;
+            padding: 2rem 0;
+            min-height: calc(100vh - 160px);
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #333;
+        }
+        .page-header h1 {
+            color: #d4af37;
+            font-size: 2rem;
+            margin: 0;
+            font-weight: 700;
+        }
+        #backBtn {
+            background: rgba(51, 51, 51, 0.85);
+            color: #ffffff;
+            font-weight: 600;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        #backBtn:hover {
+            background: rgba(68, 68, 68, 0.85);
+            transform: translateY(-2px);
+        }
+        /* Form Container - Transparent */
+        .form-container {
+            background: rgba(30, 30, 30, 0.85);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .form-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 1.8rem;
+            color: #d4af37;
+        }
+        #pageTitle {
+            color: #d4af37;
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .form-subtitle {
+            color: #ffffff;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        /* Form Styling */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .form-group label {
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .form-group input, .form-group select {
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid #333;
+            background: rgba(18, 18, 18, 0.85);
+            color: #fff;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        .form-group input::placeholder, .form-group select::placeholder {
+            color: #BDBDBD;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+        }
+        .form-group input.invalid, .form-group select.invalid {
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.2);
+        }
+        .form-group .validation-error {
+            color: #ff6b6b;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: none;
+            font-weight: 500;
+        }
+        .form-group.invalid input, .form-group.invalid select {
+            border-color: #ff6b6b;
+        }
+        .form-group.invalid .validation-error {
+            display: block;
+        }
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+        .form-group small {
+            color: #ffffff;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        #plate {
+            text-transform: uppercase;
+        }
+        #vin {
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        /* Submit Button */
+        .form-actions {
+            grid-column: span 2;
+            text-align: center;
+            margin-top: 1rem;
+        }
+        #submitBtn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: #d4af37;
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        #submitBtn:hover:not(:disabled) {
+            background: #b8962e;
+            transform: translateY(-2px);
+        }
+        #submitBtn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        /* Progress Indicator */
+        #progressIndicator {
+            display: none;
+            text-align: center;
+            margin: 1rem 0;
+        }
+        .spinner {
+            border: 4px solid #333;
+            border-top: 4px solid #d4af37;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .progress-text {
+            color: #ffffff;
+            margin-top: 0.5rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        /* Message Container */
+        #messageContainer {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .message {
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            max-width: 100%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+        .message.success {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+        }
+        .message.error {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff0000;
+            border: 1px solid #ff0000;
+        }
+        .message.info {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196F3;
+            border: 1px solid #2196F3;
+        }
+        /* Footer - Transparent */
+        .footer {
+            background: rgba(26, 26, 26, 0.85);
+            padding: 2rem 0;
+            border-top: 1px solid #333;
+            text-align: center;
+        }
+        .footer p {
+            color: #ffffff;
+            margin-bottom: 1rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .social-links a {
+            color: #ffffff;
+            font-size: 1.25rem;
+            transition: color 0.3s ease;
+            padding: 0.5rem;
+        }
+        .social-links a:hover {
+            color: #d4af37;
+            transform: translateY(-2px);
+        }
+        .footer-links {
+            margin-top: 1rem;
+        }
+        .footer-links a {
+            color: #ffffff;
+            text-decoration: none;
+            margin: 0 1rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .footer-links a:hover {
+            color: #d4af37;
+        }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+            .page-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            #backBtn {
+                justify-content: center;
+            }
+            .form-container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+        }
+        /* Mobile Bottom Nav */
+        .mobile-nav { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            z-index: 40; 
+            background: rgba(30, 30, 30, 0.85); 
+            border-top: 1px solid #333; 
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.2); 
+            display: none;
+            transition: transform 0.3s ease;
+        }
+        .mobile-nav.hidden {
+            transform: translateY(100%);
+        }
+        @media (max-width: 768px) { .mobile-nav { display: block; } }
+        .nav-grid { 
+            display: grid; 
+            grid-template-columns: repeat(5, 1fr); 
+            padding: 0.5rem 0; 
+            list-style: none;
+        }
+        .nav-item-mobile { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 0.5rem; 
+            text-decoration: none; 
+            color: #ffffff; 
+            font-size: 0.75rem; 
+            transition: all 0.3s ease; 
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .nav-item-mobile:hover {
+            color: #d4af37;
+        }
+        .nav-item-mobile.active { 
+            color: #d4af37; 
+            text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+        }
+        .nav-item-mobile i { 
+            font-size: 1.25rem; 
+            margin-bottom: 0.25rem; 
+            opacity: 0.8; 
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        .nav-item-mobile:hover i {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        .nav-item-mobile.active i { 
+            opacity: 1; 
+            text-shadow: 0 0 6px rgba(212, 175, 55, 0.8);
+            filter: drop-shadow(0 2px 6px rgba(212, 175, 55, 0.4));
+        }
+    </style>
+</head>
+<body>
+    <!-- Header (Updated to Match App Pattern) -->
+    <header id="header">
+        <!-- Logo Container - Clickable to Dashboard -->
+        <a href="dashboard.html" class="logo-container">
+            <img src="images/logo.png" alt="Top Autocare Logo" style="height: 50px; width: auto;">
+            <h1 class="logo-title">Top Autocare</h1>
+        </a>
+        
+        <!-- Header Actions -->
+        <div class="header-actions">
+            <!-- Book Service Button -->
+            <a href="book-appointment.html" class="book-service-btn">
+                Book Service
+            </a>
+            
+            <!-- Notification Bell -->
+            <div class="notification-bell" onclick="window.location.href='notifications.html'">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" style="display: none;">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1 id="pageTitle">Add Vehicle</h1>
+                <button id="backBtn" class="btn-secondary" onclick="window.location.href='myvehicles.html'">
+                    <i class="fas fa-arrow-left"></i> Back to Vehicles
+                </button>
+            </div>
+
+            <div class="form-container">
+                <div class="form-icon">
+                    <i class="fas fa-car"></i>
+                </div>
+                <h2 style="color: #d4af37; margin-bottom: 0.5rem; font-size: 1.5rem; font-weight: 700;">Add Your Vehicle</h2>
+                <p class="form-subtitle">Add your vehicle details to book appointments and track service history. All fields are required unless marked optional.</p>
+
+                <form id="vehicleForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="make">
+                                <i class="fas fa-car-side"></i> Make <span style="color: #ff6b6b;">*</span>
+                            </label>
+                            <input type="text" id="make" placeholder="E.g., Toyota" maxlength="50" required>
+                            <div class="validation-error">Make is required</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="model">
+                                <i class="fas fa-cog"></i> Model <span style="color: #ff6b6b;">*</span>
+                            </label>
+                            <input type="text" id="model" placeholder="E.g., Camry" maxlength="50" required>
+                            <div class="validation-error">Model is required</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="year">
+                                <i class="fas fa-calendar-alt"></i> Year <span style="color: #ff6b6b;">*</span>
+                            </label>
+                            <input type="number" id="year" placeholder="E.g., 2020" min="1900" max="2030" required>
+                            <div class="validation-error">Valid year (1900-2030) required</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="vin">
+                                <i class="fas fa-barcode"></i> VIN (Vehicle Identification Number)
+                            </label>
+                            <input type="text" id="vin" placeholder="17-character VIN" maxlength="17">
+                            <div class="validation-error">VIN must be 17 characters</div>
+                            <small style="color: #ffffff; font-size: 0.8rem; font-weight: 500;">Optional - Helps with precise service recommendations</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="color">
+                                <i class="fas fa-palette"></i> Color
+                            </label>
+                            <input type="text" id="color" placeholder="E.g., Silver" maxlength="30">
+                            <small style="color: #ffffff; font-size: 0.8rem; font-weight: 500;">Optional</small>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="plate">
+                                <i class="fas fa-id-card"></i> License Plate <span style="color: #ff6b6b;">*</span>
+                            </label>
+                            <input type="text" id="plate" placeholder="E.g., KAA 123A" maxlength="10" required>
+                            <div class="validation-error">Valid Kenyan plate format (e.g., KAA 123A)</div>
+                            <small style="color: #ffffff; font-size: 0.8rem; font-weight: 500;">Required for service identification</small>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" id="submitBtn" class="btn-primary">
+                            <i class="fas fa-plus"></i> Add Vehicle
+                        </button>
+                    </div>
+
+                    <div id="progressIndicator">
+                        <div class="spinner"></div>
+                        <div class="progress-text">Adding vehicle...</div>
+                    </div>
+                </form>
+
+                <div id="messageContainer"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 <span id="footerBusinessName">Top Autocare Garage</span>. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://wa.me/254757562447" aria-label="WhatsApp" target="_blank" rel="noopener">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+                <a href="https://twitter.com/BrianVags" aria-label="Twitter" target="_blank" rel="noopener">
+                    <i class="fab fa-twitter"></i>
+                </a>
+            </div>
+            <div class="footer-links">
+                <a href="privacy-policy.html">Privacy Policy</a> | 
+                <a href="terms-of-service.html">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-nav">
+        <ul class="nav-grid">
+            <li>
+                <a class="nav-item-mobile active" href="myvehicles.html">
+                    <i class="fas fa-car"></i>
+                    <span>Vehicles</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="services.html">
+                    <i class="fas fa-wrench"></i>
+                    <span>Services</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="dashboard.html">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="book-appointment.html">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Appointments</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="profile.html">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Auto-hide Navigation Script -->
+    <script>
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', () => {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const header = document.querySelector('#header');
+            const mobileNav = document.querySelector('.mobile-nav');
+            
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                // Scrolling down - hide elements
+                if (header) header.classList.add('hidden');
+                if (mobileNav) mobileNav.classList.add('hidden');
+            } else {
+                // Scrolling up or at top - show elements
+                if (header) header.classList.remove('hidden');
+                if (mobileNav) mobileNav.classList.remove('hidden');
+            }
+            
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('Service Worker registered:', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.error('Service Worker registration failed:', registrationError);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

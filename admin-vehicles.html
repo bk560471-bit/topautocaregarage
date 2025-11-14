@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Management - Top Autocare Garage</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- PWA Manifest and Mobile Optimization -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#d4af37">
+
+    <!-- Mobile/PWA Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Top Autocare">
+    <link rel="apple-touch-icon" href="assets/images/app-icon-512.png">
+
+    <!-- Favicon for Browsers -->
+    <link rel="icon" href="assets/images/app-icon-192.png" sizes="192x192" type="image/png">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            line-height: 1.6;
+            padding-bottom: 80px;
+            position: relative;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(4px);
+            z-index: -1;
+        }
+        /* Header Styles (Compact, Admin-Only) */
+        #header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 0.25rem 0;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1001;
+            transition: transform 0.3s ease;
+            height: 60px;
+        }
+        #header.hidden {
+            transform: translateY(-100%);
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 0 0.75rem;
+            color: #d4af37;
+        }
+        .logo-container:hover h1 {
+            text-decoration: underline;
+        }
+        .logo-container img {
+            height: 40px;
+            width: auto;
+            margin-right: 0.5rem;
+            border-radius: 50%;
+        }
+        .logo-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin: 0;
+            color: #d4af37;
+            text-decoration: none;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-right: 0.75rem;
+        }
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: color 0.3s ease;
+            z-index: 1002;
+        }
+        .menu-toggle:hover {
+            color: #d4af37;
+        }
+        @media (max-width: 768px) {
+            #header {
+                padding: 0.5rem;
+                flex-wrap: wrap;
+            }
+            .logo-container {
+                padding: 0 0.5rem;
+            }
+            .logo-title {
+                font-size: 1rem;
+            }
+            .header-actions {
+                padding-right: 0.5rem;
+                gap: 0.5rem;
+            }
+        }
+        /* Admin Navigation Menu (Slide-In from Right, Matching Photo Exactly) */
+        .admin-nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .admin-nav-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .admin-nav-menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100vh;
+            background: #1a1a1a;
+            padding: 1rem;
+            overflow-y: auto;
+            transition: right 0.3s ease;
+            z-index: 1001;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+        }
+        .admin-nav-menu.active {
+            right: 0;
+        }
+        .admin-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #333;
+            margin-bottom: 1rem;
+        }
+        .admin-nav-title {
+            font-size: 1.125rem;
+            color: #d4af37;
+            font-weight: 700;
+        }
+        .close-menu {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            transition: color 0.3s ease;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .close-menu:hover {
+            color: #d4af37;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        .admin-menu {
+            list-style: none;
+            padding: 0;
+        }
+        .admin-menu li {
+            margin-bottom: 0.5rem;
+        }
+        .admin-menu a {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #BDBDBD;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 6px;
+            margin: 0.25rem 0;
+        }
+        .admin-menu a:hover, .admin-menu a.active {
+            background: rgba(212, 175, 55, 0.2);
+            color: #d4af37;
+            border-right: 3px solid #d4af37;
+            transform: translateX(5px);
+        }
+        .admin-menu i {
+            width: 20px;
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+            opacity: 0.7;
+        }
+        .admin-menu a:hover i, .admin-menu a.active i {
+            opacity: 1;
+        }
+        .signout-btn {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            right: 1rem;
+            background: #ff6b6b;
+            color: #fff;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: background 0.3s ease;
+            width: calc(100% - 2rem);
+        }
+        .signout-btn:hover {
+            background: #ff5252;
+            transform: translateY(-1px);
+        }
+        /* Main Content */
+        .main-content {
+            padding: 1.5rem;
+            margin-top: 60px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #333;
+        }
+        .page-title h1 {
+            font-size: 1.75rem;
+            color: #d4af37;
+            margin-bottom: 0.25rem;
+        }
+        .page-title p {
+            color: #BDBDBD;
+            font-size: 0.875rem;
+        }
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-primary {
+            background: #d4af37;
+            color: #000;
+        }
+        .btn-primary:hover {
+            background: #b8962e;
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: #333;
+            color: #fff;
+        }
+        .btn-secondary:hover {
+            background: #444;
+            transform: translateY(-1px);
+        }
+        /* Professional Container Layout */
+        .vehicle-management {
+            background: rgba(30, 30, 30, 0.9);
+            border-radius: 12px;
+            border: 1px solid #333;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        .management-header {
+            background: rgba(42, 42, 42, 0.9);
+            padding: 1.5rem;
+            border-bottom: 1px solid #333;
+        }
+        .management-header h2 {
+            color: #d4af37;
+            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .management-header p {
+            color: #BDBDBD;
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+        .filters-container {
+            background: rgba(18, 18, 18, 0.8);
+            padding: 1.5rem;
+            border-bottom: 1px solid #333;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .filters {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+            align-items: end;
+            max-width: 800px;
+        }
+        .search-box {
+            position: relative;
+        }
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #BDBDBD;
+            z-index: 2;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #121212;
+            color: #fff;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .search-box input:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+        }
+        .filter-select {
+            position: relative;
+        }
+        .filter-select select {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #121212;
+            color: #fff;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+        .filter-select select:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+        }
+        .filter-label {
+            color: #BDBDBD;
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+        /* Advanced Table Container */
+        .table-container {
+            overflow-x: auto;
+            max-height: 70vh;
+            scrollbar-width: thin;
+            scrollbar-color: #d4af37 #333;
+        }
+        .table-container::-webkit-scrollbar {
+            height: 8px;
+        }
+        .table-container::-webkit-scrollbar-track {
+            background: #333;
+        }
+        .table-container::-webkit-scrollbar-thumb {
+            background: #d4af37;
+            border-radius: 4px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: transparent;
+            min-width: 800px;
+        }
+        thead {
+            position: sticky;
+            top: 0;
+            background: rgba(26, 26, 26, 0.95);
+            z-index: 5;
+            backdrop-filter: blur(10px);
+        }
+        th {
+            text-align: left;
+            padding: 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #d4af37;
+            border-bottom: 2px solid #333;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            position: relative;
+        }
+        th:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+        th:after {
+            content: ' ↕';
+            font-size: 0.7rem;
+            opacity: 0.5;
+            margin-left: 0.25rem;
+        }
+        th.asc:after {
+            content: ' ↑';
+        }
+        th.desc:after {
+            content: ' ↓';
+        }
+        tbody tr {
+            transition: background 0.3s ease;
+            border-bottom: 1px solid #333;
+        }
+        tbody tr:hover {
+            background: rgba(212, 175, 55, 0.05);
+        }
+        tbody tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        td {
+            padding: 1rem;
+            font-size: 0.85rem;
+            vertical-align: middle;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        .owner-info, .vehicle-details {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .owner-info strong, .vehicle-details strong {
+            color: #fff;
+            font-weight: 500;
+        }
+        .owner-info span, .vehicle-details span {
+            font-size: 0.8rem;
+            color: #BDBDBD;
+            display: block;
+        }
+        .owner-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(212, 175, 55, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #d4af37;
+        }
+        .owner-avatar i {
+            font-size: 1.2rem;
+            color: #d4af37;
+        }
+        .vehicle-color {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            background: rgba(212, 175, 55, 0.2);
+            color: #d4af37;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            min-width: fit-content;
+            border: 1px solid transparent;
+        }
+        .status-active {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+        }
+        .status-inactive {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+        }
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            color: #BDBDBD;
+            font-size: 0.9rem;
+        }
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        .view-btn:hover {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196F3;
+        }
+        .edit-btn:hover {
+            background: rgba(255, 193, 7, 0.2);
+            color: #FFC107;
+        }
+        .delete-btn:hover {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff6b6b;
+        }
+        .no-data {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #BDBDBD;
+            font-style: italic;
+            grid-column: 1 / -1;
+        }
+        .no-data i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+            display: block;
+        }
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1.5rem;
+            background: rgba(42, 42, 42, 0.9);
+            border-top: 1px solid #333;
+        }
+        .pagination button {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid #444;
+            background: #121212;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .pagination button:hover:not(:disabled) {
+            background: #d4af37;
+            color: #000;
+            border-color: #d4af37;
+        }
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .pagination span {
+            color: #BDBDBD;
+            font-size: 0.9rem;
+        }
+        #messageContainer {
+            margin-bottom: 1rem;
+            z-index: 1000;
+            position: relative;
+        }
+        .message {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            max-width: 100%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        .message.success {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+        }
+        .message.error {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+        }
+        .message.info {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196F3;
+            border: 1px solid #2196F3;
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+            .filters {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .search-box input, .filter-select select {
+                padding: 0.75rem;
+            }
+            .table-container {
+                max-height: none;
+            }
+            table {
+                min-width: none;
+                font-size: 0.75rem;
+            }
+            th, td {
+                padding: 0.75rem 0.5rem;
+            }
+            .owner-info, .vehicle-details {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+            }
+            .actions {
+                justify-content: center;
+            }
+            .pagination {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .header-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .filters {
+                grid-template-columns: 1fr;
+            }
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+        /* Auto-hide Navigation Script */
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', () => {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const header = document.getElementById('header');
+            
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                if (header) header.classList.add('hidden');
+            } else {
+                if (header) header.classList.remove('hidden');
+            }
+            
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+    </style>
+</head>
+<body>
+    <!-- Header (Compact, Admin-Only) -->
+    <header id="header">
+        <a href="admin.html" class="logo-container">
+            <img src="images/logo.png" alt="Top Autocare Logo" style="height: 40px; width: auto;">
+            <h1 class="logo-title">Admin Panel</h1>
+        </a>
+        
+        <div class="header-actions">
+            <button class="menu-toggle" onclick="toggleAdminMenu()" title="Admin Menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Admin Navigation Menu (Updated: Exact List with Profile, Active on Vehicles) -->
+    <div class="admin-nav-overlay" onclick="toggleAdminMenu()">
+        <div class="admin-nav-menu" onclick="event.stopPropagation()">
+            <div class="admin-nav-header">
+                <h2 class="admin-nav-title">Admin Menu</h2>
+                <button class="close-menu" onclick="toggleAdminMenu()">&times;</button>
+            </div>
+            
+            <ul class="admin-menu">
+                <li><a href="admin.html" onclick="toggleAdminMenu()"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="admin-users.html" onclick="toggleAdminMenu()"><i class="fas fa-users"></i> Users</a></li>
+                <li><a href="admin-appointments.html" onclick="toggleAdminMenu()"><i class="fas fa-calendar-check"></i> Appointments</a></li>
+                <li><a href="admin-services.html" onclick="toggleAdminMenu()"><i class="fas fa-wrench"></i> Services</a></li>
+                <li><a href="admin-vehicles.html" class="active" onclick="toggleAdminMenu()"><i class="fas fa-car"></i> Vehicles</a></li>
+                <li><a href="admin-reports.html" onclick="toggleAdminMenu()"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                <li><a href="admin-settings.html" onclick="toggleAdminMenu()"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><a href="admin-profile.html" onclick="toggleAdminMenu()"><i class="fas fa-user-cog"></i> Admin Profile</a></li>
+                <li><a href="admin-notifications.html" onclick="toggleAdminMenu()"><i class="fas fa-bell"></i> Notifications</a></li>
+                <li><a href="admin-faq.html" onclick="toggleAdminMenu()"><i class="fas fa-question-circle"></i> FAQ Management</a></li>
+                <li><a href="admin-analytics.html" onclick="toggleAdminMenu()"><i class="fas fa-chart-pie"></i> Analytics</a></li>
+                <li><a href="admin-backup.html" onclick="toggleAdminMenu()"><i class="fas fa-database"></i> Backup & Restore</a></li>
+                <li><a href="admin.html" onclick="toggleAdminMenu()"><i class="fas fa-arrow-left"></i> Back to Site</a></li>
+            </ul>
+            
+            <!-- Working Sign Out Button (Bottom) -->
+            <button class="signout-btn" onclick="signOut()">
+                <i class="fas fa-sign-out-alt"></i> Sign Out
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header">
+            <div class="page-title">
+                <h1>Vehicle Management</h1>
+                <p>View, edit, and manage all registered vehicles in the system</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary refresh-btn" onclick="refreshVehicles()">
+                    <i class="fas fa-sync-alt"></i> Refresh Data
+                </button>
+            </div>
+        </div>
+
+        <div id="messageContainer"></div>
+
+        <!-- Professional Container Layout -->
+        <div class="vehicle-management">
+            <!-- Management Header Card -->
+            <div class="management-header">
+                <h2><i class="fas fa-car-side"></i> Registered Vehicles</h2>
+                <p>Real-time overview of all vehicles. Use filters to search or manage specific entries.</p>
+            </div>
+
+            <!-- Filters Container (Sticky Header) -->
+            <div class="filters-container">
+                <div class="filters">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search by owner name, make, model, or VIN...">
+                    </div>
+                    <div class="filter-select">
+                        <label class="filter-label">Filter by Owner</label>
+                        <select id="ownerFilter">
+                            <option value="all">All Owners</option>
+                            <!-- Dynamically populated -->
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="clearFilters()">
+                        <i class="fas fa-times"></i> Clear Filters
+                    </button>
+                </div>
+            </div>
+
+            <!-- Advanced Table Container -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable('owner', true)">Owner <span class="sort-indicator"></span></th>
+                            <th onclick="sortTable('vehicle', true)">Vehicle Details <span class="sort-indicator"></span></th>
+                            <th onclick="sortTable('vin', true)">VIN <span class="sort-indicator"></span></th>
+                            <th onclick="sortTable('color', true)">Color <span class="sort-indicator"></span></th>
+                            <th onclick="sortTable('license', true)">License Plate <span class="sort-indicator"></span></th>
+                            <th onclick="sortTable('status', true)">Status <span class="sort-indicator"></span></th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vehiclesTable">
+                        <tr>
+                            <td colspan="7" class="no-data">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <div>Loading vehicles...</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination Container -->
+            <div class="pagination" id="paginationContainer" style="display: none;">
+                <span id="paginationInfo">Showing 1-10 of 0 vehicles</span>
+                <div>
+                    <button onclick="changePage(-1)" id="prevBtn" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+                    <span id="pageNumbers"></span>
+                    <button onclick="changePage(1)" id="nextBtn" disabled>Next <i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, query, where, getDocs, orderBy, onSnapshot, doc, deleteDoc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBkVYS0CaKe1kHPp9GVnURiZz5WP5tE3iM",
+            authDomain: "top-autocare.firebaseapp.com",
+            projectId: "top-autocare",
+            storageBucket: "top-autocare.firebasestorage.app",
+            messagingSenderId: "879247821822",
+            appId: "1:879247821822:web:e6a418395d52aac99a4eaf",
+            measurementId: "G-T5NDM5M33Z"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let unsubscribeVehicles = null;
+        let allVehicles = []; // Cache for client-side filtering/sorting
+        let allOwners = new Set(); // For owner filter options
+
+        // DOM Elements
+        const vehiclesTable = document.getElementById('vehiclesTable');
+        const searchInput = document.getElementById('searchInput');
+        const ownerFilter = document.getElementById('ownerFilter');
+        const messageContainer = document.getElementById('messageContainer');
+
+        // Utility Functions
+        function showMessage(message, type = 'info') {
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            messageContainer.innerHTML = `
+                <div class="message ${className}">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                    ${message}
+                </div>
+            `;
+            setTimeout(() => messageContainer.innerHTML = '', 3000);
+        }
+
+        function getStatusBadge(active) {
+            return active ? 
+                '<span class="status-badge status-active">Active</span>' : 
+                '<span class="status-badge status-inactive">Inactive</span>';
+        }
+
+        // FIXED: Global Navigation Toggle
+        window.toggleAdminMenu = () => {
+            const overlay = document.querySelector('.admin-nav-overlay');
+            const menu = document.querySelector('.admin-nav-menu');
+            if (overlay && menu) {
+                overlay.classList.toggle('active');
+                menu.classList.toggle('active');
+            }
+        };
+
+        // Working Sign Out (Global)
+        window.signOut = async () => {
+            if (confirm('Are you sure you want to sign out?')) {
+                try {
+                    await signOut(auth);
+                    showMessage('Signed out successfully!', 'success');
+                    setTimeout(() => window.location.href = 'signin.html', 1500);
+                } catch (error) {
+                    console.error('Sign out error:', error);
+                    showMessage('Error signing out. Please try again.', 'error');
+                }
+            }
+        };
+
+        // Load Vehicles from Firestore (Real-time, Admin full access)
+        function loadVehicles(searchTerm = '', ownerFilterValue = 'all') {
+            if (vehiclesTable) {
+                vehiclesTable.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="no-data">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <div>Loading vehicles...</div>
+                        </td>
+                    </tr>
+                `;
+            }
+
+            let vehiclesQuery = query(
+                collection(db, 'vehicles'),
+                orderBy('createdAt', 'desc')
+            );
+
+            if (unsubscribeVehicles) {
+                unsubscribeVehicles();
+            }
+
+            unsubscribeVehicles = onSnapshot(vehiclesQuery, async (snapshot) => {
+                allVehicles = [];
+                allOwners.clear();
+
+                if (snapshot.empty) {
+                    renderVehicles([], searchTerm, ownerFilterValue);
+                    return;
+                }
+
+                // Fetch user details for owners (admin access)
+                const vehiclesWithOwners = [];
+                const userPromises = snapshot.docs.map(async (doc) => {
+                    const vehicle = { id: doc.id, ...doc.data() };
+                    allOwners.add(vehicle.userId); // For filter
+                    allVehicles.push(vehicle);
+
+                    // Get owner name
+                    const userRef = doc(db, 'users', vehicle.userId);
+                    const userSnap = await getDoc(userRef);
+                    if (userSnap.exists()) {
+                        vehicle.ownerName = userSnap.data().displayName || userSnap.data().email || 'Unknown';
+                        vehicle.ownerEmail = userSnap.data().email || 'N/A';
+                    } else {
+                        vehicle.ownerName = 'Unknown User';
+                        vehicle.ownerEmail = 'N/A';
+                    }
+
+                    vehiclesWithOwners.push(vehicle);
+                });
+
+                await Promise.all(userPromises);
+
+                // Populate owner filter options
+                if (ownerFilter) {
+                    ownerFilter.innerHTML = '<option value="all">All Owners</option>';
+                    Array.from(allOwners).forEach(ownerId => {
+                        const option = document.createElement('option');
+                        option.value = ownerId;
+                        option.textContent = `Owner ID: ${ownerId.substring(0, 8)}...`; // Truncated for display
+                        ownerFilter.appendChild(option);
+                    });
+                }
+
+                renderVehicles(vehiclesWithOwners, searchTerm, ownerFilterValue);
+
+            }, (error) => {
+                console.error('Error loading vehicles:', error);
+                if (vehiclesTable) {
+                    vehiclesTable.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="no-data">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <div>Error loading vehicles. Please refresh.</div>
+                            </td>
+                        </tr>
+                    `;
+                }
+                showMessage('Error loading vehicles. Please check permissions and try again.', 'error');
+            });
+        }
+
+        // Filter and Render Vehicles (Client-side for efficiency)
+        function renderVehicles(vehicles, searchTerm = '', ownerFilterValue = 'all') {
+            let filteredVehicles = vehicles;
+
+            // Owner filter
+            if (ownerFilterValue !== 'all') {
+                filteredVehicles = filteredVehicles.filter(vehicle => vehicle.userId === ownerFilterValue);
+            }
+
+            // Search filter (case-insensitive)
+            if (searchTerm.trim()) {
+                const lowerSearch = searchTerm.toLowerCase();
+                filteredVehicles = filteredVehicles.filter(vehicle => 
+                    (vehicle.ownerName && vehicle.ownerName.toLowerCase().includes(lowerSearch)) ||
+                    vehicle.make.toLowerCase().includes(lowerSearch) ||
+                    vehicle.model.toLowerCase().includes(lowerSearch) ||
+                    (vehicle.vin && vehicle.vin.toLowerCase().includes(lowerSearch))
+                );
+            }
+
+            // Apply sorting if active
+            if (currentSort.column) {
+                filteredVehicles.sort((a, b) => {
+                    let aVal, bVal;
+                    switch (currentSort.column) {
+                        case 'owner':
+                            aVal = a.ownerName || '';
+                            bVal = b.ownerName || '';
+                            break;
+                        case 'vehicle':
+                            aVal = `${a.make} ${a.model}` || '';
+                            bVal = `${b.make} ${b.model}` || '';
+                            break;
+                        case 'vin':
+                            aVal = a.vin || '';
+                            bVal = b.vin || '';
+                            break;
+                        case 'color':
+                            aVal = a.color || '';
+                            bVal = b.color || '';
+                            break;
+                        case 'license':
+                            aVal = a.licensePlate || '';
+                            bVal = a.licensePlate || '';
+                            break;
+                        case 'status':
+                            aVal = a.active ? 1 : 0;
+                            bVal = b.active ? 1 : 0;
+                            break;
+                        default:
+                            aVal = '';
+                            bVal = '';
+                    }
+
+                    if (typeof aVal === 'string') {
+                        return currentSort.direction === 'asc' ? 
+                            aVal.localeCompare(bVal, undefined, { sensitivity: 'base' }) : 
+                            bVal.localeCompare(aVal, undefined, { sensitivity: 'base' });
+                    } else {
+                        return currentSort.direction === 'asc' ? 
+                            aVal - bVal : bVal - aVal;
+                    }
+                });
+            }
+
+            if (vehiclesTable) {
+                if (filteredVehicles.length === 0) {
+                    vehiclesTable.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="no-data">
+                                <i class="fas fa-car"></i>
+                                <div>${searchTerm ? 'No vehicles match the search.' : ownerFilterValue !== 'all' ? 'No vehicles for selected owner.' : 'No vehicles found. Add your first vehicle!'}</div>
+                            </td>
+                        </tr>
+                    `;
+                    currentPage = 1;
+                    paginateVehicles();
+                    return;
+                }
+
+                vehiclesTable.innerHTML = '';
+                filteredVehicles.forEach((vehicle) => {
+                    renderVehicleRow(vehicle);
+                });
+
+                currentPage = 1;
+                paginateVehicles();
+            }
+        }
+
+        // Render Vehicle Row
+        function renderVehicleRow(vehicle) {
+            if (!vehiclesTable) return;
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>
+                    <div class="owner-info">
+                        <div class="owner-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <strong>${vehicle.ownerName}</strong>
+                            <span>${vehicle.ownerEmail}</span>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="vehicle-details">
+                        <strong>${vehicle.make || 'N/A'} ${vehicle.model || 'N/A'} (${vehicle.year || 'N/A'})</strong>
+                        <span>${vehicle.mileage || 'N/A'} miles</span>
+                    </div>
+                </td>
+                <td>${vehicle.vin || 'N/A'}</td>
+                <td><span class="vehicle-color">${vehicle.color || 'N/A'}</span></td>
+                <td>${vehicle.licensePlate || 'N/A'}</td>
+                <td>${getStatusBadge(vehicle.active)}</td>
+                <td class="actions">
+                    <button class="action-btn view-btn" onclick="viewVehicle('${vehicle.id}')" title="View Details">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="action-btn edit-btn" onclick="editVehicle('${vehicle.id}')" title="Edit Vehicle">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="action-btn delete-btn" onclick="deleteVehicle('${vehicle.id}')" title="Delete Vehicle">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            vehiclesTable.appendChild(row);
+        }
+
+        // Global Action Functions
+        window.viewVehicle = (vehicleId) => {
+            if (vehicleId) {
+                window.location.href = `admin-vehicle-details.html?id=${vehicleId}`;
+            } else {
+                showMessage('Vehicle ID not provided.', 'error');
+            }
+        };
+
+        window.editVehicle = (vehicleId) => {
+            if (vehicleId) {
+                window.location.href = `admin-vehicle-details.html?id=${vehicleId}`;
+            } else {
+                showMessage('Vehicle not found for editing.', 'error');
+            }
+        };
+
+        window.deleteVehicle = async (vehicleId) => {
+            if (!vehicleId) {
+                showMessage('Invalid vehicle ID.', 'error');
+                return;
+            }
+
+            if (confirm(`Are you sure you want to delete this vehicle?\n\nVehicle ID: ${vehicleId}\nThis cannot be undone and may affect related appointments.`)) {
+                try {
+                    await deleteDoc(doc(db, 'vehicles', vehicleId));
+                    showMessage('Vehicle deleted successfully!', 'success');
+                    // Refresh filtered list
+                    const searchTerm = searchInput ? searchInput.value.trim() : '';
+                    const ownerValue = ownerFilter ? ownerFilter.value : 'all';
+                    renderVehicles(allVehicles, searchTerm, ownerValue);
+                } catch (error) {
+                    console.error('Error deleting vehicle:', error);
+                    showMessage('Error deleting vehicle. Check permissions and try again.', 'error');
+                }
+            }
+        };
+
+        window.refreshVehicles = () => {
+            const searchTerm = searchInput ? searchInput.value.trim() : '';
+            const ownerValue = ownerFilter ? ownerFilter.value : 'all';
+            loadVehicles(searchTerm, ownerValue);
+            showMessage('Data refreshed successfully.', 'success');
+        };
+
+        window.clearFilters = () => {
+            if (searchInput) searchInput.value = '';
+            if (ownerFilter) ownerFilter.value = 'all';
+            renderVehicles(allVehicles, '', 'all');
+            currentPage = 1;
+            paginateVehicles();
+            showMessage('Filters cleared.', 'success');
+        };
+
+        // Advanced Sorting (Global)
+        let currentSort = { column: null, direction: 'asc' };
+        window.sortTable = (column, isString = true) => {
+            const tableBody = document.getElementById('vehiclesTable');
+            if (!tableBody) return;
+
+            const rows = Array.from(tableBody.querySelectorAll('tr:not(.no-data)'));
+            
+            // Toggle direction
+            const direction = currentSort.column === column && currentSort.direction === 'asc' ? 'desc' : 'asc';
+
+            // Update header classes
+            document.querySelectorAll('th').forEach(th => th.classList.remove('asc', 'desc'));
+            const headerIndex = ['owner', 'vehicle', 'vin', 'color', 'license', 'status'].indexOf(column);
+            if (headerIndex !== -1) {
+                const header = document.querySelectorAll('th')[headerIndex];
+                header.classList.add(direction);
+            }
+
+            currentSort = { column, direction };
+
+            // Sort rows
+            rows.sort((a, b) => {
+                let aVal, bVal;
+                switch (column) {
+                    case 'owner':
+                        aVal = a.cells[0].querySelector('strong')?.textContent || '';
+                        bVal = b.cells[0].querySelector('strong')?.textContent || '';
+                        break;
+                    case 'vehicle':
+                        aVal = a.cells[1].querySelector('strong')?.textContent || '';
+                        bVal = b.cells[1].querySelector('strong')?.textContent || '';
+                        break;
+                    case 'vin':
+                        aVal = a.cells[2].textContent.trim();
+                        bVal = b.cells[2].textContent.trim();
+                        break;
+                    case 'color':
+                        aVal = a.cells[3].textContent.trim();
+                        bVal = b.cells[3].textContent.trim();
+                        break;
+                    case 'license':
+                        aVal = a.cells[4].textContent.trim();
+                        bVal = b.cells[4].textContent.trim();
+                        break;
+                    case 'status':
+                        aVal = a.cells[5].querySelector('.status-active') ? 1 : 0;
+                        bVal = b.cells[5].querySelector('.status-active') ? 1 : 0;
+                        break;
+                    default:
+                        return 0;
+                }
+
+                if (isString) {
+                    return direction === 'asc' ? 
+                        aVal.localeCompare(bVal, undefined, { sensitivity: 'base' }) : 
+                        bVal.localeCompare(aVal, undefined, { sensitivity: 'base' });
+                } else {
+                    aVal = parseFloat(aVal) || 0;
+                    bVal = parseFloat(bVal) || 0;
+                    return direction === 'asc' ? aVal - bVal : bVal - aVal;
+                }
+            });
+
+            // Re-append sorted rows
+            rows.forEach(row => tableBody.appendChild(row));
+
+            // Reset to first page
+            currentPage = 1;
+            paginateVehicles();
+
+            showMessage(`Table sorted by ${column} (${direction}).`, 'info');
+        };
+
+        // Pagination (Global)
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        window.changePage = (direction) => {
+            const tableBody = document.getElementById('vehiclesTable');
+            if (!tableBody) return;
+
+            const rows = Array.from(tableBody.querySelectorAll('tr:not(.no-data)'));
+            const totalPages = Math.ceil(rows.length / itemsPerPage);
+
+            currentPage += direction;
+            currentPage = Math.max(1, Math.min(currentPage, totalPages));
+
+            paginateVehicles();
+        };
+
+        function paginateVehicles() {
+            const tableBody = document.getElementById('vehiclesTable');
+            if (!tableBody) return;
+
+            const rows = Array.from(tableBody.querySelectorAll('tr:not(.no-data)'));
+            const totalItems = rows.length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+            // Hide all rows
+            rows.forEach(row => row.style.display = 'none');
+
+            // Show current page
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            rows.slice(start, end).forEach(row => row.style.display = '');
+
+            // Update info
+            if (document.getElementById('paginationInfo')) {
+                document.getElementById('paginationInfo').textContent = 
+                    totalItems === 0 ? 'No vehicles to display' : 
+                    `Showing ${Math.min(start + 1, totalItems)}-${Math.min(end, totalItems)} of ${totalItems} vehicles`;
+            }
+
+            // Update buttons
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            if (prevBtn) prevBtn.disabled = currentPage === 1;
+            if (nextBtn) nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+
+            // Show/hide pagination
+            const paginationContainer = document.getElementById('paginationContainer');
+            if (paginationContainer) {
+                paginationContainer.style.display = totalPages > 1 ? 'flex' : 'none';
+            }
+        }
+
+        // Event Listeners
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.trim();
+                const ownerValue = ownerFilter ? ownerFilter.value : 'all';
+                renderVehicles(allVehicles, searchTerm, ownerValue);
+            });
+        }
+
+        if (ownerFilter) {
+            ownerFilter.addEventListener('change', (e) => {
+                const searchTerm = searchInput ? searchInput.value.trim() : '';
+                renderVehicles(allVehicles, searchTerm, e.target.value);
+            });
+        }
+
+        // Initialize Page
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                
+                const userRef = doc(db, 'users', user.uid);
+                const userSnap = await getDoc(userRef);
+                
+                if (userSnap.exists() && userSnap.data().role === 'admin') {
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', () => loadVehicles());
+                    } else {
+                        loadVehicles();
+                    }
+                } else {
+                    showMessage('Access denied. Admin privileges required.', 'error');
+                    setTimeout(() => window.location.href = 'dashboard.html', 2000);
+                }
+            } else {
+                window.location.href = 'signin.html';
+            }
+        });
+
+        // Cleanup
+        window.addEventListener('beforeunload', () => {
+            if (unsubscribeVehicles) unsubscribeVehicles();
+        });
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('Service Worker registered:', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.error('Service Worker registration failed:', registrationError);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

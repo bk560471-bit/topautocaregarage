@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Vehicles - Top Autocare Garage</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#d4af37">
+
+    <!-- Mobile/PWA Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Top Autocare">
+    <link rel="apple-touch-icon" href="assets/images/app-icon-512.png">
+
+    <!-- Favicon for Browsers -->
+    <link rel="icon" href="assets/images/app-icon-192.png" sizes="192x192" type="image/png">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            line-height: 1.6;
+            padding-bottom: 80px;
+            position: relative;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(4px);
+            z-index: -1;
+        }
+        /* Header Styles */
+        #header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        #header.hidden {
+            transform: translateY(-100%);
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 0 1rem;
+            color: #d4af37;
+        }
+        .logo-container:hover h1 {
+            text-decoration: underline;
+        }
+        .logo-container img {
+            height: 50px;
+            width: auto;
+            margin-right: 0.5rem;
+            border-radius: 50%;
+        }
+        .logo-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            color: #d4af37;
+            text-decoration: none;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding-right: 1rem;
+        }
+        .notification-bell {
+            position: relative;
+            color: #ffffff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .notification-bell:hover {
+            color: #d4af37;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #d4af37;
+            color: #000;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .book-service-btn {
+            background: #d4af37;
+            color: #000;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .book-service-btn:hover {
+            background: #b8962e;
+            transform: translateY(-2px);
+        }
+        @media (max-width: 768px) {
+            #header {
+                padding: 0.5rem;
+                flex-wrap: wrap;
+            }
+            .logo-container {
+                padding: 0 0.5rem;
+            }
+            .logo-title {
+                font-size: 1.25rem;
+            }
+            .header-actions {
+                padding-right: 0.5rem;
+                gap: 0.5rem;
+            }
+            .book-service-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+        .container {
+            max-width: 800px;
+            margin: 80px auto 20px;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #d4af37;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .add-vehicle-btn-container {
+            background: rgba(30, 30, 30, 0.85);
+            border-radius: 12px;
+            border: 1px solid #333;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .add-vehicle-btn-container h2 {
+            font-size: 1.5rem;
+            color: #d4af37;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 8px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #d4af37, #b8962e);
+            color: #000;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #b8962e, #d4af37);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+        .vehicles-section {
+            background: rgba(30, 30, 30, 0.85);
+            border-radius: 12px;
+            border: 1px solid #333;
+            padding: 2rem;
+        }
+        .vehicles-section h2 {
+            font-size: 1.5rem;
+            color: #d4af37;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        #vehiclesContainer {
+            min-height: 200px;
+        }
+        .vehicle-card {
+            background: rgba(18, 18, 18, 0.85);
+            border-radius: 8px;
+            border: 1px solid #333;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        .vehicle-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+            border-color: #d4af37;
+        }
+        .vehicle-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+        .vehicle-icon i {
+            font-size: 1.5rem;
+            color: #d4af37;
+        }
+        .vehicle-info {
+            flex: 1;
+        }
+        .vehicle-info h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+        .vehicle-info p {
+            font-size: 0.95rem;
+            color: #ffffff;
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+        }
+        .vehicle-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .action-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            border: 1px solid #333;
+            background: transparent;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .edit-btn:hover {
+            border-color: #d4af37;
+            color: #d4af37;
+            background: rgba(212, 175, 55, 0.1);
+        }
+        .delete-btn:hover {
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+        }
+        .message {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .message.success {
+            background: rgba(0, 255, 0, 0.15);
+            color: #00ff00;
+            border: 1px solid #00ff00;
+        }
+        .message.error {
+            background: rgba(255, 0, 0, 0.15);
+            color: #ff0000;
+            border: 1px solid #ff0000;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #ffffff;
+            background: rgba(30, 30, 30, 0.85);
+            border-radius: 12px;
+            border: 1px solid #333;
+        }
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+            color: #ffffff;
+        }
+        .empty-state h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+        }
+        .empty-state p {
+            font-size: 0.875rem;
+            color: #ffffff;
+        }
+        /* Mobile Bottom Nav */
+        .mobile-nav { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            z-index: 40; 
+            background: rgba(30, 30, 30, 0.85); 
+            border-top: 1px solid #333; 
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.2); 
+            display: none;
+            transition: transform 0.3s ease;
+        }
+        .mobile-nav.hidden {
+            transform: translateY(100%);
+        }
+        @media (max-width: 768px) { .mobile-nav { display: block; } }
+        .nav-grid { 
+            display: grid; 
+            grid-template-columns: repeat(5, 1fr); 
+            padding: 0.5rem 0; 
+            list-style: none;
+        }
+        .nav-item-mobile { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 0.5rem; 
+            text-decoration: none; 
+            color: #ffffff; 
+            font-size: 0.75rem; 
+            transition: all 0.3s ease; 
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .nav-item-mobile:hover {
+            color: #d4af37;
+        }
+        .nav-item-mobile.active { 
+            color: #d4af37; 
+            text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+        }
+        .nav-item-mobile i { 
+            font-size: 1.25rem; 
+            margin-bottom: 0.25rem; 
+            opacity: 0.8; 
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        .nav-item-mobile:hover i {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        .nav-item-mobile.active i { 
+            opacity: 1; 
+            text-shadow: 0 0 6px rgba(212, 175, 55, 0.8);
+            filter: drop-shadow(0 2px 6px rgba(212, 175, 55, 0.4));
+        }
+        @media (max-width: 768px) {
+            .container {
+                margin: 70px auto 20px;
+                padding: 15px;
+            }
+            .add-vehicle-btn-container, .vehicles-section {
+                padding: 1.5rem;
+            }
+            .vehicle-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 1rem;
+            }
+            .vehicle-info {
+                margin-top: 1rem;
+            }
+            .vehicle-actions {
+                margin-top: 1rem;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        <a href="dashboard.html" class="logo-container">
+            <img src="images/logo.png" alt="Top Autocare Logo" style="height: 50px; width: auto;">
+            <h1 class="logo-title">Top Autocare</h1>
+        </a>
+        
+        <div class="header-actions">
+            <a href="book-appointment.html" class="book-service-btn">
+                <i class="fas fa-calendar-plus"></i> Book Service
+            </a>
+            
+            <div class="notification-bell" onclick="window.location.href='notifications.html'">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" style="display: none;">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- My Vehicles Content -->
+    <div class="container">
+        <h1>My Vehicles</h1>
+        <div id="messageContainer"></div>
+
+        <!-- Add Vehicle Button Section -->
+        <section class="add-vehicle-btn-container">
+            <h2><i class="fas fa-plus-circle"></i> Add a New Vehicle</h2>
+            <button onclick="window.location.href='add-vehicle.html'" class="btn btn-primary">
+                <i class="fas fa-car-plus"></i> Add Vehicle
+            </button>
+        </section>
+
+        <!-- Vehicles List Section -->
+        <section class="vehicles-section">
+            <h2><i class="fas fa-car"></i> My Vehicles</h2>
+            <div id="vehiclesContainer">
+                <!-- Loading state -->
+                <div class="empty-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <h3>Loading your vehicles...</h3>
+                    <p>Fetching from cloud storage</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-nav">
+        <ul class="nav-grid">
+            <li>
+                <a class="nav-item-mobile active" href="myvehicles.html">
+                    <i class="fas fa-car"></i>
+                    <span>Vehicles</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="services.html">
+                    <i class="fas fa-wrench"></i>
+                    <span>Services</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="dashboard.html">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="book-appointment.html">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Appointments</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="profile.html">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Firebase Script - Updated with Complete Fixes -->
+    <script type="module">
+        // Firebase Imports
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { 
+            getFirestore, 
+            collection, 
+            query, 
+            where, 
+            onSnapshot,
+            orderBy,
+            doc,
+            deleteDoc
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBkVYS0CaKe1kHPp9GVnURiZz5WP5tE3iM",
+            authDomain: "top-autocare.firebaseapp.com",
+            projectId: "top-autocare",
+            storageBucket: "top-autocare.firebasestorage.app",
+            messagingSenderId: "879247821822",
+            appId: "1:879247821822:web:e6a418395d52aac99a4eaf",
+            measurementId: "G-T5NDM5M33Z"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let unsubscribeVehicles = null;
+        let unsubscribeNotifications = null;
+
+        // DOM Elements
+        const vehiclesContainer = document.getElementById('vehiclesContainer');
+        const messageContainer = document.getElementById('messageContainer');
+
+        // Utility Functions
+        function showMessage(message, type = 'info') {
+            // Clear existing messages
+            messageContainer.innerHTML = '';
+            
+            const div = document.createElement('div');
+            div.className = `message ${type}`;
+            div.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-times-circle' : 'fa-info-circle'}"></i>
+                ${message}
+            `;
+            messageContainer.appendChild(div);
+            setTimeout(() => {
+                if (div.parentNode) div.remove();
+            }, 5000);
+        }
+
+        // Load Notifications for Badge
+        function loadNotifications() {
+            if (!currentUser) return;
+
+            try {
+                const notificationsQuery = query(
+                    collection(db, 'notifications'),
+                    where('userId', '==', currentUser.uid),
+                    where('read', '==', false),
+                    orderBy('timestamp', 'desc'),
+                    limit(3)
+                );
+
+                unsubscribeNotifications = onSnapshot(notificationsQuery, 
+                    (snapshot) => {
+                        const unreadCount = snapshot.size;
+                        const notificationBadge = document.querySelector('.notification-badge');
+                        if (notificationBadge) {
+                            notificationBadge.textContent = unreadCount > 99 ? '99+' : unreadCount.toString();
+                            notificationBadge.style.display = unreadCount === 0 ? 'none' : 'flex';
+                        }
+                    }, 
+                    (error) => {
+                        console.error('Notifications error:', error);
+                    }
+                );
+            } catch (error) {
+                console.error('Notifications setup error:', error);
+            }
+        }
+
+        // Load Vehicles from Firestore
+        function loadVehicles() {
+            if (!currentUser || !vehiclesContainer) return;
+
+            console.log('🔄 Loading vehicles for user:', currentUser.uid);
+
+            // Show loading state
+            vehiclesContainer.innerHTML = `
+                <div style="text-align: center; padding: 2rem; color: #ffffff;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 1rem; color: #d4af37;"></i>
+                    <p>Loading your vehicles...</p>
+                </div>
+            `;
+
+            try {
+                // Create the query - this requires the vehicles index: userId ASC, createdAt DESC
+                const vehiclesQuery = query(
+                    collection(db, 'vehicles'),
+                    where('userId', '==', currentUser.uid),
+                    orderBy('createdAt', 'desc')
+                );
+
+                unsubscribeVehicles = onSnapshot(vehiclesQuery, 
+                    (snapshot) => {
+                        console.log('✅ Vehicles snapshot received:', snapshot.size, 'vehicles');
+                        vehiclesContainer.innerHTML = '';
+
+                        if (snapshot.empty) {
+                            vehiclesContainer.innerHTML = `
+                                <div class="empty-state">
+                                    <i class="fas fa-car"></i>
+                                    <h3>No Vehicles Added</h3>
+                                    <p>Add your first vehicle to manage services and bookings easily.</p>
+                                </div>
+                            `;
+                            return;
+                        }
+
+                        snapshot.forEach((docSnap) => {
+                            const vehicle = { id: docSnap.id, ...docSnap.data() };
+                            renderVehicle(vehicle);
+                        });
+                    }, 
+                    (error) => {
+                        console.error('❌ Vehicles load error:', error);
+                        console.error('Error code:', error.code);
+                        console.error('Error message:', error.message);
+                        
+                        let errorMessage = 'Could not load vehicles. Please refresh.';
+                        
+                        if (error.code === 'permission-denied') {
+                            errorMessage = 'Permission denied. Please sign in again.';
+                            setTimeout(() => window.location.href = 'signin.html', 2000);
+                        } else if (error.code === 'failed-precondition') {
+                            errorMessage = 'Database index required. Please contact support.';
+                        }
+                        
+                        vehiclesContainer.innerHTML = `
+                            <div class="empty-state">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <h3>Error Loading Vehicles</h3>
+                                <p>${errorMessage}</p>
+                                <button onclick="location.reload()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #d4af37; color: #000; border: none; border-radius: 4px; cursor: pointer;">
+                                    <i class="fas fa-sync-alt"></i> Retry
+                                </button>
+                            </div>
+                        `;
+                        
+                        showMessage(errorMessage, 'error');
+                    }
+                );
+            } catch (error) {
+                console.error('❌ Vehicles setup error:', error);
+                vehiclesContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Setup Error</h3>
+                        <p>Failed to setup vehicles loading.</p>
+                    </div>
+                `;
+                showMessage('Setup error loading vehicles.', 'error');
+            }
+        }
+
+        // Render Single Vehicle
+        function renderVehicle(vehicle) {
+            const vehicleCard = document.createElement('div');
+            vehicleCard.className = 'vehicle-card';
+            vehicleCard.innerHTML = `
+                <div class="vehicle-icon">
+                    <i class="fas fa-car"></i>
+                </div>
+                <div class="vehicle-info">
+                    <h3>${vehicle.make || 'Unknown'} ${vehicle.model || ''}</h3>
+                    <p><strong>Year:</strong> ${vehicle.year || 'N/A'}</p>
+                    <p><strong>Plate:</strong> ${vehicle.plate || vehicle.licensePlate || 'N/A'}</p>
+                    ${vehicle.color ? `<p><strong>Color:</strong> ${vehicle.color}</p>` : ''}
+                    ${vehicle.vin ? `<p><strong>VIN:</strong> ${vehicle.vin}</p>` : ''}
+                </div>
+                <div class="vehicle-actions">
+                    <button class="action-btn edit-btn" onclick="editVehicle('${vehicle.id}')" title="Edit Vehicle">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="action-btn delete-btn" onclick="deleteVehicle('${vehicle.id}')" title="Delete Vehicle">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `;
+            vehiclesContainer.appendChild(vehicleCard);
+        }
+
+        // Edit Vehicle
+        window.editVehicle = (vehicleId) => {
+            window.location.href = `add-vehicle.html?id=${vehicleId}`;
+        };
+
+        // Delete Vehicle
+        window.deleteVehicle = async (vehicleId) => {
+            if (!confirm('Are you sure you want to delete this vehicle? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                await deleteDoc(doc(db, 'vehicles', vehicleId));
+                showMessage('Vehicle deleted successfully!', 'success');
+            } catch (error) {
+                console.error('Delete vehicle error:', error);
+                showMessage('Error deleting vehicle. Please try again.', 'error');
+            }
+        };
+
+        // Authentication and Initialization
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                console.log('👤 User authenticated:', user.uid);
+                loadVehicles();
+                loadNotifications();
+            } else {
+                showMessage('Please sign in to manage your vehicles.', 'error');
+                setTimeout(() => window.location.href = 'signin.html', 2000);
+            }
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (unsubscribeVehicles) unsubscribeVehicles();
+            if (unsubscribeNotifications) unsubscribeNotifications();
+        });
+
+        console.log('🚗 My Vehicles page loaded with Firestore integration');
+    </script>
+
+    <!-- Auto-hide Navigation Script -->
+    <script>
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', () => {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const header = document.getElementById('header');
+            const mobileNav = document.querySelector('.mobile-nav');
+            
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                if (header) header.classList.add('hidden');
+                if (mobileNav) mobileNav.classList.add('hidden');
+            } else {
+                if (header) header.classList.remove('hidden');
+                if (mobileNav) mobileNav.classList.remove('hidden');
+            }
+            
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('✅ Service Worker registered');
+                    })
+                    .catch((error) => {
+                        console.error('❌ Service Worker error:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

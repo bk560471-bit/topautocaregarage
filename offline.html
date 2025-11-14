@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - Top Autocare Garage</title>
+    <meta name="description" content="You're currently offline. Reconnect to book appointments, manage vehicles, and access full features at Top Autocare Garage.">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#d4af37">
+
+    <!-- Mobile/PWA Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Top Autocare">
+    <link rel="apple-touch-icon" href="assets/images/app-icon-512.png">
+
+    <!-- Favicon for Browsers -->
+    <link rel="icon" href="assets/images/app-icon-192.png" sizes="192x192" type="image/png">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            line-height: 1.6;
+            position: relative;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(4px);
+            z-index: -1;
+        }
+        /* Header Styles */
+        #header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        #header.hidden {
+            transform: translateY(-100%);
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 0 1rem;
+            color: #d4af37;
+        }
+        .logo-container:hover h1 {
+            text-decoration: underline;
+        }
+        .logo-container img {
+            height: 50px;
+            width: auto;
+            margin-right: 0.5rem;
+            border-radius: 50%;
+        }
+        .logo-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            color: #d4af37;
+            text-decoration: none;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding-right: 1rem;
+        }
+        .notification-bell {
+            position: relative;
+            color: #ffffff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .notification-bell:hover {
+            color: #d4af37;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #d4af37;
+            color: #000;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            display: none;
+        }
+        .book-service-btn {
+            background: #d4af37;
+            color: #000;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .book-service-btn:hover {
+            background: #b8962e;
+            transform: translateY(-2px);
+        }
+        @media (max-width: 768px) {
+            #header {
+                padding: 0.5rem;
+                flex-wrap: wrap;
+            }
+            .logo-container {
+                padding: 0 0.5rem;
+            }
+            .logo-title {
+                font-size: 1.25rem;
+            }
+            .header-actions {
+                padding-right: 0.5rem;
+                gap: 0.5rem;
+            }
+            .book-service-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+        .offline-container {
+            min-height: calc(100vh - 120px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+        .offline-content {
+            max-width: 600px;
+            padding: 2rem;
+            background: rgba(30, 30, 30, 0.85);
+            border-radius: 12px;
+            border: 1px solid #333;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        .offline-icon {
+            font-size: 6rem;
+            color: #d4af37;
+            margin-bottom: 1.5rem;
+            opacity: 0.8;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+        .offline-title {
+            color: #d4af37;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        .offline-subtitle {
+            color: #ffffff;
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+        .offline-message {
+            color: #ffffff;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+        .offline-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+        .btn-offline {
+            padding: 1rem 1.5rem;
+            background: #d4af37;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            font-size: 0.95rem;
+            min-width: 150px;
+            justify-content: center;
+        }
+        .btn-offline:hover:not(:disabled) {
+            background: #b8962e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+        .btn-offline:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            opacity: 0.7;
+        }
+        .btn-offline-secondary {
+            background: transparent;
+            color: #ffffff;
+            border: 1px solid #d4af37;
+        }
+        .btn-offline-secondary:hover:not(:disabled) {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: #b8962e;
+            color: #d4af37;
+        }
+        .connection-status {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            margin-top: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        .status-offline {
+            color: #ff6b6b;
+        }
+        .status-online {
+            color: #4CAF50;
+        }
+        .status-icon {
+            font-size: 1.2rem;
+        }
+        /* Mobile Bottom Nav */
+        .mobile-nav { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            z-index: 40; 
+            background: rgba(30, 30, 30, 0.85); 
+            border-top: 1px solid #333; 
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.2); 
+            display: none;
+            transition: transform 0.3s ease;
+        }
+        .mobile-nav.hidden {
+            transform: translateY(100%);
+        }
+        @media (max-width: 768px) { .mobile-nav { display: block; } }
+        .nav-grid { 
+            display: grid; 
+            grid-template-columns: repeat(5, 1fr); 
+            padding: 0.5rem 0; 
+            list-style: none;
+        }
+        .nav-item-mobile { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 0.5rem; 
+            text-decoration: none; 
+            color: #ffffff; 
+            font-size: 0.75rem; 
+            transition: all 0.3s ease; 
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .nav-item-mobile:hover {
+            color: #d4af37;
+        }
+        .nav-item-mobile.active { 
+            color: #d4af37; 
+            text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+        }
+        .nav-item-mobile i { 
+            font-size: 1.25rem; 
+            margin-bottom: 0.25rem; 
+            opacity: 0.8; 
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        .nav-item-mobile:hover i {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        .nav-item-mobile.active i { 
+            opacity: 1; 
+            text-shadow: 0 0 6px rgba(212, 175, 55, 0.8);
+            filter: drop-shadow(0 2px 6px rgba(212, 175, 55, 0.4));
+        }
+        @media (max-width: 768px) {
+            .offline-container {
+                padding: 1rem;
+            }
+            .offline-content {
+                padding: 1.5rem;
+                margin: 0 1rem;
+            }
+            .offline-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            .btn-offline {
+                width: 100%;
+                max-width: 250px;
+            }
+            .connection-status {
+                margin-top: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        <a href="dashboard.html" class="logo-container">
+            <img src="images/logo.png" alt="Top Autocare Logo" style="height: 50px; width: auto;">
+            <h1 class="logo-title">Top Autocare</h1>
+        </a>
+        
+        <div class="header-actions">
+            <a href="book-appointment.html" class="book-service-btn">
+                <i class="fas fa-wrench"></i> Book Service
+            </a>
+            
+            <div class="notification-bell" onclick="window.location.href='notifications.html'">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" style="display: none;">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Offline Content -->
+    <main class="offline-container">
+        <div class="offline-content">
+            <div class="offline-icon">
+                <i class="fas fa-wifi-slash"></i>
+            </div>
+            <h1 class="offline-title">You're Offline</h1>
+            <p class="offline-subtitle">Connection temporarily unavailable</p>
+            <p class="offline-message">
+                Some features like booking appointments, viewing live updates, or managing your profile require an internet connection. 
+                We've loaded cached content where available. Please check your network and try again.
+            </p>
+            
+            <div class="offline-buttons">
+                <button onclick="retryConnection()" class="btn-offline">
+                    <i class="fas fa-sync-alt"></i> Retry Connection
+                </button>
+                <a href="dashboard.html" class="btn-offline">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="services.html" class="btn-offline btn-offline-secondary">
+                    <i class="fas fa-wrench"></i> Services (Cached)
+                </a>
+                <a href="faq.html" class="btn-offline btn-offline-secondary">
+                    <i class="fas fa-question"></i> FAQ (Cached)
+                </a>
+            </div>
+
+            <div id="connectionStatus" class="connection-status">
+                <i id="statusIcon" class="fas fa-circle status-icon status-offline"></i>
+                <span id="statusText">Offline - No internet connection detected</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-nav">
+        <ul class="nav-grid">
+            <li>
+                <a class="nav-item-mobile" href="myvehicles.html">
+                    <i class="fas fa-car"></i>
+                    <span>Vehicles</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="services.html">
+                    <i class="fas fa-wrench"></i>
+                    <span>Services</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile active" href="dashboard.html">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="book-appointment.html">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Appointments</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="profile.html">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Offline Detection & Retry Script -->
+    <script>
+        function updateConnectionStatus() {
+            const statusIcon = document.getElementById('statusIcon');
+            const statusText = document.getElementById('statusText');
+            const retryBtn = document.querySelector('[onclick="retryConnection()"]');
+            
+            if (navigator.onLine) {
+                statusIcon.className = 'fas fa-circle status-icon status-online';
+                statusText.textContent = 'Online - Reload for full features';
+                retryBtn.textContent = 'Reload App';
+                retryBtn.disabled = false;
+                // Auto-reload after delay when back online
+                setTimeout(() => {
+                    if (confirm('Connection restored! Reload to access full features?')) {
+                        window.location.reload();
+                    }
+                }, 2000);
+            } else {
+                statusIcon.className = 'fas fa-circle status-icon status-offline';
+                statusText.textContent = 'Offline - Limited features available';
+                retryBtn.textContent = 'Retry Connection';
+                retryBtn.disabled = false;
+            }
+        }
+        
+        function retryConnection() {
+            const retryBtn = document.querySelector('[onclick="retryConnection()"]');
+            retryBtn.disabled = true;
+            retryBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
+            
+            // Simple reconnect attempt
+            window.location.reload();
+        }
+        
+        // Event listeners for online/offline
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+        
+        // Initial status check
+        document.addEventListener('DOMContentLoaded', updateConnectionStatus);
+        
+        // Periodic check (every 5 seconds)
+        setInterval(updateConnectionStatus, 5000);
+    </script>
+
+    <!-- Service Worker Registration (will cache this page via SW) -->
+    <script>
+        if ('serviceWorker' in navigator && navigator.onLine) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('✅ Service Worker registered for offline support');
+                    })
+                    .catch((error) => {
+                        console.error('❌ Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

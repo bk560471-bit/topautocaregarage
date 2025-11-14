@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service - Top Autocare Garage</title>
+    <meta name="description" content="Terms of Service for Top Autocare Garage. Review our rules for using the website, booking appointments, and receiving automotive services in Nairobi, Kenya.">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#d4af37">
+
+    <!-- Mobile/PWA Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Top Autocare">
+    <link rel="apple-touch-icon" href="assets/images/app-icon-512.png">
+
+    <!-- Favicon for Browsers -->
+    <link rel="icon" href="assets/images/app-icon-192.png" sizes="192x192" type="image/png">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            line-height: 1.6;
+            padding-bottom: 80px;
+            position: relative;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(4px);
+            z-index: -1;
+        }
+        /* Header Styles */
+        #header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        #header.hidden {
+            transform: translateY(-100%);
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 0 1rem;
+            color: #d4af37;
+        }
+        .logo-container:hover h1 {
+            text-decoration: underline;
+        }
+        .logo-container img {
+            height: 50px;
+            width: auto;
+            margin-right: 0.5rem;
+            border-radius: 50%;
+        }
+        .logo-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            color: #d4af37;
+            text-decoration: none;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding-right: 1rem;
+        }
+        .notification-bell {
+            position: relative;
+            color: #ffffff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .notification-bell:hover {
+            color: #d4af37;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #d4af37;
+            color: #000;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            display: none;
+        }
+        .book-service-btn {
+            background: #d4af37;
+            color: #000;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .book-service-btn:hover {
+            background: #b8962e;
+            transform: translateY(-2px);
+        }
+        @media (max-width: 768px) {
+            #header {
+                padding: 0.5rem;
+                flex-wrap: wrap;
+            }
+            .logo-container {
+                padding: 0 0.5rem;
+            }
+            .logo-title {
+                font-size: 1.25rem;
+            }
+            .header-actions {
+                padding-right: 0.5rem;
+                gap: 0.5rem;
+            }
+            .book-service-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+        .container {
+            max-width: 1200px;
+            margin: 80px auto 20px;
+            padding: 20px;
+        }
+        .terms-content {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(30, 30, 30, 0.85);
+            border-radius: 12px;
+            border: 1px solid #333;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .terms-section {
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #333;
+        }
+        .terms-section:last-child {
+            border-bottom: none;
+        }
+        .terms-section h2 {
+            color: #d4af37;
+            margin-bottom: 1rem;
+            font-size: 1.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+        }
+        .terms-section h3 {
+            color: #d4af37;
+            margin: 1.5rem 0 1rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        .terms-section p, .terms-section li {
+            color: #ffffff;
+            margin-bottom: 1rem;
+            line-height: 1.7;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        .terms-section ul {
+            padding-left: 1.5rem;
+        }
+        .terms-section li {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .terms-section strong {
+            color: #d4af37;
+        }
+        .effective-date {
+            color: #ffffff;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            font-weight: 500;
+            padding: 1rem;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 6px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        .update-info, .important-notice {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 3px solid #d4af37;
+            margin: 1rem 0;
+        }
+        .important-notice {
+            background: rgba(255, 193, 7, 0.1);
+            border-left-color: #FFC107;
+        }
+        .update-info p, .important-notice p {
+            color: #ffffff;
+            font-weight: 500;
+            margin: 0;
+        }
+        .update-info strong, .important-notice strong {
+            color: #d4af37;
+        }
+        .terms-content a {
+            color: #d4af37;
+            text-decoration: none;
+        }
+        .terms-content a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            .terms-content {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+            .terms-section h2 {
+                font-size: 1.5rem;
+            }
+        }
+        /* Footer */
+        .footer {
+            background: rgba(0, 0, 0, 0.9);
+            color: #ffffff;
+            padding: 2rem 1rem;
+            text-align: center;
+            border-top: 1px solid #333;
+            margin-top: 3rem;
+        }
+        .footer .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        .footer p {
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: #ffffff;
+        }
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .social-links a {
+            color: #d4af37;
+            font-size: 1.25rem;
+            transition: all 0.3s ease;
+        }
+        .social-links a:hover {
+            color: #b8962e;
+            transform: translateY(-2px);
+        }
+        .footer-links {
+            font-size: 0.75rem;
+            color: #ffffff;
+            margin-top: 1rem;
+        }
+        .footer-links a {
+            color: #d4af37;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            margin: 0 0.5rem;
+        }
+        .footer-links a:hover {
+            color: #b8962e;
+        }
+        /* Mobile Bottom Nav */
+        .mobile-nav { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            z-index: 40; 
+            background: rgba(30, 30, 30, 0.85); 
+            border-top: 1px solid #333; 
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.2); 
+            display: none;
+            transition: transform 0.3s ease;
+        }
+        .mobile-nav.hidden {
+            transform: translateY(100%);
+        }
+        @media (max-width: 768px) { .mobile-nav { display: block; } }
+        .nav-grid { 
+            display: grid; 
+            grid-template-columns: repeat(5, 1fr); 
+            padding: 0.5rem 0; 
+            list-style: none;
+        }
+        .nav-item-mobile { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 0.5rem; 
+            text-decoration: none; 
+            color: #ffffff; 
+            font-size: 0.75rem; 
+            transition: all 0.3s ease; 
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .nav-item-mobile:hover {
+            color: #d4af37;
+        }
+        .nav-item-mobile.active { 
+            color: #d4af37; 
+            text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+        }
+        .nav-item-mobile i { 
+            font-size: 1.25rem; 
+            margin-bottom: 0.25rem; 
+            opacity: 0.8; 
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        .nav-item-mobile:hover i {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        .nav-item-mobile.active i { 
+            opacity: 1; 
+            text-shadow: 0 0 6px rgba(212, 175, 55, 0.8);
+            filter: drop-shadow(0 2px 6px rgba(212, 175, 55, 0.4));
+        }
+        .message {
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+        .message.success {
+            background: rgba(0, 255, 0, 0.15);
+            color: #00ff00;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+        .message.error {
+            background: rgba(255, 0, 0, 0.15);
+            color: #ff0000;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+        }
+        .message.info {
+            background: rgba(0, 150, 255, 0.15);
+            color: #0096ff;
+            border: 1px solid rgba(0, 150, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        <a href="dashboard.html" class="logo-container">
+            <img src="images/logo.png" alt="Top Autocare Logo" style="height: 50px; width: auto;">
+            <h1 class="logo-title">Top Autocare</h1>
+        </a>
+        
+        <div class="header-actions">
+            <a href="book-appointment.html" class="book-service-btn">
+                <i class="fas fa-calendar-check"></i> Book Service
+            </a>
+            
+            <div class="notification-bell" onclick="window.location.href='notifications.html'">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" style="display: none;">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="terms-content">
+                <div class="effective-date">
+                    <strong>Last Updated:</strong> January 1, 2024
+                </div>
+                
+                <h1 style="color: #d4af37; text-align: center; margin-bottom: 2rem; font-size: 2.5rem; font-weight: 700;">
+                    Terms of Service
+                </h1>
+                
+                <div class="terms-section">
+                    <h2><i class="fas fa-handshake"></i> Introduction & Acceptance</h2>
+                    <p>Welcome to Top Autocare Garage ("we," "us," or "our"). These Terms of Service ("Terms") govern your use of our website <strong>topautocare.com</strong> (the "Site"), online booking system, and automotive services ("Services") provided in Nairobi, Kenya.</p>
+                    <p>By accessing the Site, creating an account, booking an appointment, or using our Services, you agree to be bound by these Terms, our <a href="privacy-policy.html">Privacy Policy</a>, and any applicable laws. If you do not agree, please do not use the Site or Services.</p>
+                    <p>These Terms apply to all users, including individuals and businesses. We may update them at any time (see below). Continued use constitutes acceptance of changes.</p>
+                    <div class="important-notice">
+                        <p><strong>Important:</strong> By using our Services, you confirm you are 18+ or have parental consent. Services are available in Kenya only.</p>
+                    </div>
+                </div>
+
+                <div class="terms-section">
+                    <h2><i class="fas fa-wrench"></i> Description of Services</h2>
+                    <p>We provide automotive repair, maintenance, and booking services through our Site and physical garage in Industrial Area, Nairobi. Key features include:</p>
+                    <ul>
+                        <li>Online appointment booking for services like routine maintenance, engine overhaul, and diagnostics.</li>
+                        <li>Vehicle registration and management (e.g., add your car's details for service tracking).</li>
+                        <li>Account dashboard for viewing appointments, history, and profile management.</li>
+                        <li>Contact forms for inquiries and customer support.</li>
+                        <li>Future integrations: Payment processing (e.g., M-Pesa) and notifications.</li>
+                    </ul>
+                    <p>Services are subject to availability. We reserve the right to refuse or cancel appointments (e.g., due to capacity or policy violations).</p>
+                </div>
+
+                <div class="terms-section">
+                    <h2><i class="fas fa-user"></i> User Accounts & Responsibilities</h2>
+                    <h3>Account Creation</h3>
+                    <p>To book appointments or manage vehicles, you must create an account with accurate information (name, email, phone). You are responsible for maintaining confidentiality of your login credentials.</p>
+                    <ul>
+                        <li>Use a valid email (verify as per our <a href="verify-email.html">verification process</a>).</li>
+                        <li>Do not share your account with others.</li>
+                        <li>Notify us immediately of unauthorized access (email <a href="mailto:bk560471@gmail.com">bk560471@gmail.com</a>).</li>
+                    </ul>
+
+                    <h3>User Conduct</h3>
+                    <p>You agree not to:</p>
+                    <ul>
+                        <li>Use the Site for unlawful purposes or violate Kenyan laws.</li>
+                        <li>Provide false information (e.g., fake vehicle details or contact info).</li>
+                        <li>Interfere with the Site (e.g., hacking, scraping without permission).</li>
+                        <li>Post abusive, harmful, or spam content in forms/messages.</li>
+                        <li>Commercial use without our written consent.</li>
+                    </ul>
+                    <p>We may suspend/terminate accounts for violations. You are liable for all activity under your account.</p>
+                </div>
+
+                <div class="terms-section">
+                    <h2><i class="fas fa-calendar-check"></i> Bookings & Services</h2>
+                    <h3>Appointment Process</h3>
+                    <p>You may book via the Site or by phone (+254 757 562 447). Bookings are requests; confirmation is via email/SMS after admin review.</p>
+                    <ul>
+                        <li>Provide accurate vehicle and contact details.</li>
+                        <li>Appointments are subject to availability and our operating hours (Mon-Fri 8AM-6PM, Sat 8AM-4PM).</li>
+                        <li>Cancellation: Free up to 24 hours before; after may incur fees (per service type).</li>
+                        <li>No-shows: May result in booking restrictions.</li>
+                    </ul>
+
+                    <h3>Service Delivery</h3>
+                    <p>Services are performed at our garage. Quotes are estimates; final costs may vary based on inspection (e.g., parts needed).</p>
+                    <ul>
+                        <li>We use genuine or equivalent parts; warranties per manufacturer's standards.</li>
+                        <li>You authorize diagnostics/repairs; we notify of extras (approval required).</li>
+                        <li>Test drives/vehicle use during service imply consent.</li>
+                        <li>Post-service: We test for roadworthiness; collect at agreed time.</li>
+                    </ul>
+                    <div class="important-notice">
+                        <p><strong>Liability Disclaimer:</strong> Services aim for quality, but we do not guarantee results (e.g., pre-existing conditions). Vehicle remains your responsibility.</p>
+                    </div>
+                </div>
+
+                <div class="terms-section">
+                    <h2><i class="fas fa-credit-card"></i> Payments & Refunds</h2>
+                    <p>Services are paid at the garage (cash, M-Pesa, card). Future online payments via trusted processors (no storage of card details).</p>
+                    <ul>
+                        <li>Prices: Displayed on Site/services page; subject to change (advance booked at quoted price).</li>
+                        <li>Deposits: May require 50% for major services (refundable if cancelled timely).</li>
+                        <li>Refunds: For cancellations (per policy); services rendered are non-refundable. Disputes via contact.</li>
+                        <li>Taxes: Include 16% VAT; additional fees (e.g., parts, diagnostics) as quoted.</li>
+                    </ul>
+                    <p>No charge for Site access; third-party fees (e.g., M-Pesa) your responsibility.</p>
+                </div>
+
+                <div class="terms-section">
+                    <h2><i class="fas fa-copyright"></i> Intellectual Property</h2>
+                    <p>The Site and content (text, images, logos) are owned by Top Autocare Garage or licensed. All rights reserved.</p>
+                    <ul>
+                        <li>You may view/print for personal use; no reproduction, distribution, or commercial use without permission.</li>
+                        <li>Trademarks: "Top Autocare" and logos are ours; no unauthorized use.</li>
+                        <li>User Content: Vehicle/appointment data you provide is yours; by submitting, you grant us a license to use for Services.</li>
+                    </ul>
+                    <p>Report infringements to <a href="mailto:bk560471@gmail.com">bk560471@gmail.com</a>.</p>
+                </div>
+
+                <div class="terms-section">
+                    <h2><i class="fas fa-exclamation-triangle"></i> Disclaimers & Liability</h2>
+                    <p>The Site/Services provided "AS IS" without warranties (express/implied). We disclaim accuracy, completeness, or fitness for purpose.</p>
+                    <ul>
+                        <li><strong>Site Availability:</strong> May have downtime; no liability for interruptions.</li>
+                        <li><strong>Service Quality:</strong> Efforts made for excellence; no guarantee of results. Vehicles inspected per industry standards.</li>
+                        <li><strong>No Advice:</strong> Info on Site is general; not professional advice. Consult experts for specific needs.</li>
+                        <li><strong>Third Parties:</strong> Links to external sites (e.g., Google Maps) not endorsed; use at own risk.</li>
+                    </ul>
+                    <p>Liability limited to direct damages; max liability = service fees paid. No consequential/indirect damages (e.g., lost profits, vehicle downtime).</p>
+                    <div class="important-notice">
+                        <p><strong>Force Majeure:</strong> No liability for delays due to strikes, pandemics, or unforeseen events.</p>
+                    </div>
+                </div>
+
+                <div class="terms-section">
+                    <h2><i class="fas fa-times-circle"></i> Termination</h2>
+                    <p>We reserve the right to:</p>
+                    <ul>
+                        <li>Suspend/terminate access for violations (e.g., abuse, non-payment).</li>
+                        <li>Remove content/accounts at discretion (with notice where possible).</li>
+                    </ul>
+                    <p>You may terminate by closing your account (deletes data per Privacy Policy). Sections surviving termination: Liability, IP, Governing Law.</p>
+                </div>
+
+                <div class="terms-section">
+                    <h2><i class="fas fa-gavel"></i> Governing Law & Disputes</h2>
+                    <p>These Terms governed by Kenyan laws. Disputes resolved in Nairobi courts.</p>
+                    <ul>
+                        <li><strong>Informal Resolution:</strong> Contact us first for issues (email/ phone).</li>
+                        <li><strong>Mediation:</strong> If unresolved, via Kenyan alternative dispute resolution.</li>
+                        <li><strong>Arbitration:</strong> Binding arbitration under Kenyan law if litigation needed (waive class actions).</li>
+                    </ul>
+                    <p>Severability: Invalid provisions do not affect others.</p>
+                </div>
+
+                <div class="terms-section">
+                    <h2><i class="fas fa-edit"></i> Changes to These Terms</h2>
+                    <p>We may update Terms (e.g., new features, law changes). Significant updates emailed/posted with new "Last Updated" date. Continued use = acceptance.</p>
+                    <p>Check periodically. Reverse no effect.</p>
+                </div>
+
+                <div class="terms-section">
+                    <h2><i class="fas fa-phone"></i> Contact Us</h2>
+                    <p>For questions/concerns about these Terms:</p>
+                    <ul>
+                        <li><strong>Email:</strong> <a href="mailto:bk560471@gmail.com">bk560471@gmail.com</a></li>
+                        <li><strong>Phone:</strong> <a href="tel:+254757562447">+254 757 562 447</a></li>
+                        <li><strong>Address:</strong> Industrial Area, Nairobi, Kenya</li>
+                        <li><strong>Business Hours:</strong> Mon-Fri 8AM-6PM, Sat 8AM-4PM</li>
+                    </ul>
+                    <p>We aim to respond within 24-48 hours. For Services complaints, use our contact form.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Top Autocare Garage. All rights reserved. Your trusted automotive partner in Nairobi.</p>
+            <div class="social-links">
+                <a href="https://wa.me/254757562447" aria-label="WhatsApp" target="_blank" rel="noopener">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+                <a href="https://twitter.com/BrianVags" aria-label="Twitter" target="_blank" rel="noopener">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" aria-label="Facebook">
+                    <i class="fab fa-facebook"></i>
+                </a>
+                <a href="#" aria-label="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+            </div>
+            <div class="footer-links">
+                <a href="privacy-policy.html">Privacy Policy</a> | 
+                <a href="terms-of-service.html">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-nav">
+        <ul class="nav-grid">
+            <li>
+                <a class="nav-item-mobile" href="myvehicles.html">
+                    <i class="fas fa-car"></i>
+                    <span>Vehicles</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="services.html">
+                    <i class="fas fa-wrench"></i>
+                    <span>Services</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="dashboard.html">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="book-appointment.html">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Appointments</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="profile.html">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Auto-hide Navigation Script -->
+    <script>
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', () => {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const header = document.getElementById('header');
+            const mobileNav = document.querySelector('.mobile-nav');
+            
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                if (header) header.classList.add('hidden');
+                if (mobileNav) mobileNav.classList.add('hidden');
+            } else {
+                if (header) header.classList.remove('hidden');
+                if (mobileNav) mobileNav.classList.remove('hidden');
+            }
+            
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('✅ Service Worker registered');
+                    })
+                    .catch((error) => {
+                        console.error('❌ Service Worker error:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

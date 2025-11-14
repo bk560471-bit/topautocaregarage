@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Details - Top Autocare Garage</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- PWA Manifest and Mobile Optimization -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#d4af37">
+
+    <!-- Mobile/PWA Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Top Autocare">
+    <link rel="apple-touch-icon" href="assets/images/app-icon-512.png">
+
+    <!-- Favicon for Browsers -->
+    <link rel="icon" href="assets/images/app-icon-192.png" sizes="192x192" type="image/png">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            line-height: 1.6;
+            padding-bottom: 80px;
+            position: relative;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(4px);
+            z-index: -1;
+        }
+        /* Header Styles (Compact, Admin-Only) */
+        #header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 0.25rem 0;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1001;
+            transition: transform 0.3s ease;
+            height: 60px;
+        }
+        #header.hidden {
+            transform: translateY(-100%);
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 0 0.75rem;
+            color: #d4af37;
+        }
+        .logo-container:hover h1 {
+            text-decoration: underline;
+        }
+        .logo-container img {
+            height: 40px;
+            width: auto;
+            margin-right: 0.5rem;
+            border-radius: 50%;
+        }
+        .logo-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin: 0;
+            color: #d4af37;
+            text-decoration: none;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-right: 0.75rem;
+        }
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: color 0.3s ease;
+            z-index: 1002;
+        }
+        .menu-toggle:hover {
+            color: #d4af37;
+        }
+        @media (max-width: 768px) {
+            #header {
+                padding: 0.5rem;
+                flex-wrap: wrap;
+            }
+            .logo-container {
+                padding: 0 0.5rem;
+            }
+            .logo-title {
+                font-size: 1rem;
+            }
+            .header-actions {
+                padding-right: 0.5rem;
+                gap: 0.5rem;
+            }
+        }
+        /* Admin Navigation Menu (Slide-In from Right, Matching Photo Exactly) */
+        .admin-nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .admin-nav-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .admin-nav-menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100vh;
+            background: #1a1a1a;
+            padding: 1rem;
+            overflow-y: auto;
+            transition: right 0.3s ease;
+            z-index: 1001;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+        }
+        .admin-nav-menu.active {
+            right: 0;
+        }
+        .admin-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #333;
+            margin-bottom: 1rem;
+        }
+        .admin-nav-title {
+            font-size: 1.125rem;
+            color: #d4af37;
+            font-weight: 700;
+        }
+        .close-menu {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            transition: color 0.3s ease;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .close-menu:hover {
+            color: #d4af37;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        .admin-menu {
+            list-style: none;
+            padding: 0;
+        }
+        .admin-menu li {
+            margin-bottom: 0.5rem;
+        }
+        .admin-menu a {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #BDBDBD;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 6px;
+            margin: 0.25rem 0;
+        }
+        .admin-menu a:hover, .admin-menu a.active {
+            background: rgba(212, 175, 55, 0.2);
+            color: #d4af37;
+            border-right: 3px solid #d4af37;
+            transform: translateX(5px);
+        }
+        .admin-menu i {
+            width: 20px;
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+            opacity: 0.7;
+        }
+        .admin-menu a:hover i, .admin-menu a.active i {
+            opacity: 1;
+        }
+        .signout-btn {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            right: 1rem;
+            background: #ff6b6b;
+            color: #fff;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: background 0.3s ease;
+            width: calc(100% - 2rem);
+        }
+        .signout-btn:hover {
+            background: #ff5252;
+            transform: translateY(-1px);
+        }
+        /* Main Content */
+        .main-content {
+            padding: 1.5rem;
+            margin-top: 60px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #333;
+        }
+        .page-title h1 {
+            font-size: 1.75rem;
+            color: #d4af37;
+            margin-bottom: 0.25rem;
+        }
+        .page-title p {
+            color: #BDBDBD;
+            font-size: 0.875rem;
+        }
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+        .btn-primary {
+            background: #d4af37;
+            color: #000;
+        }
+        .btn-primary:hover {
+            background: #b8962e;
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: #333;
+            color: #fff;
+        }
+        .btn-secondary:hover {
+            background: #444;
+            transform: translateY(-1px);
+        }
+        /* Professional Container Layout */
+        .user-details-content {
+            background: rgba(30, 30, 30, 0.9);
+            border-radius: 12px;
+            border: 1px solid #333;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        .user-header {
+            background: rgba(42, 42, 42, 0.9);
+            padding: 1.5rem;
+            border-bottom: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .user-header h2 {
+            font-size: 1.5rem;
+            color: #d4af37;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .user-profile.view-mode {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(18, 18, 18, 0.8);
+        }
+        .user-profile.edit-mode {
+            display: none;
+        }
+        .user-avatar-large {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(212, 175, 55, 0.1);
+            border: 2px solid #d4af37;
+            overflow: hidden;
+        }
+        .user-avatar-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .user-avatar-large i {
+            font-size: 3rem;
+            color: #d4af37;
+        }
+        .user-info h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+            color: #fff;
+        }
+        .user-email {
+            color: #BDBDBD;
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+        }
+        .user-meta {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+        .role-badge, .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            min-width: fit-content;
+            border: 1px solid transparent;
+        }
+        .role-admin {
+            background: rgba(156, 39, 176, 0.2);
+            color: #9C27B0;
+            border-color: #9C27B0;
+        }
+        .role-user {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196F3;
+            border-color: #2196F3;
+        }
+        .role-mechanic {
+            background: rgba(255, 193, 7, 0.2);
+            color: #FFC107;
+            border-color: #FFC107;
+        }
+        .status-active {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border-color: #4CAF50;
+        }
+        .status-inactive {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff6b6b;
+            border-color: #ff6b6b;
+        }
+        .status-pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #FFC107;
+            border: 1px solid #FFC107;
+        }
+        .status-approved {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+        }
+        .status-completed {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196F3;
+            border: 1px solid #2196F3;
+        }
+        .status-cancelled {
+            background: rgba(128, 128, 128, 0.2);
+            color: #808080;
+            border: 1px solid #808080;
+        }
+        .status-rejected {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+        }
+        .user-details-grid.view-mode {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(18, 18, 18, 0.8);
+        }
+        .user-details-grid.edit-mode {
+            display: none;
+        }
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .detail-item label {
+            font-size: 0.875rem;
+            color: #d4af37;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        .detail-item span {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid #333;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+        .detail-item:hover span {
+            background: rgba(212, 175, 55, 0.05);
+            border-color: #d4af37;
+        }
+        .user-id {
+            font-family: monospace;
+            font-size: 0.85rem;
+            word-break: break-all;
+            color: #BDBDBD;
+        }
+        /* Edit Form Section */
+        .edit-form-section {
+            display: none;
+            background: rgba(42, 42, 42, 0.9);
+            padding: 1.5rem;
+            border-top: 1px solid #333;
+        }
+        .edit-form-section.edit-mode {
+            display: block;
+        }
+        .user-profile.edit-mode {
+            display: none;
+        }
+        .user-details-grid.edit-mode {
+            display: none;
+        }
+        #editForm h3 {
+            color: #d4af37;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .form-group label {
+            font-size: 0.875rem;
+            color: #d4af37;
+            font-weight: 500;
+        }
+        .form-group select, .form-group input[type="checkbox"] {
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #121212;
+            color: #fff;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+        }
+        .form-group select:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: #121212;
+            border-radius: 8px;
+            border: 1px solid #444;
+            transition: border-color 0.3s ease;
+        }
+        .checkbox-group:hover {
+            border-color: #d4af37;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: 1.2rem;
+            height: 1.2rem;
+            accent-color: #d4af37;
+            cursor: pointer;
+        }
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #333;
+        }
+        .form-actions .btn {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9rem;
+        }
+        /* Activity Sections */
+        .activity-section {
+            padding: 1.5rem;
+            border-top: 1px solid #333;
+            background: rgba(18, 18, 18, 0.8);
+        }
+        .activity-section:last-child {
+            border-bottom: none;
+        }
+        .activity-section h3 {
+            font-size: 1.25rem;
+            color: #d4af37;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .appointment-item, .vehicle-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(42, 42, 42, 0.9);
+            border-radius: 8px;
+            border: 1px solid #333;
+            transition: all 0.3s ease;
+        }
+        .appointment-item:hover, .vehicle-item:hover {
+            background: rgba(212, 175, 55, 0.05);
+            border-color: #d4af37;
+            transform: translateY(-1px);
+        }
+        .appointment-info, .vehicle-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            flex: 1;
+        }
+        .appointment-info strong, .vehicle-info strong {
+            font-size: 0.95rem;
+            color: #fff;
+        }
+        .appointment-info span, .vehicle-info span {
+            font-size: 0.85rem;
+            color: #BDBDBD;
+        }
+        .vehicle-color {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            background: rgba(212, 175, 55, 0.2);
+            color: #d4af37;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+        .no-data {
+            text-align: center;
+            padding: 2rem;
+            color: #BDBDBD;
+            font-style: italic;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+        .no-data.error {
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+        }
+        /* Error/Loading States */
+        .error-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #BDBDBD;
+            background: rgba(18, 18, 18, 0.8);
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+        .error-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+            display: block;
+        }
+        .error-state h3 {
+            font-size: 1.25rem;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+        .loading-skeleton {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            color: #BDBDBD;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+        .loading-skeleton i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #messageContainer {
+            margin-bottom: 1rem;
+            z-index: 1000;
+            position: relative;
+        }
+        .message {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            max-width: 100%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        .message.success {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+        }
+        .message.error {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+        }
+        .message.info {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196F3;
+            border: 1px solid #2196F3;
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+            .user-profile {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            .user-details-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .header-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .appointment-item, .vehicle-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            .user-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header (Compact, Admin-Only) -->
+    <header id="header">
+        <a href="admin.html" class="logo-container">
+            <img src="images/logo.png" alt="Top Autocare Logo" style="height: 40px; width: auto;">
+            <h1 class="logo-title">Admin Panel</h1>
+        </a>
+        
+        <div class="header-actions">
+            <button class="menu-toggle" onclick="toggleAdminMenu()" title="Admin Menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Admin Navigation Menu (Updated: Full List with Profile, Active on Users) -->
+    <div class="admin-nav-overlay" onclick="toggleAdminMenu()">
+        <div class="admin-nav-menu" onclick="event.stopPropagation()">
+            <div class="admin-nav-header">
+                <h2 class="admin-nav-title">Admin Menu</h2>
+                <button class="close-menu" onclick="toggleAdminMenu()">&times;</button>
+            </div>
+            
+            <ul class="admin-menu">
+                <li><a href="admin.html" onclick="toggleAdminMenu()"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="admin-users.html" class="active" onclick="toggleAdminMenu()"><i class="fas fa-users"></i> Users</a></li>
+                <li><a href="admin-appointments.html" onclick="toggleAdminMenu()"><i class="fas fa-calendar-check"></i> Appointments</a></li>
+                <li><a href="admin-services.html" onclick="toggleAdminMenu()"><i class="fas fa-wrench"></i> Services</a></li>
+                <li><a href="admin-vehicles.html" onclick="toggleAdminMenu()"><i class="fas fa-car"></i> Vehicles</a></li>
+                <li><a href="admin-reports.html" onclick="toggleAdminMenu()"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                <li><a href="admin-settings.html" onclick="toggleAdminMenu()"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><a href="admin-profile.html" onclick="toggleAdminMenu()"><i class="fas fa-user-cog"></i> Admin Profile</a></li>
+                <li><a href="admin-notifications.html" onclick="toggleAdminMenu()"><i class="fas fa-bell"></i> Notifications</a></li>
+                <li><a href="admin-faq.html" onclick="toggleAdminMenu()"><i class="fas fa-question-circle"></i> FAQ Management</a></li>
+                <li><a href="admin-analytics.html" onclick="toggleAdminMenu()"><i class="fas fa-chart-pie"></i> Analytics</a></li>
+                <li><a href="admin-backup.html" onclick="toggleAdminMenu()"><i class="fas fa-database"></i> Backup & Restore</a></li>
+                <li><a href="admin.html" onclick="toggleAdminMenu()"><i class="fas fa-arrow-left"></i> Back to Site</a></li>
+            </ul>
+            
+            <!-- Working Sign Out Button (Bottom) -->
+            <button class="signout-btn" onclick="signOut()">
+                <i class="fas fa-sign-out-alt"></i> Sign Out
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header">
+            <div class="page-title">
+                <h1>User Details</h1>
+                <p>View and manage specific user information and activity</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" id="editUserBtn">
+                    <i class="fas fa-edit"></i> Edit User
+                </button>
+                <a href="admin-users.html" class="btn btn-primary">
+                    <i class="fas fa-arrow-left"></i> Back to Users
+                </a>
+            </div>
+        </div>
+
+        <div id="messageContainer"></div>
+
+        <!-- Professional Container Layout -->
+        <div class="user-details-content">
+            <!-- User Header -->
+            <div class="user-header">
+                <h2><i class="fas fa-user"></i> <span id="userNameDisplay">Loading...</span></h2>
+                <span class="role-badge" id="roleBadge">Loading...</span>
+            </div>
+
+            <!-- Loading/Error Placeholder -->
+            <div id="userDetailsContainer" class="loading-skeleton">
+                <i class="fas fa-spinner fa-spin"></i>
+                <div>Loading user details...</div>
+            </div>
+
+            <!-- View Mode User Details -->
+            <div class="user-details-grid view-mode" id="viewDetailsGrid"></div>
+
+            <!-- Edit Mode Form -->
+            <div class="edit-form-section edit-mode">
+                <form id="editForm">
+                    <h3><i class="fas fa-edit"></i> Edit User Details</h3>
+                    <div class="form-group">
+                        <label for="editRole">User Role</label>
+                        <select id="editRole">
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                            <option value="mechanic">Mechanic</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="editStatus">
+                            <label for="editStatus">Active Status</label>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelEditBtn">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="saveUserBtn">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- User Appointments Section -->
+            <div class="activity-section">
+                <h3><i class="fas fa-calendar-check"></i> Appointment History</h3>
+                <div class="activity-list" id="userAppointmentsList">
+                    <div class="loading-skeleton" style="height: 60px; margin-bottom: 0.5rem; border-radius: 8px;"></div>
+                    <div class="loading-skeleton" style="height: 60px; border-radius: 8px;"></div>
+                </div>
+            </div>
+
+            <!-- User Vehicles Section -->
+            <div class="activity-section">
+                <h3><i class="fas fa-car"></i> Registered Vehicles</h3>
+                <div class="activity-list" id="userVehiclesList">
+                    <div class="loading-skeleton" style="height: 60px; margin-bottom: 0.5rem; border-radius: 8px;"></div>
+                    <div class="loading-skeleton" style="height: 60px; border-radius: 8px;"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Global Navigation Script (MUST BE BEFORE FIREBASE) -->
+    <script>
+        // Global Navigation Functions
+        window.toggleAdminMenu = function() {
+            console.log('Toggle menu called');
+            const overlay = document.querySelector('.admin-nav-overlay');
+            const menu = document.querySelector('.admin-nav-menu');
+            if (overlay && menu) {
+                overlay.classList.toggle('active');
+                menu.classList.toggle('active');
+                console.log('Menu toggled - overlay active:', overlay.classList.contains('active'));
+            }
+        };
+
+        // Auto-hide Navigation on Scroll
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', () => {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const header = document.getElementById('header');
+            
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                if (header) header.classList.add('hidden');
+            } else {
+                if (header) header.classList.remove('hidden');
+            }
+            
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (event) => {
+            const overlay = document.querySelector('.admin-nav-overlay');
+            const menu = document.querySelector('.admin-nav-menu');
+            if (overlay && overlay.classList.contains('active') && 
+                !menu.contains(event.target) && 
+                !event.target.closest('.menu-toggle')) {
+                toggleAdminMenu();
+            }
+        });
+    </script>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBkVYS0CaKe1kHPp9GVnURiZz5WP5tE3iM",
+            authDomain: "top-autocare.firebaseapp.com",
+            projectId: "top-autocare",
+            storageBucket: "top-autocare.firebasestorage.app",
+            messagingSenderId: "879247821822",
+            appId: "1:879247821822:web:e6a418395d52aac99a4eaf",
+            measurementId: "G-T5NDM5M33Z"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let targetUserId = null;
+        let currentUserData = null;
+
+        // DOM Elements
+        const userDetailsContainer = document.getElementById('userDetailsContainer');
+        const userAppointmentsList = document.getElementById('userAppointmentsList');
+        const userVehiclesList = document.getElementById('userVehiclesList');
+        const messageContainer = document.getElementById('messageContainer');
+        const editUserBtn = document.getElementById('editUserBtn');
+        const saveUserBtn = document.getElementById('saveUserBtn');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+        const editForm = document.getElementById('editForm');
+        const userNameDisplay = document.getElementById('userNameDisplay');
+        const roleBadge = document.getElementById('roleBadge');
+        const viewDetailsGrid = document.getElementById('viewDetailsGrid');
+
+        // Utility Functions
+        function showMessage(message, type = 'info') {
+            if (!messageContainer) return;
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            messageContainer.innerHTML = `
+                <div class="message ${className}">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                    ${message}
+                </div>
+            `;
+            setTimeout(() => messageContainer.innerHTML = '', 3000);
+        }
+
+        function formatDate(date) {
+            if (!date) return 'N/A';
+            const dateObj = date.toDate ? date.toDate() : new Date(date);
+            return dateObj.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function getRoleBadge(role) {
+            const roles = {
+                'admin': { text: 'Admin', class: 'role-admin' },
+                'user': { text: 'User', class: 'role-user' },
+                'mechanic': { text: 'Mechanic', class: 'role-mechanic' }
+            };
+            return roles[role] || { text: role.charAt(0).toUpperCase() + role.slice(1), class: 'role-user' };
+        }
+
+        function getStatusBadge(status) {
+            return status ? 
+                '<span class="role-badge status-active">Active</span>' : 
+                '<span class="role-badge status-inactive">Inactive</span>';
+        }
+
+        function getAppointmentStatusBadge(status) {
+            const statusMap = {
+                'pending': { text: 'Pending', class: 'status-pending' },
+                'approved': { text: 'Approved', class: 'status-approved' },
+                'completed': { text: 'Completed', class: 'status-completed' },
+                'cancelled': { text: 'Cancelled', class: 'status-cancelled' },
+                'rejected': { text: 'Rejected', class: 'status-rejected' }
+            };
+            const statusInfo = statusMap[status] || { text: status.charAt(0).toUpperCase() + status.slice(1), class: 'status-pending' };
+            return `<span class="status-badge ${statusInfo.class}">${statusInfo.text}</span>`;
+        }
+
+        // Working Sign Out (Global)
+        window.signOut = async () => {
+            if (confirm('Are you sure you want to sign out?')) {
+                try {
+                    await signOut(auth);
+                    showMessage('Signed out successfully!', 'success');
+                    setTimeout(() => window.location.href = 'signin.html', 1500);
+                } catch (error) {
+                    console.error('Sign out error:', error);
+                    showMessage('Error signing out. Please try again.', 'error');
+                }
+            }
+        };
+
+        // Load User Details
+        async function loadUserDetails() {
+            if (!targetUserId) {
+                showMessage('No user ID provided.', 'error');
+                if (userDetailsContainer) {
+                    userDetailsContainer.innerHTML = `
+                        <div class="error-state">
+                            <i class="fas fa-user-slash"></i>
+                            <h3>No User Selected</h3>
+                            <p>Please select a user from the users list.</p>
+                            <a href="admin-users.html" class="btn btn-primary" style="margin-top: 1rem;">
+                                <i class="fas fa-arrow-left"></i> Back to Users
+                            </a>
+                        </div>
+                    `;
+                }
+                return;
+            }
+
+            // Show loading
+            if (userDetailsContainer) {
+                userDetailsContainer.innerHTML = `
+                    <div class="loading-skeleton">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <div>Loading user details...</div>
+                    </div>
+                `;
+            }
+            if (userNameDisplay) userNameDisplay.textContent = 'Loading...';
+            if (roleBadge) roleBadge.textContent = 'Loading...';
+
+            try {
+                const userRef = doc(db, 'users', targetUserId);
+                const userSnap = await getDoc(userRef);
+
+                if (!userSnap.exists()) {
+                    showMessage('User not found.', 'error');
+                    if (userDetailsContainer) {
+                        userDetailsContainer.innerHTML = `
+                            <div class="error-state">
+                                <i class="fas fa-user-slash"></i>
+                                <h3>User Not Found</h3>
+                                <p>The requested user does not exist or has been deleted.</p>
+                                <a href="admin-users.html" class="btn btn-primary" style="margin-top: 1rem;">
+                                    <i class="fas fa-arrow-left"></i> Back to Users
+                                </a>
+                            </div>
+                        `;
+                    }
+                    return;
+                }
+
+                currentUserData = userSnap.data();
+                displayUserDetails(currentUserData);
+                await loadUserAppointments(targetUserId);
+                await loadUserVehicles(targetUserId);
+                showMessage('User details loaded successfully.', 'success');
+
+            } catch (error) {
+                console.error('Error loading user details:', error);
+                showMessage('Error loading user details. Please check permissions and try again.', 'error');
+                if (userDetailsContainer) {
+                    userDetailsContainer.innerHTML = `
+                        <div class="error-state">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>Error Loading User</h3>
+                            <p>Unable to load user details. Please try again or contact support.</p>
+                            <a href="admin-users.html" class="btn btn-primary" style="margin-top: 1rem;">
+                                <i class="fas fa-arrow-left"></i> Back to Users
+                            </a>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Display User Details
+        function displayUserDetails(user) {
+            const role = getRoleBadge(user.role || 'user');
+
+            if (userNameDisplay) userNameDisplay.textContent = user.displayName || 'No name';
+            if (roleBadge) {
+                roleBadge.textContent = role.text;
+                roleBadge.className = `role-badge ${role.class}`;
+            }
+
+            if (userDetailsContainer) {
+                userDetailsContainer.innerHTML = `
+                    <div class="user-profile view-mode">
+                        <div class="user-avatar-large">
+                            ${user.photoURL ? `<img src="${user.photoURL}" alt="${user.displayName}" onerror="this.outerHTML='<i class=\"fas fa-user-circle\"></i>'">` : `<i class="fas fa-user-circle"></i>`}
+                        </div>
+                        <div class="user-info">
+                            <h2>${user.displayName || 'No name'}</h2>
+                            <p class="user-email">${user.email || 'N/A'}</p>
+                            <div class="user-meta">
+                                <span class="${role.class}">${role.text}</span>
+                                ${getStatusBadge(user.active)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (viewDetailsGrid) {
+                viewDetailsGrid.innerHTML = `
+                    <div class="detail-item">
+                        <label><i class="fas fa-phone" style="color: #d4af37; margin-right: 0.5rem;"></i>Phone Number</label>
+                        <span>${user.phoneNumber || 'N/A'}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label><i class="fas fa-calendar-check" style="color: #d4af37; margin-right: 0.5rem;"></i>Joined Date</label>
+                        <span>${formatDate(user.createdAt)}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label><i class="fas fa-clock" style="color: #d4af37; margin-right: 0.5rem;"></i>Last Login</label>
+                        <span>${formatDate(user.lastLoginAt) || 'Never'}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label><i class="fas fa-id-card" style="color: #d4af37; margin-right: 0.5rem;"></i>User ID</label>
+                        <span class="user-id">${targetUserId}</span>
+                    </div>
+                `;
+            }
+        }
+
+        // Load User Appointments
+        async function loadUserAppointments(userId) {
+            try {
+                const appointmentsQuery = query(
+                    collection(db, 'appointments'),
+                    where('userId', '==', userId),
+                    orderBy('date', 'desc')
+                );
+                const snapshot = await getDocs(appointmentsQuery);
+                
+                const list = document.getElementById('userAppointmentsList');
+                if (!list) return;
+                
+                list.innerHTML = '';
+
+                if (snapshot.empty) {
+                    list.innerHTML = '<p class="no-data">No appointments found for this user</p>';
+                    return;
+                }
+
+                snapshot.forEach((doc) => {
+                    const appointment = { id: doc.id, ...doc.data() };
+                    const listItem = document.createElement('div');
+                    listItem.className = 'appointment-item';
+                    listItem.innerHTML = `
+                        <div class="appointment-info">
+                            <strong>${appointment.service || 'N/A'}</strong>
+                            <span>${formatDate(appointment.date)}${appointment.time ? ` at ${appointment.time}` : ''}</span>
+                            ${appointment.notes ? `<span style="font-size: 0.8rem; color: #BDBDBD;">Notes: ${appointment.notes.substring(0, 50)}${appointment.notes.length > 50 ? '...' : ''}</span>` : ''}
+                        </div>
+                        ${getAppointmentStatusBadge(appointment.status || 'pending')}
+                    `;
+                    list.appendChild(listItem);
+                });
+
+            } catch (error) {
+                console.error('Error loading user appointments:', error);
+                const list = document.getElementById('userAppointmentsList');
+                if (list) list.innerHTML = '<p class="no-data error">Error loading appointments.</p>';
+            }
+        }
+
+        // Load User Vehicles
+        async function loadUserVehicles(userId) {
+            try {
+                const vehiclesQuery = query(
+                    collection(db, 'vehicles'),
+                    where('userId', '==', userId),
+                    orderBy('createdAt', 'desc')
+                );
+                const snapshot = await getDocs(vehiclesQuery);
+                
+                const list = document.getElementById('userVehiclesList');
+                if (!list) return;
+                
+                list.innerHTML = '';
+
+                if (snapshot.empty) {
+                    list.innerHTML = '<p class="no-data">No vehicles registered for this user</p>';
+                    return;
+                }
+
+                snapshot.forEach((doc) => {
+                    const vehicle = doc.data();
+                    const listItem = document.createElement('div');
+                    listItem.className = 'vehicle-item';
+                    listItem.innerHTML = `
+                        <div class="vehicle-info">
+                            <strong>${vehicle.make || 'N/A'} ${vehicle.model || 'N/A'} (${vehicle.year || 'N/A'})</strong>
+                            <span>VIN: ${vehicle.vin || 'N/A'}</span>
+                            ${vehicle.licensePlate ? `<span>Plate: ${vehicle.licensePlate}</span>` : ''}
+                            ${vehicle.color ? `<span>Color: ${vehicle.color}</span>` : ''}
+                        </div>
+                        ${vehicle.mileage ? `<span style="color: #d4af37; font-weight: 500;">${vehicle.mileage.toLocaleString()} km</span>` : ''}
+                    `;
+                    list.appendChild(listItem);
+                });
+
+            } catch (error) {
+                console.error('Error loading user vehicles:', error);
+                const list = document.getElementById('userVehiclesList');
+                if (list) list.innerHTML = '<p class="no-data error">Error loading vehicles.</p>';
+            }
+        }
+
+        // Edit Functionality
+        function toggleEditMode() {
+            const viewProfile = document.querySelector('.user-profile.view-mode');
+            const viewGrid = document.querySelector('.user-details-grid.view-mode');
+            const editSection = document.querySelector('.edit-form-section.edit-mode');
+
+            if (viewProfile && viewGrid && editSection && currentUserData) {
+                // Enter edit mode
+                document.getElementById('editRole').value = currentUserData.role || 'user';
+                document.getElementById('editStatus').checked = currentUserData.active !== false;
+                viewProfile.style.display = 'none';
+                viewGrid.style.display = 'none';
+                editSection.style.display = 'block';
+                showMessage('Edit mode activated. Modify and save changes.', 'info');
+            }
+        }
+
+        function exitEditMode() {
+            const viewProfile = document.querySelector('.user-profile.view-mode');
+            const viewGrid = document.querySelector('.user-details-grid.view-mode');
+            const editSection = document.querySelector('.edit-form-section.edit-mode');
+
+            if (viewProfile && viewGrid && editSection) {
+                viewProfile.style.display = 'flex';
+                viewGrid.style.display = 'grid';
+                editSection.style.display = 'none';
+                showMessage('Edit cancelled.', 'info');
+            }
+        }
+
+        if (editUserBtn) {
+            editUserBtn.addEventListener('click', toggleEditMode);
+        }
+
+        if (cancelEditBtn) {
+            cancelEditBtn.addEventListener('click', exitEditMode);
+        }
+
+        if (editForm) {
+            editForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (!currentUserData) {
+                    showMessage('User data not available.', 'error');
+                    return;
+                }
+
+                const newRole = document.getElementById('editRole').value;
+                const newStatus = document.getElementById('editStatus').checked;
+
+                const changes = {};
+                let hasChanges = false;
+
+                if (newRole !== (currentUserData.role || 'user')) {
+                    changes.role = newRole;
+                    hasChanges = true;
+                }
+                if (newStatus !== (currentUserData.active !== false)) {
+                    changes.active = newStatus;
+                    hasChanges = true;
+                }
+
+                if (!hasChanges) {
+                    showMessage('No changes detected.', 'info');
+                    exitEditMode();
+                    return;
+                }
+
+                if (confirm('Save these changes to the user profile?')) {
+                    try {
+                        await updateDoc(doc(db, 'users', targetUserId), {
+                            ...changes,
+                            updatedAt: new Date(),
+                            updatedBy: currentUser ? currentUser.uid : null
+                        });
+
+                        showMessage('User updated successfully!', 'success');
+                        currentUserData = { ...currentUserData, ...changes }; // Update local data
+                        displayUserDetails(currentUserData); // Refresh display
+                        exitEditMode(); // Back to view mode
+                        loadUserDetails(); // Reload full details to refresh sections
+
+                    } catch (error) {
+                        console.error('Error updating user:', error);
+                        showMessage('Error updating user. Check permissions and try again.', 'error');
+                    }
+                }
+            });
+        }
+
+        // Initialize Page
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                
+                const userRef = doc(db, 'users', user.uid);
+                const userSnap = await getDoc(userRef);
+                
+                if (userSnap.exists() && userSnap.data().role === 'admin') {
+                    targetUserId = new URLSearchParams(window.location.search).get('id');
+                    if (!targetUserId) {
+                        showMessage('No user ID provided.', 'error');
+                        setTimeout(() => window.location.href = 'admin-users.html', 2000);
+                        return;
+                    }
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', loadUserDetails);
+                    } else {
+                        loadUserDetails();
+                    }
+                } else {
+                    showMessage('Access denied. Admin privileges required.', 'error');
+                    setTimeout(() => window.location.href = 'dashboard.html', 2000);
+                }
+            } else {
+                window.location.href = 'signin.html';
+            }
+        });
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('Service Worker registered:', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.error('Service Worker registration failed:', registrationError);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

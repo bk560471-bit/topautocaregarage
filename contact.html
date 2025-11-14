@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Top Autocare Garage</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#d4af37">
+
+    <!-- Mobile/PWA Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Top Autocare">
+    <link rel="apple-touch-icon" href="assets/images/app-icon-512.png">
+
+    <!-- Favicon for Browsers -->
+    <link rel="icon" href="assets/images/app-icon-192.png" sizes="192x192" type="image/png">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            line-height: 1.6;
+            padding-bottom: 80px;
+            position: relative;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(4px);
+            z-index: -1;
+        }
+        /* Header Styles */
+        #header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        #header.hidden {
+            transform: translateY(-100%);
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 0 1rem;
+            color: #d4af37;
+        }
+        .logo-container:hover h1 {
+            text-decoration: underline;
+        }
+        .logo-container img {
+            height: 50px;
+            width: auto;
+            margin-right: 0.5rem;
+            border-radius: 50%;
+        }
+        .logo-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            color: #d4af37;
+            text-decoration: none;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding-right: 1rem;
+        }
+        .notification-bell {
+            position: relative;
+            color: #ffffff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .notification-bell:hover {
+            color: #d4af37;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #d4af37;
+            color: #000;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .book-service-btn {
+            background: #d4af37;
+            color: #000;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .book-service-btn:hover {
+            background: #b8962e;
+            transform: translateY(-2px);
+        }
+        @media (max-width: 768px) {
+            #header {
+                padding: 0.5rem;
+                flex-wrap: wrap;
+            }
+            .logo-container {
+                padding: 0 0.5rem;
+            }
+            .logo-title {
+                font-size: 1.25rem;
+            }
+            .header-actions {
+                padding-right: 0.5rem;
+                gap: 0.5rem;
+            }
+            .book-service-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+        /* Main Content */
+        .main-content {
+            margin-top: 80px;
+            padding: 2rem 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            color: #d4af37;
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1.125rem;
+            color: #ffffff;
+            max-width: 600px;
+            margin: 0 auto;
+            font-weight: 600;
+        }
+        /* Contact Info Grid */
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        .contact-item {
+            background: rgba(30, 30, 30, 0.85);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid #333;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .contact-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+        }
+        .contact-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #d4af37;
+            margin: 0 auto 1rem;
+        }
+        .contact-item h3 {
+            color: #d4af37;
+            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+        }
+        .contact-item p {
+            color: #ffffff;
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+        .contact-link {
+            color: #d4af37;
+            text-decoration: none;
+            font-weight: 700;
+            display: inline-block;
+            margin-top: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .contact-link:hover {
+            background: rgba(212, 175, 55, 0.2);
+            text-decoration: none;
+        }
+        /* Contact Form */
+        .contact-form-section {
+            background: rgba(30, 30, 30, 0.85);
+            border-radius: 8px;
+            border: 1px solid #333;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+        .form-title {
+            color: #d4af37;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .form-group label {
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid #333;
+            background: #121212;
+            color: #fff;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #d4af37;
+        }
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+            grid-column: span 2;
+        }
+        .form-actions {
+            grid-column: span 2;
+            text-align: center;
+        }
+        .btn-submit {
+            padding: 1rem 2.5rem;
+            background: #d4af37;
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-submit:hover:not(:disabled) {
+            background: #b8962e;
+            transform: translateY(-2px);
+        }
+        .btn-submit:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        #messageContainer {
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .message {
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .message.success {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+        }
+        .message.error {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff0000;
+            border: 1px solid #ff0000;
+        }
+        .message.info {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196F3;
+            border: 1px solid #2196F3;
+        }
+        /* Social Media Section */
+        .social-section {
+            background: rgba(30, 30, 30, 0.85);
+            border-radius: 8px;
+            border: 1px solid #333;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        .social-section h2 {
+            color: #d4af37;
+            margin-bottom: 1.5rem;
+        }
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .social-item {
+            padding: 1rem;
+            background: rgba(18, 18, 18, 0.85);
+            border-radius: 6px;
+            border: 1px solid #333;
+        }
+        .social-item i {
+            font-size: 1.5rem;
+            color: #d4af37;
+            margin-bottom: 0.5rem;
+        }
+        .social-item h3 {
+            color: #d4af37;
+            margin-bottom: 0.25rem;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+        .social-item a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+        .social-item a:hover {
+            color: #d4af37;
+        }
+        /* Map Section */
+        .map-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .map-section h2 {
+            color: #d4af37;
+            margin-bottom: 1rem;
+        }
+        .map-container {
+            position: relative;
+            height: 400px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #333;
+            margin: 0 auto;
+            max-width: 800px;
+            width: 100%;
+        }
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        .map-info {
+            margin-top: 1rem;
+            color: #ffffff;
+            font-size: 0.95rem;
+        }
+        /* Footer */
+        .footer {
+            background: rgba(26, 26, 26, 0.9);
+            padding: 2rem 0;
+            border-top: 1px solid #333;
+            text-align: center;
+        }
+        .footer p {
+            color: #ffffff;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .social-links a {
+            color: #ffffff;
+            font-size: 1.25rem;
+            transition: color 0.3s ease;
+            padding: 0.5rem;
+        }
+        .social-links a:hover {
+            color: #d4af37;
+            transform: translateY(-2px);
+        }
+        .footer-links {
+            margin-top: 1rem;
+        }
+        .footer-links a {
+            color: #ffffff;
+            text-decoration: none;
+            margin: 0 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .footer-links a:hover {
+            color: #d4af37;
+        }
+        /* Mobile Bottom Nav */
+        .mobile-nav { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            z-index: 40; 
+            background: rgba(30, 30, 30, 0.85); 
+            border-top: 1px solid #333; 
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.2); 
+            display: none;
+            transition: transform 0.3s ease;
+        }
+        .mobile-nav.hidden {
+            transform: translateY(100%);
+        }
+        @media (max-width: 768px) { .mobile-nav { display: block; } }
+        .nav-grid { 
+            display: grid; 
+            grid-template-columns: repeat(5, 1fr); 
+            padding: 0.5rem 0; 
+            list-style: none;
+        }
+        .nav-item-mobile { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 0.5rem; 
+            text-decoration: none; 
+            color: #ffffff; 
+            font-size: 0.75rem; 
+            transition: all 0.3s ease; 
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .nav-item-mobile:hover {
+            color: #d4af37;
+        }
+        .nav-item-mobile.active { 
+            color: #d4af37; 
+            text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+        }
+        .nav-item-mobile i { 
+            font-size: 1.25rem; 
+            margin-bottom: 0.25rem; 
+            opacity: 0.8; 
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        .nav-item-mobile:hover i {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        .nav-item-mobile.active i { 
+            opacity: 1; 
+            text-shadow: 0 0 6px rgba(212, 175, 55, 0.8);
+            filter: drop-shadow(0 2px 6px rgba(212, 175, 55, 0.4));
+        }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .hero p {
+                font-size: 1rem;
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-group textarea {
+                grid-column: span 1;
+            }
+            .contact-info {
+                grid-template-columns: 1fr;
+            }
+            .social-grid {
+                grid-template-columns: 1fr;
+            }
+            .map-container {
+                height: 300px;
+            }
+            .contact-form-section, .social-section {
+                padding: 1.5rem;
+            }
+            .contact-item {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        <!-- Logo Container - Clickable to Dashboard -->
+        <a href="dashboard.html" class="logo-container">
+            <img src="images/logo.png" alt="Top Autocare Logo" style="height: 50px; width: auto;">
+            <h1 class="logo-title">Top Autocare</h1>
+        </a>
+        
+        <!-- Header Actions -->
+        <div class="header-actions">
+            <!-- Book Service Button -->
+            <a href="book-appointment.html" class="book-service-btn">
+                <i class="fas fa-wrench"></i> Book Service
+            </a>
+            
+            <!-- Notification Bell -->
+            <div class="notification-bell" onclick="window.location.href='notifications.html'">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" style="display: none;">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="hero">
+                <h1>Get In Touch</h1>
+                <p>Have questions about our services, need a quote, or want to schedule a visit? We're here to help. Fill out the form below or contact us directly.</p>
+            </section>
+
+            <div id="messageContainer"></div>
+
+            <!-- Contact Info -->
+            <section class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3>Visit Us</h3>
+                    <p id="businessAddress">Milestone Business Centre, Total Energies Ridgeways, Kiambu Rd, Nairobi</p>
+                    <p id="businessHours">Mon-Fri: 8AM-6PM, Sat: 8AM-4PM</p>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <h3>Call Us</h3>
+                    <p id="businessPhone">+254 757 562 447</p>
+                    <a id="businessPhoneLink" href="tel:+254757562447" class="contact-link">
+                        <i class="fas fa-phone"></i> Make a Call
+                    </a>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3>Email Us</h3>
+                    <p id="businessEmail">bk560471@gmail.com</p>
+                    <a id="businessEmailLink" href="mailto:bk560471@gmail.com" class="contact-link">
+                        <i class="fas fa-envelope"></i> Send Email
+                    </a>
+                </div>
+            </section>
+
+            <!-- Social Media Section -->
+            <section class="social-section">
+                <h2>Connect With Us</h2>
+                <div class="social-grid">
+                    <div class="social-item">
+                        <i class="fab fa-whatsapp"></i>
+                        <h3 id="whatsappNumber">+254 757 562 447</h3>
+                        <a id="whatsappLink" href="https://wa.me/254757562447" target="_blank" rel="noopener">Chat on WhatsApp</a>
+                    </div>
+                    <div class="social-item">
+                        <i class="fab fa-twitter"></i>
+                        <h3 id="twitterHandle">@BrianVags</h3>
+                        <a id="twitterLink" href="https://twitter.com/BrianVags" target="_blank" rel="noopener">Follow on X</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact Form -->
+            <section class="contact-form-section">
+                <h2 class="form-title">Send Us a Message</h2>
+                <form id="contactForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="name">Full Name <span style="color: #ff6b6b;">*</span></label>
+                            <input type="text" id="name" required placeholder="Enter your full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address <span style="color: #ff6b6b;">*</span></label>
+                            <input type="email" id="email" required placeholder="your.email@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Subject <span style="color: #ff6b6b;">*</span></label>
+                            <input type="text" id="subject" required placeholder="E.g., Service Inquiry, Quote Request">
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message <span style="color: #ff6b6b;">*</span></label>
+                            <textarea id="message" required placeholder="Tell us more about your inquiry or service needs..."></textarea>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit" id="submitBtn">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Map Section -->
+            <section class="map-section">
+                <h2>Our Location</h2>
+                <div class="map-container">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.854077!2d36.8284!3d1.234!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f173f2f3b4b4f%3A0x9c5c5c5c5c5c5c5c!2sTotal%20Energies%20Ridgeways%2C%20Kiambu%20Rd%2C%20Nairobi!5e0!3m2!1sen!2ske!4v1720690000000!5m2!1sen!2ske" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+                <div class="map-info">
+                    We're conveniently located at Milestone Business Centre, Total Energies Ridgeways Service Station, Kiambu Rd, Nairobi, serving customers from all over the city.
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 <span id="footerBusinessName">Top Autocare Garage</span>. All rights reserved.</p>
+            <div class="social-links">
+                <a href="https://wa.me/254757562447" aria-label="WhatsApp" target="_blank" rel="noopener">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+                <a href="https://twitter.com/BrianVags" aria-label="Twitter" target="_blank" rel="noopener">
+                    <i class="fab fa-twitter"></i>
+                </a>
+            </div>
+            <div class="footer-links">
+                <a href="privacy-policy.html">Privacy Policy</a> | 
+                <a href="terms-of-service.html">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-nav">
+        <ul class="nav-grid">
+            <li>
+                <a class="nav-item-mobile" href="myvehicles.html">
+                    <i class="fas fa-car"></i>
+                    <span>Vehicles</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="services.html">
+                    <i class="fas fa-wrench"></i>
+                    <span>Services</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="dashboard.html">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="book-appointment.html">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Appointments</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="profile.html">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Firebase Script -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, doc, getDoc, collection, addDoc, query, where, onSnapshot, orderBy, limit } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getAuth } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBkVYS0CaKe1kHPp9GVnURiZz5WP5tE3iM",
+            authDomain: "top-autocare.firebaseapp.com",
+            projectId: "top-autocare",
+            storageBucket: "top-autocare.firebasestorage.app",
+            messagingSenderId: "879247821822",
+            appId: "1:879247821822:web:e6a418395d52aac99a4eaf",
+            measurementId: "G-T5NDM5M33Z"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        let unsubscribeNotifications = null;
+
+        const contactForm = document.getElementById('contactForm');
+        const businessNameEl = document.getElementById('businessName');
+        const businessEmailEl = document.getElementById('businessEmail');
+        const businessPhoneEl = document.getElementById('businessPhone');
+        const businessAddressEl = document.getElementById('businessAddress');
+        const businessHoursEl = document.getElementById('businessHours');
+        const whatsappNumberEl = document.getElementById('whatsappNumber');
+        const twitterHandleEl = document.getElementById('twitterHandle');
+        const messageContainer = document.getElementById('messageContainer');
+        const submitBtn = document.getElementById('submitBtn');
+        const footerBusinessNameEl = document.getElementById('footerBusinessName');
+
+        function showMessage(message, type = 'info') {
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            messageContainer.innerHTML = `
+                <div class="message ${className}">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-times-circle' : 'fa-info-circle'}"></i>
+                    ${message}
+                </div>
+            `;
+            setTimeout(() => messageContainer.innerHTML = '', 5000);
+        }
+
+        function loadNotifications() {
+            const currentUser = auth.currentUser;
+            if (!currentUser) return;
+
+            const notificationsQuery = query(
+                collection(db, 'notifications'),
+                where('userId', '==', currentUser.uid),
+                where('read', '==', false),
+                orderBy('timestamp', 'desc'),
+                limit(3)
+            );
+
+            unsubscribeNotifications = onSnapshot(notificationsQuery, (snapshot) => {
+                const unreadCount = snapshot.size;
+                const notificationBadge = document.querySelector('.notification-badge');
+                if (notificationBadge) {
+                    notificationBadge.textContent = unreadCount > 99 ? '99+' : unreadCount.toString();
+                    notificationBadge.style.display = unreadCount === 0 ? 'none' : 'flex';
+                }
+            }, (error) => {
+                console.error('Error loading notifications for badge:', error);
+            });
+        }
+
+        async function loadBusinessSettings() {
+            try {
+                const settingsRef = doc(db, 'settings', 'global');
+                const settingsSnap = await getDoc(settingsRef);
+
+                if (settingsSnap.exists()) {
+                    const settings = settingsSnap.data();
+                    
+                    const businessName = settings.businessName || 'Top Autocare Garage';
+                    const businessEmail = settings.businessEmail || 'bk560471@gmail.com';
+                    const businessPhone = settings.businessPhone || '+254 757 562 447';
+                    const businessAddress = settings.businessAddress || 'Milestone Business Centre, Total Energies Ridgeways, Kiambu Rd, Nairobi';
+                    const businessHours = settings.businessHours || 'Mon-Fri: 8AM-6PM, Sat: 8AM-4PM';
+                    const whatsappNumber = settings.whatsappNumber || '+254 757 562 447';
+                    const twitterHandle = settings.twitterHandle || '@BrianVags';
+                    
+                    businessNameEl.textContent = businessName;
+                    businessEmailEl.textContent = businessEmail;
+                    businessEmailEl.href = `mailto:${businessEmail}`;
+                    businessPhoneEl.textContent = businessPhone;
+                    businessPhoneEl.href = `tel:${businessPhone.replace(/\D/g, '')}`;
+                    businessAddressEl.textContent = businessAddress;
+                    businessHoursEl.textContent = businessHours;
+                    
+                    whatsappNumberEl.textContent = whatsappNumber;
+                    whatsappNumberEl.href = `https://wa.me/${whatsappNumber.replace(/\D/g, '')}`;
+                    twitterHandleEl.textContent = twitterHandle;
+                    twitterHandleEl.href = `https://twitter.com/${twitterHandle.replace('@', '')}`;
+                    
+                    footerBusinessNameEl.textContent = businessName;
+                    
+                    showMessage('Contact information updated from database!', 'success');
+                } else {
+                    loadDefaultContactInfo();
+                }
+            } catch (error) {
+                console.error('Error loading contact settings:', error);
+                showMessage('Using default contact information.', 'info');
+                loadDefaultContactInfo();
+            }
+        }
+
+        function loadDefaultContactInfo() {
+            businessNameEl.textContent = 'Top Autocare Garage';
+            businessEmailEl.textContent = 'bk560471@gmail.com';
+            businessEmailEl.href = 'mailto:bk560471@gmail.com';
+            businessPhoneEl.textContent = '+254 757 562 447';
+            businessPhoneEl.href = 'tel:+254757562447';
+            businessAddressEl.textContent = 'Milestone Business Centre, Total Energies Ridgeways, Kiambu Rd, Nairobi';
+            businessHoursEl.textContent = 'Mon-Fri: 8AM-6PM, Sat: 8AM-4PM';
+            whatsappNumberEl.textContent = '+254 757 562 447';
+            whatsappNumberEl.href = 'https://wa.me/254757562447';
+            twitterHandleEl.textContent = '@BrianVags';
+            twitterHandleEl.href = 'https://twitter.com/BrianVags';
+            footerBusinessNameEl.textContent = 'Top Autocare Garage';
+        }
+
+        if (contactForm) {
+            contactForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const subject = document.getElementById('subject').value.trim();
+                const message = document.getElementById('message').value.trim();
+
+                if (!name || !email || !subject || !message) {
+                    showMessage('Please fill in all fields.', 'error');
+                    return;
+                }
+
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    showMessage('Please enter a valid email address.', 'error');
+                    return;
+                }
+
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+                try {
+                    const currentUser = auth.currentUser;
+                    const userInfo = currentUser ? {
+                        userId: currentUser.uid,
+                        authenticated: true
+                    } : { authenticated: false };
+
+                    await addDoc(collection(db, 'contacts'), {
+                        name,
+                        email,
+                        subject,
+                        message,
+                        ...userInfo,
+                        submittedAt: new Date(),
+                        status: 'new'
+                    });
+
+                    showMessage('Thank you! Your message has been sent. We\'ll get back to you within 24 hours.', 'success');
+                    contactForm.reset();
+                } catch (error) {
+                    console.error('Error submitting contact form:', error);
+                    showMessage('Error sending message. Please try again later or call us directly.', 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Message';
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadBusinessSettings();
+            loadNotifications();
+        });
+
+        window.addEventListener('beforeunload', () => {
+            if (unsubscribeNotifications) unsubscribeNotifications();
+        });
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('✅ Service Worker registered');
+                    })
+                    .catch((error) => {
+                        console.error('❌ Service Worker error:', error);
+                    });
+            });
+        }
+
+        // Auto-hide Navigation Script
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', () => {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const header = document.getElementById('header');
+            const mobileNav = document.querySelector('.mobile-nav');
+            
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                if (header) header.classList.add('hidden');
+                if (mobileNav) mobileNav.classList.add('hidden');
+            } else {
+                if (header) header.classList.remove('hidden');
+                if (mobileNav) mobileNav.classList.remove('hidden');
+            }
+            
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+    </script>
+</body>
+</html>

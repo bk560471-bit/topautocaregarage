@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports & Analytics - Top Autocare Garage</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- PWA Manifest and Mobile Optimization -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#d4af37">
+
+    <!-- Mobile/PWA Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Top Autocare">
+    <link rel="apple-touch-icon" href="assets/images/app-icon-512.png">
+
+    <!-- Favicon for Browsers -->
+    <link rel="icon" href="assets/images/app-icon-192.png" sizes="192x192" type="image/png">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            line-height: 1.6;
+            padding-bottom: 80px;
+            position: relative;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(4px);
+            z-index: -1;
+        }
+        /* Header Styles (Compact, Admin-Only: No Book Service or Notification Bell) */
+        #header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 0.25rem 0;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1001;
+            transition: transform 0.3s ease;
+            height: 60px;
+        }
+        #header.hidden {
+            transform: translateY(-100%);
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 0 0.75rem;
+            color: #d4af37;
+        }
+        .logo-container:hover h1 {
+            text-decoration: underline;
+        }
+        .logo-container img {
+            height: 40px;
+            width: auto;
+            margin-right: 0.5rem;
+            border-radius: 50%;
+        }
+        .logo-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin: 0;
+            color: #d4af37;
+            text-decoration: none;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-right: 0.75rem;
+        }
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: color 0.3s ease;
+            z-index: 1002;
+        }
+        .menu-toggle:hover {
+            color: #d4af37;
+        }
+        @media (max-width: 768px) {
+            #header {
+                padding: 0.5rem;
+                flex-wrap: wrap;
+            }
+            .logo-container {
+                padding: 0 0.5rem;
+            }
+            .logo-title {
+                font-size: 1rem;
+            }
+            .header-actions {
+                padding-right: 0.5rem;
+                gap: 0.5rem;
+            }
+        }
+        /* Admin Navigation Menu (Slide-In from Right, Matching Photo Exactly) */
+        .admin-nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .admin-nav-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .admin-nav-menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100vh;
+            background: #1a1a1a;
+            padding: 1rem;
+            overflow-y: auto;
+            transition: right 0.3s ease;
+            z-index: 1001;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+        }
+        .admin-nav-menu.active {
+            right: 0;
+        }
+        .admin-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #333;
+            margin-bottom: 1rem;
+        }
+        .admin-nav-title {
+            font-size: 1.125rem;
+            color: #d4af37;
+            font-weight: 700;
+        }
+        .close-menu {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            transition: color 0.3s ease;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .close-menu:hover {
+            color: #d4af37;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        .admin-menu {
+            list-style: none;
+            padding: 0;
+        }
+        .admin-menu li {
+            margin-bottom: 0.5rem;
+        }
+        .admin-menu a {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #BDBDBD;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 6px;
+            margin: 0.25rem 0;
+        }
+        .admin-menu a:hover, .admin-menu a.active {
+            background: rgba(212, 175, 55, 0.2);
+            color: #d4af37;
+            border-right: 3px solid #d4af37;
+            transform: translateX(5px);
+        }
+        .admin-menu i {
+            width: 20px;
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+            opacity: 0.7;
+        }
+        .admin-menu a:hover i, .admin-menu a.active i {
+            opacity: 1;
+        }
+        .signout-btn {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            right: 1rem;
+            background: #ff6b6b;
+            color: #fff;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: background 0.3s ease;
+            width: calc(100% - 2rem);
+        }
+        .signout-btn:hover {
+            background: #ff5252;
+            transform: translateY(-1px);
+        }
+        /* Main Content */
+        .main-content {
+            padding: 1.5rem;
+            margin-top: 60px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #333;
+        }
+        .page-title h1 {
+            font-size: 1.75rem;
+            color: #d4af37;
+            margin-bottom: 0.25rem;
+        }
+        .page-title p {
+            color: #BDBDBD;
+            font-size: 0.875rem;
+        }
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-primary {
+            background: #d4af37;
+            color: #000;
+        }
+        .btn-primary:hover {
+            background: #b8962e;
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: #333;
+            color: #fff;
+        }
+        .btn-secondary:hover {
+            background: #444;
+            transform: translateY(-1px);
+        }
+        /* Reports Content */
+        .reports-content {
+            background: rgba(30, 30, 30, 0.9);
+            border-radius: 12px;
+            border: 1px solid #333;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        .management-header {
+            background: rgba(42, 42, 42, 0.9);
+            padding: 1.5rem;
+            border-bottom: 1px solid #333;
+        }
+        .management-header h2 {
+            color: #d4af37;
+            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .management-header p {
+            color: #BDBDBD;
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+        .filters-container {
+            background: rgba(18, 18, 18, 0.8);
+            padding: 1.5rem;
+            border-bottom: 1px solid #333;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .filter-section {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 1rem;
+            align-items: end;
+            max-width: 600px;
+        }
+        .filter-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .filter-group label {
+            color: #BDBDBD;
+            font-size: 0.875rem;
+            white-space: nowrap;
+        }
+        .filter-group input {
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid #333;
+            background: #121212;
+            color: #fff;
+            font-size: 0.875rem;
+            transition: border-color 0.3s ease;
+        }
+        .filter-group input:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+        }
+        /* Analytics Cards */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(18, 18, 18, 0.8);
+        }
+        .analytics-card {
+            background: rgba(42, 42, 42, 0.9);
+            border-radius: 8px;
+            padding: 1.5rem;
+            border: 1px solid #333;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .analytics-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.2);
+        }
+        .analytics-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+        }
+        .revenue { background: rgba(212, 175, 55, 0.2); color: #d4af37; border: 1px solid #d4af37; }
+        .appointments { background: rgba(33, 150, 243, 0.2); color: #2196F3; border: 1px solid #2196F3; }
+        .avg-revenue { background: rgba(76, 175, 80, 0.2); color: #4CAF50; border: 1px solid #4CAF50; }
+        .top-service { background: rgba(156, 39, 176, 0.2); color: #9C27B0; border: 1px solid #9C27B0; }
+        .analytics-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            color: #fff;
+        }
+        .analytics-label {
+            font-size: 0.875rem;
+            color: #BDBDBD;
+        }
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(18, 18, 18, 0.8);
+        }
+        .chart-container {
+            background: rgba(42, 42, 42, 0.9);
+            border-radius: 8px;
+            border: 1px solid #333;
+            padding: 1.5rem;
+        }
+        .chart-container h3 {
+            color: #d4af37;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 1.125rem;
+        }
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+        }
+        /* Recent Activity */
+        .recent-activity {
+            background: rgba(18, 18, 18, 0.8);
+            border-radius: 8px;
+            border: 1px solid #333;
+            padding: 1.5rem;
+            margin: 1.5rem;
+        }
+        .recent-activity h3 {
+            color: #d4af37;
+            margin-bottom: 1rem;
+            font-size: 1.125rem;
+        }
+        .activity-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #333;
+            transition: background 0.3s ease;
+        }
+        .activity-item:hover {
+            background: rgba(212, 175, 55, 0.05);
+        }
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        .activity-info {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        .activity-info strong {
+            font-size: 0.875rem;
+            color: #fff;
+        }
+        .activity-info span {
+            font-size: 0.75rem;
+            color: #BDBDBD;
+        }
+        .activity-value {
+            font-weight: 600;
+            color: #d4af37;
+            text-align: right;
+            min-width: 80px;
+        }
+        /* Export Section */
+        .export-section {
+            background: rgba(42, 42, 42, 0.9);
+            border-radius: 8px;
+            padding: 1.5rem;
+            border: 1px solid #333;
+            text-align: center;
+            margin: 1.5rem;
+        }
+        .export-section h3 {
+            color: #d4af37;
+            margin-bottom: 0.5rem;
+            font-size: 1.125rem;
+        }
+        .export-options {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .export-options button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #333;
+            color: #fff;
+        }
+        .export-options button:hover {
+            background: #d4af37;
+            color: #000;
+            transform: translateY(-1px);
+        }
+        #messageContainer {
+            margin-bottom: 1rem;
+            z-index: 1000;
+            position: relative;
+        }
+        .message {
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            max-width: 100%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        .message.success {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+        }
+        .message.error {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff0000;
+            border: 1px solid #ff0000;
+        }
+        .message.info {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196F3;
+            border: 1px solid #2196F3;
+        }
+        .no-data {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #BDBDBD;
+            font-style: italic;
+        }
+        .no-data i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+            display: block;
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            .chart-wrapper {
+                height: 250px;
+            }
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .export-options {
+                flex-direction: column;
+            }
+            .header-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .filter-section {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 480px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        /* Auto-hide Navigation Script */
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', () => {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const header = document.getElementById('header');
+            
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                if (header) header.classList.add('hidden');
+            } else {
+                if (header) header.classList.remove('hidden');
+            }
+            
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+    </style>
+</head>
+<body>
+    <!-- Header (Compact, Admin-Only: No Book Service or Notification Bell) -->
+    <header id="header">
+        <a href="admin.html" class="logo-container">
+            <img src="images/logo.png" alt="Top Autocare Logo" style="height: 40px; width: auto;">
+            <h1 class="logo-title">Admin Panel</h1>
+        </a>
+        
+        <div class="header-actions">
+            <!-- Only Menu Toggle -->
+            <button class="menu-toggle" onclick="toggleAdminMenu()" title="Admin Menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Admin Navigation Menu (Updated: Exact List with Profile, Active on Reports) -->
+    <div class="admin-nav-overlay" onclick="toggleAdminMenu()">
+        <div class="admin-nav-menu" onclick="event.stopPropagation()">
+            <div class="admin-nav-header">
+                <h2 class="admin-nav-title">Admin Menu</h2>
+                <button class="close-menu" onclick="toggleAdminMenu()">&times;</button>
+            </div>
+            
+            <ul class="admin-menu">
+                <li><a href="admin.html" onclick="toggleAdminMenu()"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="admin-users.html" onclick="toggleAdminMenu()"><i class="fas fa-users"></i> Users</a></li>
+                <li><a href="admin-appointments.html" onclick="toggleAdminMenu()"><i class="fas fa-calendar-check"></i> Appointments</a></li>
+                <li><a href="admin-services.html" onclick="toggleAdminMenu()"><i class="fas fa-wrench"></i> Services</a></li>
+                <li><a href="admin-vehicles.html" onclick="toggleAdminMenu()"><i class="fas fa-car"></i> Vehicles</a></li>
+                <li><a href="admin-reports.html" class="active" onclick="toggleAdminMenu()"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                <li><a href="admin-settings.html" onclick="toggleAdminMenu()"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><a href="admin-profile.html" onclick="toggleAdminMenu()"><i class="fas fa-user-cog"></i> Admin Profile</a></li>
+                <li><a href="admin-notifications.html" onclick="toggleAdminMenu()"><i class="fas fa-bell"></i> Notifications</a></li>
+                <li><a href="admin-faq.html" onclick="toggleAdminMenu()"><i class="fas fa-question-circle"></i> FAQ Management</a></li>
+                <li><a href="admin-analytics.html" onclick="toggleAdminMenu()"><i class="fas fa-chart-pie"></i> Analytics</a></li>
+                <li><a href="admin-backup.html" onclick="toggleAdminMenu()"><i class="fas fa-database"></i> Backup & Restore</a></li>
+                <li><a href="admin.html" onclick="toggleAdminMenu()"><i class="fas fa-arrow-left"></i> Back to Site</a></li>
+            </ul>
+            
+            <!-- Working Sign Out Button (Bottom) -->
+            <button class="signout-btn" onclick="signOut()">
+                <i class="fas fa-sign-out-alt"></i> Sign Out
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header">
+            <div class="page-title">
+                <h1>Reports & Analytics</h1>
+                <p>Business insights and performance metrics</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-primary" id="exportBtn">
+                    <i class="fas fa-download"></i> Export Report
+                </button>
+            </div>
+        </div>
+
+        <div id="messageContainer"></div>
+
+        <div class="reports-content">
+            <!-- Management Header -->
+            <div class="management-header">
+                <h2><i class="fas fa-chart-bar"></i> Business Analytics</h2>
+                <p>Real-time insights from appointments and revenue data. Filter by date and export reports.</p>
+            </div>
+
+            <!-- Filters Container (Sticky) -->
+            <div class="filters-container">
+                <div class="filter-section">
+                    <div class="filter-group">
+                        <label for="dateFilter">Date Range:</label>
+                        <input type="date" id="dateFilter">
+                        <button class="btn btn-secondary" onclick="loadAnalyticsData(document.getElementById('dateFilter').value)">
+                            <i class="fas fa-filter"></i> Apply Filter
+                        </button>
+                        <button class="btn btn-secondary" onclick="loadAnalyticsData('')">
+                            <i class="fas fa-refresh"></i> All Time
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Cards -->
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <div class="analytics-icon revenue">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="analytics-value" id="totalRevenue">KES 0</div>
+                    <div class="analytics-label">Total Revenue</div>
+                </div>
+                <div class="analytics-card">
+                    <div class="analytics-icon appointments">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="analytics-value" id="totalAppointments">0</div>
+                    <div class="analytics-label">Total Appointments</div>
+                </div>
+                <div class="analytics-card">
+                    <div class="analytics-icon avg-revenue">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <div class="analytics-value" id="avgRevenue">KES 0</div>
+                    <div class="analytics-label">Average Revenue</div>
+                </div>
+                <div class="analytics-card">
+                    <div class="analytics-icon top-service">
+                        <i class="fas fa-wrench"></i>
+                    </div>
+                    <div class="analytics-value" id="topService">None</div>
+                    <div class="analytics-label">Top Service</div>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3>Revenue Overview</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3>Service Distribution</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="servicesChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3>Status Breakdown</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="recent-activity">
+                <h3><i class="fas fa-clock"></i> Recent Activity</h3>
+                <div id="activityList">
+                    <div class="no-data">
+                        <i class="fas fa-list"></i>
+                        <div>No recent activity to display. Filter by date to see appointments.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Section -->
+            <div class="export-section">
+                <h3><i class="fas fa-download"></i> Export Reports</h3>
+                <p style="color: #BDBDBD; margin-bottom: 1rem;">Download your analytics data in various formats for further analysis.</p>
+                <div class="export-options">
+                    <button class="btn btn-primary" onclick="exportData('csv')">
+                        <i class="fas fa-file-csv"></i> CSV
+                    </button>
+                    <button class="btn btn-primary" onclick="exportData('pdf')">
+                        <i class="fas fa-file-pdf"></i> PDF
+                    </button>
+                    <button class="btn btn-primary" onclick="exportData('excel')">
+                        <i class="fas fa-file-excel"></i> Excel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, query, where, getDocs, orderBy, limit, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBkVYS0CaKe1kHPp9GVnURiZz5WP5tE3iM",
+            authDomain: "top-autocare.firebaseapp.com",
+            projectId: "top-autocare",
+            storageBucket: "top-autocare.firebasestorage.app",
+            messagingSenderId: "879247821822",
+            appId: "1:879247821822:web:e6a418395d52aac99a4eaf",
+            measurementId: "G-T5NDM5M33Z"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let revenueChart = null;
+        let servicesChart = null;
+        let statusChart = null;
+
+        // DOM Elements
+        const totalRevenueEl = document.getElementById('totalRevenue');
+        const totalAppointmentsEl = document.getElementById('totalAppointments');
+        const avgRevenueEl = document.getElementById('avgRevenue');
+        const topServiceEl = document.getElementById('topService');
+        const dateFilter = document.getElementById('dateFilter');
+        const messageContainer = document.getElementById('messageContainer');
+        const exportBtn = document.getElementById('exportBtn');
+        const activityList = document.getElementById('activityList');
+
+        // Utility Functions
+        function showMessage(message, type = 'info') {
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            messageContainer.innerHTML = `
+                <div class="message ${className}">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                    ${message}
+                </div>
+            `;
+            setTimeout(() => messageContainer.innerHTML = '', 3000);
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-KE', {
+                style: 'currency',
+                currency: 'KES'
+            }).format(amount || 0);
+        }
+
+        function formatDate(date) {
+            if (!date) return 'N/A';
+            return new Date(date.toDate()).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
+
+        // FIXED: Make toggleAdminMenu global (for onclick attributes)
+        window.toggleAdminMenu = () => {
+            const overlay = document.querySelector('.admin-nav-overlay');
+            const menu = document.querySelector('.admin-nav-menu');
+            if (overlay && menu) {
+                overlay.classList.toggle('active');
+                menu.classList.toggle('active');
+            }
+        };
+
+        // Working Sign Out Function (Global)
+        window.signOut = async () => {
+            if (confirm('Are you sure you want to sign out?')) {
+                try {
+                    await signOut(auth);
+                    showMessage('Signed out successfully!', 'success');
+                    setTimeout(() => window.location.href = 'signin.html', 1500);
+                } catch (error) {
+                    console.error('Sign out error:', error);
+                    showMessage('Error signing out. Please try again.', 'error');
+                }
+            }
+        };
+
+        // Load Analytics Data (Global for onclick, admins have full read access)
+        window.loadAnalyticsData = async function(filterDate = '') {
+            if (!totalRevenueEl || !totalAppointmentsEl || !avgRevenueEl || !topServiceEl || !activityList) {
+                showMessage('DOM elements not ready. Please refresh.', 'error');
+                return;
+            }
+
+            // Show loading state
+            totalRevenueEl.textContent = 'KES 0';
+            totalAppointmentsEl.textContent = 'Loading...';
+            avgRevenueEl.textContent = 'KES 0';
+            topServiceEl.textContent = 'Loading...';
+            activityList.innerHTML = '<div class="no-data"><i class="fas fa-spinner fa-spin"></i><div>Loading analytics...</div></div>';
+
+            try {
+                // Get all appointments (admin full access)
+                let appointmentsQuery = collection(db, 'appointments');
+                if (filterDate) {
+                    const startDate = new Date(filterDate);
+                    startDate.setHours(0, 0, 0, 0);
+                    const endDate = new Date(startDate);
+                    endDate.setDate(endDate.getDate() + 1);
+                    endDate.setHours(0, 0, 0, 0);
+                    
+                    appointmentsQuery = query(
+                        appointmentsQuery,
+                        where('date', '>=', startDate),
+                        where('date', '<', endDate),
+                        orderBy('date', 'desc')
+                    );
+                } else {
+                    appointmentsQuery = query(
+                        appointmentsQuery,
+                        orderBy('date', 'desc'),
+                        limit(500) // Limit for performance; paginate if needed
+                    );
+                }
+                
+                const appointmentsSnapshot = await getDocs(appointmentsQuery);
+                let totalAppointments = 0;
+                let totalRevenue = 0;
+                let serviceStats = {};
+                let statusStats = {};
+                let completedAppointments = 0;
+                let recentActivities = [];
+
+                appointmentsSnapshot.forEach((doc) => {
+                    const appointment = { id: doc.id, ...doc.data() };
+                    totalAppointments++;
+                    
+                    // Recent activity (last 10)
+                    if (recentActivities.length < 10) {
+                        recentActivities.push(appointment);
+                    }
+                    
+                    // Calculate revenue (only completed, use static prices or add price field)
+                    if (appointment.status === 'completed') {
+                        let servicePrice = getServicePrice(appointment.service);
+                        totalRevenue += servicePrice;
+                        completedAppointments++;
+                        
+                        // Service stats
+                        serviceStats[appointment.service] = (serviceStats[appointment.service] || 0) + 1;
+                    }
+                    
+                    // Status stats (all)
+                    statusStats[appointment.status || 'pending'] = (statusStats[appointment.status || 'pending'] || 0) + 1;
+                });
+
+                // Get user names for recent activity (cache users if needed)
+                await Promise.all(recentActivities.map(async (apt) => {
+                    if (!apt.userName) {
+                        const userRef = doc(db, 'users', apt.userId);
+                        const userSnap = await getDoc(userRef);
+                        if (userSnap.exists()) {
+                            apt.userName = userSnap.data().displayName || 'Unknown';
+                        } else {
+                            apt.userName = 'Unknown User';
+                        }
+                    }
+                }));
+
+                // Metrics
+                const avgRevenue = completedAppointments > 0 ? Math.round(totalRevenue / completedAppointments) : 0;
+                const topService = Object.keys(serviceStats).reduce((a, b) => 
+                    serviceStats[a] > serviceStats[b] ? a : b, ''
+                ) || 'None';
+
+                // Update metrics
+                totalRevenueEl.textContent = formatCurrency(totalRevenue);
+                totalAppointmentsEl.textContent = totalAppointments.toLocaleString();
+                avgRevenueEl.textContent = formatCurrency(avgRevenue);
+                topServiceEl.textContent = topService;
+
+                // Update recent activity
+                activityList.innerHTML = '';
+                if (recentActivities.length === 0) {
+                    activityList.innerHTML = '<div class="no-data"><i class="fas fa-list"></i><div>No recent activity found.</div></div>';
+                } else {
+                    recentActivities.forEach((apt) => {
+                        const item = document.createElement('div');
+                        item.className = 'activity-item';
+                        item.innerHTML = `
+                            <div class="activity-info">
+                                <strong>${apt.service} - ${apt.userName}</strong>
+                                <span>${formatDate(apt.date)} | Status: ${apt.status || 'Pending'}</span>
+                            </div>
+                            <div class="activity-value">${formatCurrency(getServicePrice(apt.service))}</div>
+                        `;
+                        activityList.appendChild(item);
+                    });
+                }
+
+                // Update charts
+                updateServicesChart(serviceStats);
+                updateStatusChart(statusStats);
+                updateRevenueChart(); // Static, but can be dynamic if monthly data added
+
+                showMessage(`${appointmentsSnapshot.size} records analyzed${filterDate ? ` for ${filterDate}` : ''}.`, 'success');
+
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+                showMessage('Error loading analytics data. Please check permissions and try again.', 'error');
+                [totalRevenueEl, totalAppointmentsEl, avgRevenueEl, topServiceEl].forEach(el => {
+                    el.textContent = el.id.includes('Revenue') ? 'KES 0' : 'Error';
+                });
+                activityList.innerHTML = '<div class="no-data"><i class="fas fa-exclamation-triangle"></i><div>Error loading activity.</div></div>';
+            }
+        };
+
+        function getServicePrice(service) {
+            const prices = {
+                'Routine Maintenance': 12000,
+                'Engine Overhaul': 40000,
+                'Brake Service': 8000,
+                'Oil Change': 5000,
+                'Tire Rotation': 3000
+                // Add more as needed
+            };
+            return prices[service] || 0;
+        }
+
+        // Initialize Revenue Chart (Dynamic if monthly aggregation added; static demo)
+        function updateRevenueChart() {
+            const ctx = document.getElementById('revenueChart');
+            if (!ctx || revenueChart) return;
+
+            const ctxElement = ctx.getContext('2d');
+            
+            const data = {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Monthly Revenue',
+                    data: [150000, 200000, 180000, 250000, 220000, 300000, 280000, 320000, 290000, 350000, 310000, 380000], // Static; make dynamic
+                    backgroundColor: 'rgba(212, 175, 55, 0.2)',
+                    borderColor: '#d4af37',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            };
+
+            revenueChart = new Chart(ctxElement, {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Revenue Overview (KES)',
+                            color: '#fff',
+                            font: { size: 16, weight: 'bold' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: {
+                                color: '#BDBDBD',
+                                callback: (value) => formatCurrency(value)
+                            }
+                        },
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#BDBDBD' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update Service Distribution Chart
+        function updateServicesChart(serviceStats) {
+            const ctx = document.getElementById('servicesChart');
+            if (!ctx) return;
+
+            if (!servicesChart) {
+                const ctxElement = ctx.getContext('2d');
+                servicesChart = new Chart(ctxElement, {
+                    type: 'doughnut',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            data: [],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.8)',
+                                'rgba(54, 162, 235, 0.8)',
+                                'rgba(255, 205, 86, 0.8)',
+                                'rgba(75, 192, 192, 0.8)',
+                                'rgba(153, 102, 255, 0.8)',
+                                'rgba(255, 159, 64, 0.8)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 205, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { color: '#fff', padding: 20 }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Service Distribution',
+                                color: '#fff',
+                                font: { size: 16, weight: 'bold' }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const labels = Object.keys(serviceStats).length > 0 ? Object.keys(serviceStats) : ['No Data'];
+            const data = Object.values(serviceStats).length > 0 ? Object.values(serviceStats) : [0];
+
+            servicesChart.data.labels = labels;
+            servicesChart.data.datasets[0].data = data;
+            servicesChart.update();
+        }
+
+        // Update Status Distribution Chart
+        function updateStatusChart(statusStats) {
+            const ctx = document.getElementById('statusChart');
+            if (!ctx) return;
+
+            if (!statusChart) {
+                const ctxElement = ctx.getContext('2d');
+                statusChart = new Chart(ctxElement, {
+                    type: 'bar',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: 'Appointments',
+                            data: [],
+                            backgroundColor: [
+                                'rgba(255, 193, 7, 0.8)',  // Pending
+                                'rgba(76, 175, 80, 0.8)',  // Approved
+                                'rgba(33, 150, 243, 0.8)', // Completed
+                                'rgba(255, 0, 0, 0.8)',    // Cancelled/Rejected
+                            ],
+                            borderColor: [
+                                'rgba(255, 193, 7, 1)',
+                                'rgba(76, 175, 80, 1)',
+                                'rgba(33, 150, 243, 1)',
+                                'rgba(255, 0, 0, 1)',
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            title: {
+                                display: true,
+                                text: 'Status Breakdown',
+                                color: '#fff',
+                                font: { size: 16, weight: 'bold' }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                                ticks: { color: '#BDBDBD' }
+                            },
+                            x: {
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                                ticks: { color: '#BDBDBD' }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const statusOrder = ['pending', 'approved', 'completed', 'cancelled', 'rejected'];
+            const labels = statusOrder.map(status => status.charAt(0).toUpperCase() + status.slice(1));
+            const data = statusOrder.map(status => statusStats[status] || 0);
+
+            statusChart.data.labels = labels;
+            statusChart.data.datasets[0].data = data;
+            statusChart.update();
+        }
+
+        // Export Data (Global, Enhanced Placeholder - admins can access data)
+        window.exportData = function(format) {
+            if (!format) return;
+            showMessage(`Preparing ${format.toUpperCase()} export... (Full report generation in progress.)`, 'info');
+            // In production: Aggregate data from Firestore, generate file (e.g., via jsPDF for PDF, PapaParse for CSV)
+            // For now, placeholder to avoid errors
+            console.log(`Exporting analytics data as ${format}...`);
+        };
+
+        // Event Listeners (Safe DOM Checks)
+        if (dateFilter) {
+            dateFilter.valueAsDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); // Default to last 30 days
+            dateFilter.addEventListener('change', (e) => loadAnalyticsData(e.target.value));
+        }
+
+        if (exportBtn) {
+            exportBtn.addEventListener('click', () => {
+                showMessage('Exporting full report... (CSV, PDF, Excel options available.)', 'info');
+                // Trigger main export (e.g., CSV as default)
+                exportData('csv');
+            });
+        }
+
+        // Initialize Page
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                
+                // Check if user is admin (rules allow reading own user doc)
+                const userRef = doc(db, 'users', user.uid);
+                const userSnap = await getDoc(userRef);
+                
+                if (userSnap.exists() && userSnap.data().role === 'admin') {
+                    // Wait for DOM
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', () => {
+                            updateRevenueChart(); // Static chart init
+                            loadAnalyticsData(dateFilter ? dateFilter.value : '');
+                        });
+                    } else {
+                        updateRevenueChart();
+                        loadAnalyticsData(dateFilter ? dateFilter.value : '');
+                    }
+                    showMessage('Analytics dashboard loaded.', 'success');
+                } else {
+                    showMessage('Access denied. Admin privileges required.', 'error');
+                    setTimeout(() => window.location.href = 'dashboard.html', 2000);
+                }
+            } else {
+                window.location.href = 'signin.html';
+            }
+        });
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('Service Worker registered:', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.error('Service Worker registration failed:', registrationError);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

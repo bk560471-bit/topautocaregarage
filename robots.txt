@@ -1,0 +1,39 @@
+User-agent: *
+Allow: /
+Crawl-delay: 1
+
+# Allow all pages for full site syncing (Dashboard, Services, Profile, Notifications, Verify Email, etc.)
+# Specific paths explicitly allowed for SEO (public/static/dynamic pages)
+Allow: /index.html
+Allow: /dashboard.html
+Allow: /profile.html
+Allow: /services.html
+Allow: /pricing.html
+Allow: /notifications.html
+Allow: /verify-email.html
+Allow: /privacy-policy.html
+Allow: /terms-of-service.html
+Allow: /signin.html
+Allow: /signup.html
+Allow: /book-appointment.html
+Allow: /myvehicles.html
+Allow: /contact.html
+Allow: /forgot-password.html
+Allow: /reset-password.html
+
+# Allow assets (CSS, JS, images) for proper page rendering across all pages
+Allow: /main.css
+Allow: /assets/js/
+Allow: /assets/images/
+Allow: /images/
+
+# Block sensitive/private paths (e.g., admin dashboard, internal tools—not public)
+Disallow: /admin.html
+Disallow: /admin/
+Disallow: /internal/
+Disallow: /tmp/
+Disallow: /backup/
+Disallow: /uploads/  # If user-uploaded content (e.g., vehicle photos)
+
+# Sitemap for bot discovery (lists all synced pages—place sitemap.xml in root)
+Sitemap: https://topautocare.com/sitemap.xml

@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Details - Top Autocare Garage</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#d4af37">
+
+    <!-- Mobile/PWA Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Top Autocare">
+    <link rel="apple-touch-icon" href="assets/images/app-icon-512.png">
+
+    <!-- Favicon for Browsers -->
+    <link rel="icon" href="assets/images/app-icon-192.png" sizes="192x192" type="image/png">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            line-height: 1.6;
+            padding-bottom: 80px;
+            position: relative;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(4px);
+            z-index: -1;
+        }
+        /* Header Styles */
+        #header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        #header.hidden {
+            transform: translateY(-100%);
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 0 1rem;
+            color: #d4af37;
+        }
+        .logo-container:hover h1 {
+            text-decoration: underline;
+        }
+        .logo-container img {
+            height: 50px;
+            width: auto;
+            margin-right: 0.5rem;
+            border-radius: 50%;
+        }
+        .logo-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            color: #d4af37;
+            text-decoration: none;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding-right: 1rem;
+        }
+        .notification-bell {
+            position: relative;
+            color: #ffffff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .notification-bell:hover {
+            color: #d4af37;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #d4af37;
+            color: #000;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .book-service-btn {
+            background: #d4af37;
+            color: #000;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .book-service-btn:hover {
+            background: #b8962e;
+            transform: translateY(-2px);
+        }
+        @media (max-width: 768px) {
+            #header {
+                padding: 0.5rem;
+                flex-wrap: wrap;
+            }
+            .logo-container {
+                padding: 0 0.5rem;
+            }
+            .logo-title {
+                font-size: 1.25rem;
+            }
+            .header-actions {
+                padding-right: 0.5rem;
+                gap: 0.5rem;
+            }
+            .book-service-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+        .container {
+            max-width: 600px;
+            margin: 80px auto 20px;
+            padding: 20px;
+        }
+        h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #d4af37;
+            text-align: center;
+        }
+        .appointment-details {
+            background: rgba(30, 30, 30, 0.85);
+            border-radius: 12px;
+            border: 1px solid #333;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1.5rem;
+        }
+        .appointment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .appointment-header h2 {
+            font-size: 1.5rem;
+            margin: 0;
+            color: #d4af37;
+            text-align: left;
+        }
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .status-pending {
+            background: rgba(212, 175, 55, 0.2);
+            color: #d4af37;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        .status-approved {
+            background: rgba(0, 255, 0, 0.2);
+            color: #00ff00;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+        .status-completed {
+            background: rgba(0, 150, 255, 0.2);
+            color: #0096ff;
+            border: 1px solid rgba(0, 150, 255, 0.3);
+        }
+        .status-cancelled {
+            background: rgba(128, 128, 128, 0.2);
+            color: #808080;
+            border: 1px solid rgba(128, 128, 128, 0.3);
+        }
+        .status-rejected {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff0000;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+        }
+        .detail {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+            padding: 0.75rem;
+            background: rgba(51, 51, 51, 0.2);
+            border-radius: 8px;
+            border-left: 3px solid #d4af37;
+        }
+        .detail i {
+            width: 20px;
+            color: #d4af37;
+            flex-shrink: 0;
+            margin-top: 0.25rem;
+        }
+        .detail strong {
+            color: #d4af37;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        .detail span {
+            color: #ffffff;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+        .actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 0.875rem 1.75rem;
+            border-radius: 8px;
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            min-width: 140px;
+            justify-content: center;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #d4af37, #b8962e);
+            color: #000;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #b8962e, #d4af37);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+        .btn-danger {
+            background: transparent;
+            color: #ff6b6b;
+            border: 2px solid #ff6b6b;
+        }
+        .btn-danger:hover {
+            background: #ff6b6b;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+        .message {
+            padding: 0.875rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: center;
+        }
+        .message.success {
+            background: rgba(0, 255, 0, 0.15);
+            color: #00ff00;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+        .message.error {
+            background: rgba(255, 0, 0, 0.15);
+            color: #ff0000;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #ffffff;
+            background: rgba(30, 30, 30, 0.85);
+            border-radius: 12px;
+            border: 1px solid #333;
+            margin: 2rem auto;
+            max-width: 400px;
+        }
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+            color: #d4af37;
+        }
+        .empty-state h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: #ffffff;
+        }
+        .empty-state p {
+            font-size: 0.875rem;
+            color: #cccccc;
+            line-height: 1.5;
+        }
+        .refresh-btn {
+            background: #d4af37;
+            color: #000;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .refresh-btn:hover {
+            background: #b8962e;
+            transform: translateY(-2px);
+        }
+        .loading-skeleton {
+            background: linear-gradient(90deg, #333 25%, #222 50%, #333 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 12px;
+            height: 300px;
+            opacity: 0.5;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                margin: 70px auto 20px;
+                padding: 15px;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+            .appointment-details {
+                padding: 1.5rem;
+            }
+            .appointment-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+            .appointment-header h2 {
+                font-size: 1.25rem;
+                text-align: center;
+                width: 100%;
+            }
+            .detail {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+                padding: 0.75rem;
+            }
+            .detail i {
+                margin-top: 0;
+                align-self: flex-start;
+            }
+            .actions {
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: stretch;
+            }
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .empty-state {
+                margin: 1rem auto;
+                padding: 2rem 1rem;
+            }
+        }
+        /* Mobile Bottom Nav */
+        .mobile-nav { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            z-index: 40; 
+            background: rgba(30, 30, 30, 0.85); 
+            border-top: 1px solid #333; 
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.2); 
+            display: none;
+            transition: transform 0.3s ease;
+        }
+        .mobile-nav.hidden {
+            transform: translateY(100%);
+        }
+        @media (max-width: 768px) { .mobile-nav { display: block; } }
+        .nav-grid { 
+            display: grid; 
+            grid-template-columns: repeat(5, 1fr); 
+            padding: 0.5rem 0; 
+            list-style: none;
+        }
+        .nav-item-mobile { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 0.5rem; 
+            text-decoration: none; 
+            color: #ffffff; 
+            font-size: 0.75rem; 
+            transition: all 0.3s ease; 
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .nav-item-mobile:hover {
+            color: #d4af37;
+        }
+        .nav-item-mobile.active { 
+            color: #d4af37; 
+            text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+        }
+        .nav-item-mobile i { 
+            font-size: 1.25rem; 
+            margin-bottom: 0.25rem; 
+            opacity: 0.8; 
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        .nav-item-mobile:hover i {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        .nav-item-mobile.active i { 
+            opacity: 1; 
+            text-shadow: 0 0 6px rgba(212, 175, 55, 0.8);
+            filter: drop-shadow(0 2px 6px rgba(212, 175, 55, 0.4));
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        <!-- Logo Container - Clickable to Dashboard -->
+        <a href="dashboard.html" class="logo-container">
+            <img src="images/logo.png" alt="Top Autocare Logo" style="height: 50px; width: auto;">
+            <h1 class="logo-title">Top Autocare</h1>
+        </a>
+        
+        <!-- Header Actions -->
+        <div class="header-actions">
+            <!-- Book Service Button -->
+            <a href="book-appointment.html" class="book-service-btn">
+                <i class="fas fa-calendar-plus"></i> Book Service
+            </a>
+            
+            <!-- Notification Bell -->
+            <div class="notification-bell" onclick="window.location.href='notifications.html'">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" style="display: none;">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Appointment Details Page Content -->
+    <div class="container">
+        <div id="messageContainer"></div>
+        <div id="detailsContainer">
+            <!-- Loading state - replaced on load -->
+            <div class="appointment-details loading-skeleton"></div>
+        </div>
+        <div class="actions">
+            <button class="btn btn-danger" id="cancelBtn" onclick="cancelAppointment()" style="display: none;">
+                <i class="fas fa-times"></i> Cancel Appointment
+            </button>
+            <button class="btn btn-primary" id="rescheduleBtn" onclick="rescheduleAppointment()" style="display: none;">
+                <i class="fas fa-calendar-alt"></i> Reschedule
+            </button>
+            <a href="appointments.html" class="btn btn-primary" style="background: #666; margin-left: auto; display: block; text-align: center;">
+                <i class="fas fa-arrow-left"></i> Back to Appointments
+            </a>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-nav">
+        <ul class="nav-grid">
+            <li>
+                <a class="nav-item-mobile" href="myvehicles.html">
+                    <i class="fas fa-car"></i>
+                    <span>Vehicles</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="book-appointment.html">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>Book</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile active" href="appointments.html">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Appointments</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="notifications.html">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="profile.html">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Firebase Script - Self-Contained -->
+    <script type="module">
+        // Firebase Imports
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc, 
+            updateDoc, 
+            deleteDoc, 
+            collection, 
+            query, 
+            where, 
+            onSnapshot, 
+            orderBy, 
+            serverTimestamp, 
+            limit 
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBkVYS0CaKe1kHPp9GVnURiZz5WP5tE3iM",
+            authDomain: "top-autocare.firebaseapp.com",
+            projectId: "top-autocare",
+            storageBucket: "top-autocare.firebasestorage.app",
+            messagingSenderId: "879247821822",
+            appId: "1:879247821822:web:e6a418395d52aac99a4eaf",
+            measurementId: "G-T5NDM5M33Z"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let appointmentId = null;
+        let unsubscribeNotifications = null;
+
+        // DOM Elements
+        const detailsContainer = document.getElementById('detailsContainer');
+        const messageContainer = document.getElementById('messageContainer');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const rescheduleBtn = document.getElementById('rescheduleBtn');
+
+        // Utility Functions
+        function showMessage(message, type = 'info') {
+            const existingMessage = messageContainer.querySelector('.message');
+            if (existingMessage) existingMessage.remove();
+            const div = document.createElement('div');
+            div.className = `message ${type}`;
+            div.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-times-circle' : 'fa-info-circle'}"></i>
+                ${message}
+            `;
+            messageContainer.appendChild(div);
+            setTimeout(() => {
+                if (div.parentNode) div.remove();
+            }, 3000);
+        }
+
+        // Show empty/error state
+        function showEmptyState(type = 'not-found') {
+            if (type === 'not-found') {
+                detailsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-calendar-times"></i>
+                        <h3>Appointment Not Found</h3>
+                        <p>This appointment does not exist or has been removed. Please check the appointment ID.</p>
+                        <a href="appointments.html" class="refresh-btn">
+                            <i class="fas fa-arrow-left"></i> Back to Appointments
+                        </a>
+                    </div>
+                `;
+            } else if (type === 'unauthorized') {
+                detailsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Unauthorized Access</h3>
+                        <p>You don't have permission to view this appointment. Redirecting...</p>
+                    </div>
+                `;
+                setTimeout(() => window.location.href = 'appointments.html', 2000);
+            }
+        }
+
+        // Format dates/times
+        function formatDate(date) {
+            if (!date) return 'Not scheduled';
+            return new Date(date.toDate()).toLocaleDateString('en-US', {
+                weekday: 'short',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function formatTime(time) {
+            return time || 'Flexible';
+        }
+
+        function getStatusBadge(status) {
+            const statusMap = {
+                'pending': { text: 'Pending', class: 'status-pending' },
+                'approved': { text: 'Approved', class: 'status-approved' },
+                'completed': { text: 'Completed', class: 'status-completed' },
+                'cancelled': { text: 'Cancelled', class: 'status-cancelled' },
+                'rejected': { text: 'Rejected', class: 'status-rejected' }
+            };
+            return statusMap[status] || { text: 'Unknown', class: 'status-pending' };
+        }
+
+        // Load notifications badge (user-specific, rules allow read own)
+        function loadNotifications() {
+            if (!currentUser || unsubscribeNotifications) return;
+            
+            const notificationsQuery = query(
+                collection(db, 'notifications'),
+                where('userId', '==', currentUser.uid),
+                where('read', '==', false),
+                orderBy('timestamp', 'desc'),
+                limit(3)
+            );
+
+            unsubscribeNotifications = onSnapshot(notificationsQuery, (snapshot) => {
+                const unreadCount = snapshot.size;
+                const notificationBadge = document.querySelector('.notification-badge');
+                if (notificationBadge) {
+                    notificationBadge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+                    notificationBadge.style.display = unreadCount === 0 ? 'none' : 'flex';
+                }
+            }, (error) => {
+                console.error('Badge error:', error);
+                if (error.code === 'permission-denied') {
+                    console.warn('No permission to read notifications');
+                }
+            });
+        }
+
+        // Load appointment details (rules: read only own appointments)
+        async function loadAppointmentDetails() {
+            if (!appointmentId) {
+                showEmptyState('not-found');
+                return;
+            }
+
+            try {
+                // Show loading
+                detailsContainer.innerHTML = `
+                    <div class="appointment-details">
+                        <div style="text-align: center; padding: 2rem; color: #BDBDBD;">
+                            <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                            Loading appointment details...
+                        </div>
+                    </div>
+                `;
+
+                const appointmentRef = doc(db, 'appointments', appointmentId);
+                const appointmentSnap = await getDoc(appointmentRef);
+
+                if (!appointmentSnap.exists()) {
+                    showEmptyState('not-found');
+                    return;
+                }
+
+                const appointment = appointmentSnap.data();
+                
+                // Security check: Ensure it's the user's appointment (client-side validation)
+                if (appointment.userId !== currentUser.uid) {
+                    console.warn('Unauthorized appointment access attempt:', appointmentId);
+                    showEmptyState('unauthorized');
+                    return;
+                }
+
+                const status = getStatusBadge(appointment.status);
+                detailsContainer.innerHTML = `
+                    <div class="appointment-header">
+                        <h2>${appointment.service || 'Appointment Details'}</h2>
+                        <span class="status-badge ${status.class}">${status.text}</span>
+                    </div>
+                    <div class="detail">
+                        <i class="fas fa-wrench"></i>
+                        <strong>Service Requested:</strong>
+                        <span>${appointment.service || 'Not specified'}</span>
+                    </div>
+                    <div class="detail">
+                        <i class="fas fa-calendar-day"></i>
+                        <strong>Scheduled Date:</strong>
+                        <span>${formatDate(appointment.date)}</span>
+                    </div>
+                    <div class="detail">
+                        <i class="fas fa-clock"></i>
+                        <strong>Preferred Time:</strong>
+                        <span>${formatTime(appointment.time)}</span>
+                    </div>
+                    ${appointment.vehicle ? `
+                    <div class="detail">
+                        <i class="fas fa-car"></i>
+                        <strong>Vehicle:</strong>
+                        <span>${appointment.vehicle}</span>
+                    </div>
+                    ` : ''}
+                    ${appointment.notes ? `
+                    <div class="detail">
+                        <i class="fas fa-sticky-note"></i>
+                        <strong>Additional Notes:</strong>
+                        <span>${appointment.notes}</span>
+                    </div>
+                    ` : ''}
+                    <div class="detail">
+                        <i class="fas fa-calendar-plus"></i>
+                        <strong>Created On:</strong>
+                        <span>${formatDate(appointment.createdAt)}</span>
+                    </div>
+                `;
+
+                // Show actions based on status (only for pending appointments, owner can cancel/reschedule)
+                if (appointment.status === 'pending') {
+                    if (cancelBtn) cancelBtn.style.display = 'inline-flex';
+                    if (rescheduleBtn) rescheduleBtn.style.display = 'inline-flex';
+                } else {
+                    if (cancelBtn) cancelBtn.style.display = 'none';
+                    if (rescheduleBtn) rescheduleBtn.style.display = 'none';
+                }
+
+                console.log('✅ Appointment loaded successfully:', appointmentId);
+            } catch (error) {
+                console.error('Load details error:', error);
+                if (error.code === 'permission-denied') {
+                    showEmptyState('unauthorized');
+                } else {
+                    showMessage('Error loading appointment details. Please try again.', 'error');
+                    detailsContainer.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>Error Loading Details</h3>
+                            <p>Failed to load appointment information. Try refreshing or contact support.</p>
+                            <button class="refresh-btn" onclick="loadAppointmentDetails()">
+                                <i class="fas fa-sync-alt"></i> Retry Load
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Cancel appointment (rules: only owner can update own to cancelled)
+        window.cancelAppointment = async () => {
+            if (!confirm('Are you sure you want to cancel this appointment?\n\nThis action cannot be undone and may affect your service history.')) return;
+            
+            try {
+                await updateDoc(doc(db, 'appointments', appointmentId), {
+                    status: 'cancelled',
+                    updatedAt: serverTimestamp(),
+                    cancelledBy: currentUser.uid,
+                    cancelledAt: serverTimestamp()
+                });
+                showMessage('Appointment cancelled successfully! You will receive a confirmation.', 'success');
+                await loadAppointmentDetails();  // Reload to update UI
+            } catch (error) {
+                console.error('Cancel error:', error);
+                if (error.code === 'permission-denied') {
+                    showMessage('You are not authorized to cancel this appointment.', 'error');
+                } else {
+                    showMessage('Error cancelling appointment. Please try again or contact support.', 'error');
+                }
+            }
+        };
+
+        // Reschedule (redirect to booking with prefill)
+        window.rescheduleAppointment = () => {
+            if (confirm('Reschedule this appointment? You will be taken to the booking page with details pre-filled.')) {
+                window.location.href = `book-appointment.html?rescheduleId=${appointmentId}`;
+            }
+        };
+
+        // DOM Ready + Auth Init
+        document.addEventListener('DOMContentLoaded', () => {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUser = user;
+                    console.log('👤 User authenticated:', user.uid);
+                    appointmentId = new URLSearchParams(window.location.search).get('id');
+                    
+                    if (!appointmentId) {
+                        showMessage('No appointment ID provided in URL.', 'error');
+                        setTimeout(() => window.location.href = 'appointments.html', 2000);
+                        return;
+                    }
+                    
+                    loadAppointmentDetails();  // Load from Firestore
+                    loadNotifications();  // Real-time badge updates
+                } else {
+                    showMessage('Please sign in to view your appointment details.', 'error');
+                    setTimeout(() => window.location.href = 'signin.html', 2000);
+                }
+            });
+        });
+
+        // Cleanup listeners on unload
+        window.addEventListener('beforeunload', () => {
+            if (unsubscribeNotifications) {
+                unsubscribeNotifications();
+            }
+        });
+    </script>
+
+    <!-- Auto-hide Navigation Script -->
+    <script>
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', () => {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const header = document.getElementById('header');
+            const mobileNav = document.querySelector('.mobile-nav');
+            
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                if (header) header.classList.add('hidden');
+                if (mobileNav) mobileNav.classList.add('hidden');
+            } else {
+                if (header) header.classList.remove('hidden');
+                if (mobileNav) mobileNav.classList.remove('hidden');
+            }
+            
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('✅ Service Worker registered successfully');
+                    })
+                    .catch((error) => {
+                        console.error('❌ Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

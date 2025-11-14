@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment - Top Autocare Garage</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#d4af37">
+
+    <!-- Mobile/PWA Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Top Autocare">
+    <link rel="apple-touch-icon" href="assets/images/app-icon-512.png">
+
+    <!-- Favicon for Browsers -->
+    <link rel="icon" href="assets/images/app-icon-192.png" sizes="192x192" type="image/png">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            line-height: 1.6;
+            padding-bottom: 80px;
+            position: relative;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(4px);
+            z-index: -1;
+        }
+        /* Header Styles */
+        #header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        #header.hidden {
+            transform: translateY(-100%);
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 0 1rem;
+            color: #d4af37;
+        }
+        .logo-container:hover h1 {
+            text-decoration: underline;
+        }
+        .logo-container img {
+            height: 50px;
+            width: auto;
+            margin-right: 0.5rem;
+            border-radius: 50%;
+        }
+        .logo-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            color: #d4af37;
+            text-decoration: none;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding-right: 1rem;
+        }
+        .notification-bell {
+            position: relative;
+            color: #ffffff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .notification-bell:hover {
+            color: #d4af37;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #d4af37;
+            color: #000;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .book-service-btn {
+            background: #d4af37;
+            color: #000;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .book-service-btn:hover {
+            background: #b8962e;
+            transform: translateY(-2px);
+        }
+        .book-service-btn.active-page {
+            background: #d4af37;
+            box-shadow: 0 2px 8px rgba(212, 175, 55, 0.4);
+        }
+        @media (max-width: 768px) {
+            #header {
+                padding: 0.5rem;
+                flex-wrap: wrap;
+            }
+            .logo-container {
+                padding: 0 0.5rem;
+            }
+            .logo-title {
+                font-size: 1.25rem;
+            }
+            .header-actions {
+                padding-right: 0.5rem;
+                gap: 0.5rem;
+            }
+            .book-service-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+        .container {
+            max-width: 600px;
+            margin: 80px auto 20px;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #d4af37;
+            text-align: center;
+        }
+        .book-form {
+            background: rgba(30, 30, 30, 0.85);
+            border-radius: 12px;
+            border: 1px solid #333;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .form-section {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(51, 51, 51, 0.5);
+        }
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .form-section h3 {
+            font-size: 1.1rem;
+            color: #d4af37;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        label {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+        }
+        .required {
+            color: #ff6b6b;
+        }
+        select, input[type="date"], input[type="time"], textarea {
+            width: 100%;
+            padding: 0.875rem;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background: rgba(18, 18, 18, 0.85);
+            color: #fff;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+            background: rgba(30, 30, 30, 0.95);
+        }
+        select option {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 0.5rem;
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+            min-height: 100px;
+        }
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 8px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #d4af37, #b8962e);
+            color: #000;
+        }
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #b8962e, #d4af37);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+        .btn-primary:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            opacity: 0.6;
+        }
+        .message {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-align: center;
+        }
+        .message.success {
+            background: rgba(0, 255, 0, 0.15);
+            color: #00ff00;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+        .message.error {
+            background: rgba(255, 0, 0, 0.15);
+            color: #ff0000;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+        }
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: #d4af37;
+            font-size: 1.1rem;
+        }
+        .loading i {
+            margin-right: 0.5rem;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #cccccc;
+            background: rgba(30, 30, 30, 0.5);
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        .empty-state i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.5;
+        }
+        .empty-state p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        /* Mobile Bottom Nav */
+        .mobile-nav { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            z-index: 40; 
+            background: rgba(30, 30, 30, 0.85); 
+            border-top: 1px solid #333; 
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.2); 
+            display: none;
+            transition: transform 0.3s ease;
+        }
+        .mobile-nav.hidden {
+            transform: translateY(100%);
+        }
+        @media (max-width: 768px) { .mobile-nav { display: block; } }
+        .nav-grid { 
+            display: grid; 
+            grid-template-columns: repeat(5, 1fr); 
+            padding: 0.5rem 0; 
+            list-style: none;
+        }
+        .nav-item-mobile { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 0.5rem; 
+            text-decoration: none; 
+            color: #ffffff; 
+            font-size: 0.75rem; 
+            transition: all 0.3s ease; 
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .nav-item-mobile:hover {
+            color: #d4af37;
+        }
+        .nav-item-mobile.active { 
+            color: #d4af37; 
+            text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+        }
+        .nav-item-mobile i { 
+            font-size: 1.25rem; 
+            margin-bottom: 0.25rem; 
+            opacity: 0.8; 
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        .nav-item-mobile:hover i {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        .nav-item-mobile.active i { 
+            opacity: 1; 
+            text-shadow: 0 0 6px rgba(212, 175, 55, 0.8);
+            filter: drop-shadow(0 2px 6px rgba(212, 175, 55, 0.4));
+        }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                margin: 70px auto 20px;
+                padding: 15px;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            .book-form {
+                padding: 1.5rem;
+            }
+            .form-group {
+                margin-bottom: 1.25rem;
+            }
+            label {
+                font-size: 0.9rem;
+            }
+            select, input, textarea {
+                padding: 0.75rem;
+                font-size: 0.9rem;
+            }
+            .btn {
+                padding: 0.875rem;
+                font-size: 0.95rem;
+            }
+            .message {
+                font-size: 0.85rem;
+                padding: 0.75rem;
+            }
+            .form-section h3 {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        <!-- Logo Container - Clickable to Dashboard -->
+        <a href="dashboard.html" class="logo-container">
+            <img src="images/logo.png" alt="Top Autocare Logo" style="height: 50px; width: auto;">
+            <h1 class="logo-title">Top Autocare</h1>
+        </a>
+        
+        <!-- Header Actions -->
+        <div class="header-actions">
+            <!-- Book Service Button -->
+            <a href="book-appointment.html" class="book-service-btn active-page">
+                <i class="fas fa-wrench"></i> Book Service
+            </a>
+            
+            <!-- Notification Bell -->
+            <div class="notification-bell" onclick="window.location.href='notifications.html'">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" style="display: none;">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Book Appointment Page Content -->
+    <div class="container">
+        <h1>Book Your Appointment</h1>
+        <div id="messageContainer"></div>
+        
+        <!-- Appointment Booking Form -->
+        <form id="bookForm" class="book-form">
+            <div class="form-section">
+                <h3><i class="fas fa-wrench"></i> Select Service</h3>
+                <div class="form-group">
+                    <label for="service">Service Required <span class="required">*</span></label>
+                    <select id="service" required>
+                        <option value="" disabled selected>Loading services...</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3><i class="fas fa-calendar"></i> Schedule Date & Time</h3>
+                <div class="form-group">
+                    <label for="date">Preferred Date <span class="required">*</span></label>
+                    <input type="date" id="date" required>
+                </div>
+                <div class="form-group">
+                    <label for="time">Preferred Time (Optional)</label>
+                    <input type="time" id="time">
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3><i class="fas fa-car"></i> Vehicle Information</h3>
+                <div class="form-group">
+                    <label for="vehicleId">Your Vehicle <span class="required">*</span></label>
+                    <select id="vehicleId" required>
+                        <option value="" disabled selected>Loading your vehicles...</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="notes">Additional Notes (Optional)</label>
+                <textarea id="notes" placeholder="Describe any specific issues, preferred technician, or special requirements..."></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
+                <i class="fas fa-calendar-check"></i> Book Appointment
+            </button>
+        </form>
+    </div>
+
+    <!-- Mobile Bottom Navigation (Updated Order: Vehicles, Services, Dashboard, Appointments/Book (Active), Profile) -->
+    <nav class="mobile-nav">
+        <ul class="nav-grid">
+            <li>
+                <a class="nav-item-mobile" href="myvehicles.html">
+                    <i class="fas fa-car"></i>
+                    <span>Vehicles</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="services.html">
+                    <i class="fas fa-wrench"></i>
+                    <span>Services</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="dashboard.html">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile active" href="book-appointment.html">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Appointments</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="profile.html">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Firebase Script - Self-Contained -->
+    <script type="module">
+        // Firebase Imports
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            query, 
+            where, 
+            onSnapshot, 
+            orderBy, 
+            getDocs, 
+            serverTimestamp,
+            doc,
+            getDoc 
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBkVYS0CaKe1kHPp9GVnURiZz5WP5tE3iM",
+            authDomain: "top-autocare.firebaseapp.com",
+            projectId: "top-autocare",
+            storageBucket: "top-autocare.firebasestorage.app",
+            messagingSenderId: "879247821822",
+            appId: "1:879247821822:web:e6a418395d52aac99a4eaf",
+            measurementId: "G-T5NDM5M33Z"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let unsubscribeNotifications = null;
+        let unsubscribeVehicles = null;
+        let currentVehicles = []; // Store vehicles for real-time updates
+
+        // DOM Elements
+        const bookForm = document.getElementById('bookForm');
+        const serviceSelect = document.getElementById('service');
+        const dateInput = document.getElementById('date');
+        const timeInput = document.getElementById('time');
+        const vehicleSelect = document.getElementById('vehicleId'); // Renamed for clarity (stores vehicle doc ID)
+        const notesInput = document.getElementById('notes');
+        const messageContainer = document.getElementById('messageContainer');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Utility Functions
+        function showMessage(message, type = 'info') {
+            const existingMessage = messageContainer.querySelector('.message');
+            if (existingMessage) existingMessage.remove();
+            const div = document.createElement('div');
+            div.className = `message ${type}`;
+            div.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-times-circle' : 'fa-info-circle'}"></i>
+                ${message}
+            `;
+            messageContainer.appendChild(div);
+            setTimeout(() => {
+                if (div.parentNode) div.remove();
+            }, 5000);
+        }
+
+        // Update vehicle dropdown from currentVehicles array
+        function updateVehicleDropdown() {
+            if (!vehicleSelect) return;
+            
+            vehicleSelect.innerHTML = '<option value="">Select a vehicle</option>';
+            
+            if (currentVehicles.length === 0) {
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = 'No vehicles added yet';
+                option.disabled = true;
+                vehicleSelect.appendChild(option);
+                return;
+            }
+
+            currentVehicles.forEach((vehicle) => {
+                const option = document.createElement('option');
+                option.value = vehicle.id; // Store vehicle document ID for easy reference
+                option.textContent = `${vehicle.make || 'Unknown'} ${vehicle.model || ''} (${vehicle.year || 'N/A'}) - ${vehicle.plate || 'No plate'}`;
+                vehicleSelect.appendChild(option);
+            });
+        }
+
+        // Enable/disable submit button based on form validation
+        function toggleSubmitButton() {
+            const isValid = serviceSelect.value && dateInput.value && vehicleSelect.value && new Date(dateInput.value) >= new Date().toDateString();
+            submitBtn.disabled = !isValid;
+            submitBtn.style.opacity = isValid ? '1' : '0.6';
+        }
+
+        // Load Services from Firestore (public read access)
+        async function loadServices() {
+            try {
+                if (!serviceSelect) return;
+                serviceSelect.innerHTML = '<option value="" disabled>Loading services...</option>';
+                const servicesQuery = query(collection(db, 'services'), orderBy('name'));
+                const snapshot = await getDocs(servicesQuery);
+                
+                serviceSelect.innerHTML = '<option value="" disabled selected>Choose a service</option>';
+                
+                if (snapshot.empty) {
+                    serviceSelect.innerHTML += '<option value="" disabled>No services available</option>';
+                    showMessage('No services found. Please contact support.', 'error');
+                } else {
+                    snapshot.forEach((doc) => {
+                        const service = doc.data();
+                        const option = document.createElement('option');
+                        option.value = doc.id;
+                        option.textContent = `${service.name || 'Unknown Service'} - KSh ${service.price || 'TBD'}`;
+                        serviceSelect.appendChild(option);
+                    });
+                    console.log('✅ Services loaded:', snapshot.size);
+                }
+            } catch (error) {
+                console.error('Services load error:', error);
+                if (serviceSelect) {
+                    serviceSelect.innerHTML = '<option value="" disabled>Error loading services</option>';
+                }
+                showMessage('Error loading services. Please refresh.', 'error');
+            }
+        }
+
+        // Load User's Vehicles from Firestore (rules-compliant: read own, real-time)
+        function loadVehicles() {
+            if (!currentUser || !vehicleSelect) return;
+
+            try {
+                console.log('🔄 Loading vehicles for booking...');
+
+                // Use the existing index: userId + createdAt DESC
+                const vehiclesQuery = query(
+                    collection(db, 'vehicles'),
+                    where('userId', '==', currentUser.uid),
+                    orderBy('createdAt', 'desc')
+                );
+
+                // Real-time listener for vehicles (in case user adds one while on page)
+                unsubscribeVehicles = onSnapshot(vehiclesQuery, 
+                    (snapshot) => {
+                        currentVehicles = [];
+                        snapshot.forEach((doc) => {
+                            currentVehicles.push({ id: doc.id, ...doc.data() });
+                        });
+                        updateVehicleDropdown();
+                        console.log('✅ Vehicles loaded for booking:', currentVehicles.length);
+                        
+                        if (currentVehicles.length === 0) {
+                            showMessage('No vehicles found. Please add one in My Vehicles to book easily.', 'info');
+                        }
+                    }, 
+                    (error) => {
+                        console.error('Vehicles load error:', error);
+                        if (error.code === 'permission-denied') {
+                            showMessage('Permission denied. Please sign in again.', 'error');
+                            setTimeout(() => window.location.href = 'signin.html', 2000);
+                        } else {
+                            vehicleSelect.innerHTML = '<option value="" selected>Error loading vehicles</option>';
+                            showMessage('Error loading your vehicles. Please refresh.', 'error');
+                        }
+                    }
+                );
+            } catch (error) {
+                console.error('Vehicles setup error:', error);
+                vehicleSelect.innerHTML = '<option value="" selected>Failed to load vehicles</option>';
+                showMessage('Failed to setup vehicle loading.', 'error');
+            }
+        }
+
+        // Load Notifications Badge (rules: read own)
+        function loadNotifications() {
+            if (!currentUser) return;
+
+            try {
+                const notificationsQuery = query(
+                    collection(db, 'notifications'),
+                    where('userId', '==', currentUser.uid),
+                    where('read', '==', false),
+                    orderBy('timestamp', 'desc'),
+                    limit(5)
+                );
+
+                unsubscribeNotifications = onSnapshot(notificationsQuery, (snapshot) => {
+                    const unreadCount = snapshot.size;
+                    const notificationBadge = document.querySelector('.notification-badge');
+                    if (notificationBadge) {
+                        notificationBadge.textContent = unreadCount > 99 ? '99+' : unreadCount.toString();
+                        notificationBadge.style.display = unreadCount === 0 ? 'none' : 'flex';
+                    }
+                    console.log('🔔 Notifications badge updated:', unreadCount);
+                }, (error) => {
+                    console.error('Notifications error:', error);
+                });
+            } catch (error) {
+                console.error('Notifications setup error:', error);
+            }
+        }
+
+        // Handle Form Submission (rules-compliant: create with userId, vehicleId)
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const serviceId = serviceSelect.value;
+            const date = dateInput.value;
+            const time = timeInput.value || 'Flexible';
+            const vehicleId = vehicleSelect.value;
+            const notes = notesInput.value.trim();
+
+            if (!serviceId || !date || !vehicleId) {
+                showMessage('Please select a service, date, and vehicle.', 'error');
+                return;
+            }
+
+            const selectedDate = new Date(date);
+            if (selectedDate <= new Date()) {
+                showMessage('Please select a future date for your appointment.', 'error');
+                return;
+            }
+
+            try {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Booking Your Appointment...';
+                
+                // Get service details
+                const serviceRef = doc(db, 'services', serviceId);
+                const serviceSnap = await getDoc(serviceRef);
+                const serviceData = serviceSnap.exists() ? serviceSnap.data() : { name: 'Custom Service', price: 'TBD' };
+
+                // Get vehicle details
+                const vehicleRef = doc(db, 'vehicles', vehicleId);
+                const vehicleSnap = await getDoc(vehicleRef);
+                const vehicleData = vehicleSnap.exists() ? vehicleSnap.data() : { make: 'Unknown', model: 'N/A' };
+
+                // Create appointment document
+                const appointmentRef = await addDoc(collection(db, 'appointments'), {
+                    userId: currentUser.uid,  // Required for security rules
+                    service: serviceData.name,
+                    serviceId: serviceId,  // Reference to service
+                    vehicleId: vehicleId,  // Reference to vehicle (for admin)
+                    vehicleMake: vehicleData.make || 'Unknown',
+                    vehicleModel: vehicleData.model || 'N/A',
+                    vehicleYear: vehicleData.year || 0,
+                    vehiclePlate: vehicleData.plate || vehicleData.licensePlate || 'N/A',
+                    date: Timestamp.fromDate(selectedDate),
+                    time: time,
+                    notes: notes,
+                    status: 'pending',
+                    createdAt: serverTimestamp()
+                });
+
+                showMessage(`Appointment booked successfully! Reference: ${appointmentRef.id.substring(0, 8)}. Check your appointments.`, 'success');
+                
+                // Reset form
+                bookForm.reset();
+                vehicleSelect.value = '';
+                serviceSelect.value = '';
+                dateInput.value = '';
+                toggleSubmitButton();
+                
+                // Redirect to appointments list after success
+                setTimeout(() => {
+                    window.location.href = 'appointments.html';
+                }, 3000);
+                
+                console.log('✅ Appointment created:', appointmentRef.id);
+            } catch (error) {
+                console.error('Booking error:', error);
+                if (error.code === 'permission-denied') {
+                    showMessage('Permission denied. Check if you have a vehicle and valid service.', 'error');
+                } else {
+                    showMessage('Error booking appointment. Please try again.', 'error');
+                }
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-calendar-check"></i> Book Appointment';
+            }
+        }
+
+        // Event Listeners Setup
+        if (bookForm) {
+            bookForm.addEventListener('submit', handleFormSubmit);
+        }
+
+        // Form validation on changes
+        [serviceSelect, dateInput, vehicleSelect].forEach(el => {
+            if (el) {
+                el.addEventListener('change', toggleSubmitButton);
+            }
+        });
+
+        // Set min date to tomorrow (appointments need future dates)
+        if (dateInput) {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowStr = tomorrow.toISOString().split('T')[0];
+            dateInput.min = tomorrowStr;
+        }
+
+        // Authentication and Initialization
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                console.log('👤 User authenticated:', user.uid);
+                
+                // Load data only after auth
+                await loadServices();
+                loadVehicles(); // Real-time loader
+                loadNotifications();
+                
+                // Initial validation
+                toggleSubmitButton();
+                
+                // Check for reschedule param (optional)
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('rescheduleId')) {
+                    showMessage('Rescheduling mode: Form will prefill existing appointment data.', 'info');
+                    // TODO: Prefill form if rescheduling
+                }
+            } else {
+                showMessage('Please sign in to book an appointment.', 'error');
+                setTimeout(() => window.location.href = 'signin.html', 2000);
+            }
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (unsubscribeNotifications) unsubscribeNotifications();
+            if (unsubscribeVehicles) unsubscribeVehicles();
+        });
+
+        console.log('📅 Book Appointment page loaded with Firestore integration');
+    </script>
+
+    <!-- Auto-hide Navigation Script -->
+    <script>
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', () => {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const header = document.getElementById('header');
+            const mobileNav = document.querySelector('.mobile-nav');
+            
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                if (header) header.classList.add('hidden');
+                if (mobileNav) mobileNav.classList.add('hidden');
+            } else {
+                if (header) header.classList.remove('hidden');
+                if (mobileNav) mobileNav.classList.remove('hidden');
+            }
+            
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('✅ Service Worker registered');
+                    })
+                    .catch((error) => {
+                        console.error('❌ Service Worker error:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

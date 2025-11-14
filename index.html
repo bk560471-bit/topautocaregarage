@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Autocare</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- PWA Manifest and Mobile Optimization -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#d4af37">
+
+    <!-- Mobile/PWA Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Top Autocare">
+    <link rel="apple-touch-icon" href="assets/images/app-icon-512.png"> <!-- Update if icon path differs -->
+
+    <!-- Favicon for Browsers -->
+    <link rel="icon" href="assets/images/app-icon-192.png" sizes="192x192" type="image/png">
+
+    <style>
+        * {margin:0;padding:0;box-sizing:border-box;}
+        body {
+            font-family:Arial, Helvetica, sans-serif;
+            color:#fff;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            overflow-x:hidden;
+            padding-bottom: 70px; /* Space for bottom nav */
+            transition: background-color 0.3s ease, color 0.3s ease;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(0px);
+            z-index: -1;
+        }
+
+        /* ---- HEADER ---- */
+        header {
+            display:flex;justify-content:space-between;align-items:center;
+            background:rgba(0, 0, 0, 0.9);
+            color:#d4af37;
+            padding:10px 20px;
+            position:fixed;top:0;left:0;right:0;z-index:1000;
+            box-shadow:0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            height: 80px;
+        }
+        
+        header.hidden {
+            transform: translateY(-100%);
+        }
+        
+        header .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        
+        header .logo-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #d4af37;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        /* Install App Button - In Header, Top Right, Direct Install */
+        .install-btn {
+            background: #d4af37;
+            color: #000;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+            text-decoration: none;
+        }
+
+        .install-btn:hover {
+            background: #b8941f;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .install-btn i {
+            margin-right: 0;
+        }
+
+        /* Hide button only after successful install */
+        .install-btn.installed {
+            display: none;
+        }
+
+        /* Responsive Install Button */
+        @media (max-width: 768px) {
+            .install-btn {
+                padding: 6px 16px;
+                font-size: 0.8em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .install-btn {
+                padding: 5px 14px;
+                font-size: 0.75em;
+            }
+        }
+
+        /* ---- HERO SECTION (Advanced and Attractive - Professional Arts Added) ---- */
+        .hero-section {
+            position: relative;
+            height: calc(100vh - 80px); /* Full viewport minus fixed header height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-image: url('images/hero.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 700px; /* Taller for advanced layout */
+            animation: heroGradientShift 10s ease-in-out infinite alternate; /* Subtle animated gradient shift for attractiveness */
+        }
+
+        @keyframes heroGradientShift {
+            0% { filter: hue-rotate(0deg) brightness(1); }
+            100% { filter: hue-rotate(10deg) brightness(1.05); }
+        }
+
+        /* Professional Arts: Red Sports Car Graphic (Top Left) */
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: 5%;
+            width: 200px;
+            height: 120px;
+            background-image: url('https://via.placeholder.com/200x120/ff0000/ffffff?text=Red+Sports+Car'); /* Replace with actual red car graphic path/URL */
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.7;
+            z-index: 1;
+            animation: carFloat 4s ease-in-out infinite; /* Floating animation for dynamism */
+        }
+
+        @keyframes carFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+        }
+
+        /* Professional Arts: Faint Gold Wrench (Top Right) */
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            top: 25%;
+            right: 5%;
+            width: 100px;
+            height: 100px;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23d4af37" opacity="0.2"><path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z"/></svg>'); /* Faint gold wrench SVG */
+            background-size: contain;
+            background-repeat: no-repeat;
+            z-index: 1;
+            animation: wrenchRotate 6s linear infinite; /* Subtle rotation for advanced feel */
+        }
+
+        @keyframes wrenchRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* New: Floating Gear Particles (Multiple pseudo-elements for 3-5 particles) */
+        .hero-section .particle-1::before,
+        .hero-section .particle-2::before,
+        .hero-section .particle-3::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23d4af37" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,2 12,12 16,14"/><polyline points="12,12 12,22 8,20"/><polyline points="12,12 2,12 4,16"/><polyline points="12,12 22,12 20,8"/></svg>');
+            background-size: contain;
+            opacity: 0.6;
+            z-index: 1;
+            animation: gearFloat 3s ease-in-out infinite;
+        }
+
+        .hero-section .particle-1::before {
+            bottom: 10%; left: 10%; animation-delay: 0s;
+        }
+
+        .hero-section .particle-2::before {
+            bottom: 20%; right: 15%; animation-delay: 1s;
+        }
+
+        .hero-section .particle-3::before {
+            bottom: 5%; left: 20%; animation-delay: 2s;
+        }
+
+        @keyframes gearFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.6; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.3; }
+        }
+
+        /* New: Logo Glow Pulse */
+        .hero-logo img {
+            animation: logoGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes logoGlow {
+            0% { box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4), inset 0 0 20px rgba(212, 175, 55, 0.2); }
+            100% { box-shadow: 0 8px 25px rgba(212, 175, 55, 0.6), inset 0 0 30px rgba(212, 175, 55, 0.3); }
+        }
+
+        /* New: Service Icons Fade-In (Placed below subtitle) */
+        .service-icons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            opacity: 0;
+            animation: iconsFadeIn 1.5s ease-out 1.2s forwards;
+            z-index: 3;
+        }
+
+        .service-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #d4af37;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .service-icon:hover {
+            background: rgba(212, 175, 55, 0.4);
+            transform: scale(1.1);
+        }
+
+        @keyframes iconsFadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* New: Road Pulse Effect (Faint road line with pulsing headlights) */
+        .hero-road {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background: linear-gradient(to right, transparent 0%, #333 20%, #333 80%, transparent 100%);
+            opacity: 0.3;
+            z-index: 1;
+            animation: roadPulse 4s ease-in-out infinite;
+        }
+
+        .hero-road::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            right: -20px;
+            width: 40px;
+            height: 30px;
+            background: radial-gradient(circle, #ffff00 20%, transparent 70%);
+            opacity: 0;
+            animation: headlightPulse 3s ease-in-out infinite 1s;
+            border-radius: 50%;
+        }
+
+        @keyframes roadPulse {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+        }
+
+        @keyframes headlightPulse {
+            0%, 100% { opacity: 0; transform: scale(0.8); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        /* New: Tool Rotation Loop (Additional rotating tool below existing wrench) */
+        .hero-tool-rotate {
+            position: absolute;
+            bottom: 15%;
+            left: 5%;
+            width: 60px;
+            height: 60px;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23d4af37" opacity="0.4"><path d="M3 18h18v-2H3v2zM12 6l-8.5 8.5 1.414 1.414L12 9.828l6.086 6.086 1.414-1.414L12 6z"/></svg>'); /* Tire icon or tool */
+            background-size: contain;
+            z-index: 1;
+            animation: toolRotate 5s linear infinite reverse;
+        }
+
+        @keyframes toolRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* New: CTA Button Arrow Motion Trail */
+        .hero-cta-btn {
+            position: relative;
+            overflow: visible; /* Allow trail to show */
+        }
+
+        .hero-cta-btn::after {
+            content: '';
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            width: 30px;
+            height: 2px;
+            background: rgba(212, 175, 55, 0.6);
+            transform: translateY(-50%);
+            animation: arrowTrail 2s ease-in-out infinite;
+            z-index: 4;
+        }
+
+        @keyframes arrowTrail {
+            0% { transform: translateY(-50%) translateX(0) scaleX(1); opacity: 1; }
+            50% { transform: translateY(-50%) translateX(10px) scaleX(0.5); opacity: 0.5; }
+            100% { transform: translateY(-50%) translateX(0) scaleX(1); opacity: 1; }
+        }
+
+        /* New: Mechanic Silhouette Fade (Behind CTA) */
+        .mechanic-silhouette {
+            position: absolute;
+            bottom: 20%;
+            right: 10%;
+            width: 80px;
+            height: 100px;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23d4af37" stroke-width="2" opacity="0.3"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'); /* Simple mechanic silhouette */
+            background-size: contain;
+            z-index: 2;
+            animation: mechanicFade 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes mechanicFade {
+            0% { opacity: 0.3; transform: translateX(0) scale(1); }
+            100% { opacity: 0.6; transform: translateX(5px) scale(1.05); }
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 31, 63, 0.7); /* Enhanced dark blue semi-transparent overlay for sleek look */
+            z-index: 2;
+            animation: overlayPulse 8s ease-in-out infinite alternate; /* Pulsing overlay for subtle motion */
+        }
+
+        @keyframes overlayPulse {
+            0% { opacity: 0.7; }
+            100% { opacity: 0.5; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            max-width: 800px;
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem; /* Increased for better spacing */
+            width: 100%;
+            animation: contentFadeIn 1.5s ease-out; /* Fade-in animation on load */
+        }
+
+        @keyframes contentFadeIn {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-logo {
+            margin-bottom: 0;
+            animation: logoScale 2s ease-out; /* Scale animation for logo */
+        }
+
+        @keyframes logoScale {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .hero-logo img {
+            height: 120px; /* Larger for prominence as described */
+            width: auto;
+            border-radius: 50%;
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4); /* Enhanced golden glow */
+            border: 3px solid #d4af37; /* Prominent golden border */
+            transition: all 0.3s ease;
+        }
+
+        .hero-logo img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 30px rgba(212, 175, 55, 0.5);
+        }
+
+        .hero-title {
+            font-size: clamp(3.5rem, 8vw, 5.5rem); /* Larger, more impactful responsive size */
+            font-weight: 900; /* Bolder for excellence */
+            color: #d4af37; /* Vibrant golden */
+            margin: 0;
+            line-height: 1.1;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.8); /* Stronger shadow for depth */
+            letter-spacing: 2px; /* Professional spacing */
+            animation: titleSlideIn 1s ease-out 0.5s both; /* Staggered slide-in */
+        }
+
+        @keyframes titleSlideIn {
+            0% { opacity: 0; transform: translateX(-50px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        .hero-subtitle {
+            color: #ffffff;
+            font-size: clamp(1.3rem, 5vw, 1.6rem);
+            line-height: 1.6; /* Better readability */
+            margin: 0;
+            opacity: 0.95;
+            max-width: 100%;
+            padding: 0 1rem;
+            font-weight: 600; /* Bolder for emphasis */
+            animation: subtitleFadeIn 1s ease-out 1s both; /* Staggered fade-in */
+        }
+
+        @keyframes subtitleFadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-cta-btn {
+            background: linear-gradient(45deg, #d4af37, #b8941f); /* Golden gradient for advanced look */
+            color: #000;
+            padding: 1.5rem 3rem;
+            border-radius: 50px; /* Rounded pill shape for modern appeal */
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smooth cubic-bezier transition */
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4); /* Deeper golden shadow */
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            white-space: nowrap;
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+            animation: btnBounce 2s ease-out 1.5s both; /* Bouncing entrance */
+            border: none;
+        }
+
+        .hero-cta-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s;
+        }
+
+        .hero-cta-btn:hover::before {
+            left: 100%; /* Shimmer effect on hover */
+        }
+
+        .hero-cta-btn:hover {
+            background: linear-gradient(45deg, #b8941f, #d4af37);
+            transform: translateY(-5px) scale(1.05); /* Enhanced hover with scale */
+            box-shadow: 0 12px 35px rgba(212, 175, 55, 0.6);
+        }
+
+        .hero-cta-btn i {
+            color: #001f3f; /* Dark blue icon for contrast */
+            transition: transform 0.3s ease;
+        }
+
+        .hero-cta-btn:hover i {
+            transform: scale(1.2); /* Icon pulse on hover */
+        }
+
+        @keyframes btnBounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        /* Mobile-Specific Adjustments */
+        @media (max-width: 768px) {
+            .hero-section {
+                height: calc(100vh - 70px);
+                min-height: 600px;
+                background-attachment: scroll;
+            }
+
+            .hero-section::before {
+                top: 10%;
+                left: 2%;
+                width: 150px;
+                height: 90px;
+            }
+
+            .hero-section::after {
+                top: 15%;
+                right: 2%;
+                width: 80px;
+                height: 80px;
+                animation-duration: 8s; /* Slower on mobile */
+            }
+
+            /* New Mobile Adjustments */
+            .hero-section .particle-1::before,
+            .hero-section .particle-2::before,
+            .hero-section .particle-3::before {
+                width: 15px;
+                height: 15px;
+                animation-duration: 4s;
+            }
+
+            .service-icons {
+                gap: 0.75rem;
+            }
+
+            .service-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+
+            .hero-road {
+                height: 40px;
+            }
+
+            .hero-tool-rotate {
+                width: 50px;
+                height: 50px;
+                bottom: 10%;
+            }
+
+            .mechanic-silhouette {
+                width: 60px;
+                height: 80px;
+                right: 5%;
+            }
+
+            .hero-content {
+                padding: 1.5rem 0.75rem;
+                gap: 1.25rem;
+            }
+
+            .hero-logo img {
+                height: 90px;
+            }
+
+            .hero-title {
+                font-size: 2.8rem;
+                letter-spacing: 1px;
+            }
+
+            .hero-subtitle {
+                font-size: 1.3rem;
+                padding: 0 0.5rem;
+            }
+
+            .hero-cta-btn {
+                padding: 1.25rem 2.5rem;
+                font-size: 1.1rem;
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+                border-radius: 40px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-content {
+                padding: 1rem 0.5rem;
+                gap: 1rem;
+            }
+
+            .hero-title {
+                font-size: 2.3rem;
+                letter-spacing: 0.5px;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .hero-cta-btn {
+                padding: 1.1rem 2rem;
+                font-size: 1rem;
+            }
+
+            .hero-section::before {
+                width: 120px;
+                height: 70px;
+                animation-duration: 5s;
+            }
+
+            .hero-section::after {
+                width: 60px;
+                height: 60px;
+                animation-duration: 10s;
+            }
+
+            /* New Mobile Adjustments */
+            .service-icons {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .service-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 0.9rem;
+            }
+
+            .hero-road::after {
+                width: 30px;
+                height: 20px;
+            }
+        }
+
+        /* ---- SECTIONS ---- */
+        .section {
+            padding: 60px 20px;
+            background: rgba(18, 18, 18, 0.85);
+            margin-bottom: 0;
+            transition: background 0.3s ease;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2em;
+            color: #d4af37;
+            margin-bottom: 40px;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        /* FAQ Section */
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+            transition: background 0.3s ease;
+        }
+
+        .faq-item {
+            background: rgba(30, 30, 30, 0.85);
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #d4af37;
+            transition: background 0.3s ease;
+        }
+
+        .faq-question {
+            padding: 20px;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        .faq-question:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .faq-answer {
+            padding: 0 20px 20px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            display: none;
+            transition: color 0.3s ease;
+            max-height: 0;
+            overflow: hidden;
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+            max-height: 200px; /* Adjust for content */
+        }
+
+        /* Contact Section */
+        .contact-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            transition: color 0.3s ease;
+        }
+
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .contact-item {
+            background: rgba(30, 30, 30, 0.85);
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        .contact-item:hover {
+            border-color: #d4af37;
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+        }
+
+        .contact-item i {
+            font-size: 2em;
+            color: #d4af37;
+            margin-bottom: 15px;
+            transition: color 0.3s ease;
+        }
+
+        .contact-item h3 {
+            color: #fff;
+            margin-bottom: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .contact-item p {
+            color: rgba(255, 255, 255, 0.8);
+            transition: color 0.3s ease;
+        }
+
+        /* Quick Links Section */
+        .quick-links-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            transition: color 0.3s ease;
+        }
+
+        .quick-links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .quick-link-item {
+            background: rgba(30, 30, 30, 0.85);
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            transition: all 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+            cursor: pointer;
+        }
+        .quick-link-item:hover {
+            border-color: #d4af37;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .quick-link-item i {
+            font-size: 2em;
+            color: #d4af37;
+            margin-bottom: 15px;
+            transition: color 0.3s ease;
+        }
+
+        .quick-link-item h3 {
+            color: #fff;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+        }
+
+        .quick-link-item a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: color 0.3s ease;
+        }
+
+        .quick-link-item a:hover {
+            color: #d4af37;
+        }
+
+        /* Blog Section (New - Loads from Firestore) */
+        .blog-section {
+            padding: 60px 20px;
+            background: rgba(18, 18, 18, 0.85);
+            margin-bottom: 0;
+            transition: background 0.3s ease;
+        }
+
+        .blog-title {
+            text-align: center;
+            font-size: 2em;
+            color: #d4af37;
+            margin-bottom: 40px;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .blogs-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            gap: 30px;
+        }
+
+        .blog-post {
+            background: rgba(30, 30, 30, 0.85);
+            border-radius: 12px;
+            padding: 0;
+            overflow: hidden;
+            border: 1px solid #333;
+            transition: all 0.3s ease;
+        }
+
+        .blog-post:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.2);
+            border-color: #d4af37;
+        }
+
+        .blog-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .blog-content {
+            padding: 20px;
+        }
+
+        .blog-title-post {
+            font-size: 1.5em;
+            color: #fff;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .blog-body {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .blog-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .like-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .like-btn {
+            background: rgba(212, 175, 55, 0.2);
+            border: 1px solid #d4af37;
+            color: #d4af37;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9em;
+        }
+
+        .like-btn:hover, .like-btn.liked {
+            background: #d4af37;
+            color: #000;
+        }
+
+        .comment-section {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .comment-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .comment-btn:hover {
+            color: #d4af37;
+        }
+
+        /* Admin Controls (Visible only to admin) */
+        .admin-controls {
+            display: none;
+            gap: 10px;
+        }
+
+        .admin-controls button {
+            background: #d4af37;
+            color: #000;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.3s ease;
+        }
+
+        .admin-controls button:hover {
+            background: #b8941f;
+        }
+
+        .admin-controls.delete {
+            background: #ff6b6b;
+            color: #fff;
+        }
+
+        .admin-controls.delete:hover {
+            background: #ff5252;
+        }
+
+        /* Loading State for Blogs */
+        .blog-loading {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .blog-loading i {
+            font-size: 2em;
+            margin-bottom: 10px;
+            opacity: 0.5;
+        }
+
+        /* No Blogs Message */
+        .no-blogs {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Responsive for Blog Section */
+        @media (max-width: 768px) {
+            .blog-section {
+                padding: 40px 15px;
+            }
+            .blog-title {
+                font-size: 1.75em;
+            }
+            .blog-image {
+                height: 150px;
+            }
+            .blog-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .like-section, .comment-section {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .blogs-container {
+                gap: 20px;
+            }
+            .blog-content {
+                padding: 15px;
+            }
+            .blog-title-post {
+                font-size: 1.3em;
+            }
+        }
+
+        /* Responsive for Sections */
+        @media (max-width: 768px) {
+            .section {
+                padding: 40px 15px;
+            }
+            .section-title {
+                font-size: 1.75em;
+            }
+            .contact-info {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .quick-links-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            .bottom-nav {
+                padding: 5px 0;
+            }
+            .bottom-nav a {
+                font-size: 11px;
+            }
+            .bottom-nav a i {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quick-links-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ---- BOTTOM NAV (Updated - Blogs instead of Install) ---- */
+        .bottom-nav {
+            position:fixed;
+            bottom:0;
+            width:100%;
+            background:rgba(30, 30, 30, 0.85);
+            display:flex;
+            justify-content:space-around;
+            align-items:center;
+            padding:8px 0;
+            border-top:2px solid #333;
+            z-index:20;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        .bottom-nav a {
+            color:rgba(255, 255, 255, 0.8);
+            text-decoration:none;
+            font-size:13px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            transition: color 0.3s ease;
+        }
+        .bottom-nav a i {
+            font-size:20px;
+            margin-bottom:2px;
+        }
+        .bottom-nav a.active,
+        .bottom-nav a:hover {
+            color:#d4af37;
+        }
+
+        /* Responsive Bottom Nav */
+        @media (max-width: 768px) {
+            .bottom-nav {
+                padding: 5px 0;
+            }
+            .bottom-nav a {
+                font-size: 11px;
+            }
+            .bottom-nav a i {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER (Updated - Install Button in Top Right) -->
+<header id="header">
+   <div class="logo-container">
+       <img src="images/logo.png" alt="Top Autocare Logo" style="height: 60px; width: auto;">
+       <h1 class="logo-title">Top Autocare</h1>
+   </div>
+   <a href="#" id="installBtn" class="install-btn">
+       <i class="fas fa-download"></i>
+       <span>Install App</span>
+   </a>
+</header>
+
+<!-- HERO SECTION (Advanced and Attractive with Professional Arts) -->
+<section class="hero-section particle-1 particle-2 particle-3"> <!-- Added classes for particles -->
+    <div class="hero-overlay"></div>
+    <div class="hero-road"></div> <!-- New: Road Pulse -->
+    <div class="hero-tool-rotate"></div> <!-- New: Tool Rotation -->
+    <div class="mechanic-silhouette"></div> <!-- New: Mechanic Silhouette -->
+    <div class="hero-content">
+        <div class="hero-logo">
+            <img src="images/logo.png" alt="Top Autocare Logo" aria-label="Top Autocare Emblem"> <!-- Small circular emblem above title -->
+        </div>
+        <h1 class="hero-title">Top Autocare</h1> <!-- Bold golden text signifying excellence -->
+        <p class="hero-subtitle">
+            Professional automotive care services on Kiambu Road, Nairobi, Kenya. We specialize in maintaining your vehicle in peak condition with expert diagnostics, repairs, and maintenance.
+        </p>
+        <div class="service-icons"> <!-- New: Service Icons -->
+            <div class="service-icon"><i class="fas fa-stethoscope"></i></div> <!-- Diagnostics -->
+            <div class="service-icon"><i class="fas fa-wrench"></i></div> <!-- Repairs -->
+            <div class="service-icon"><i class="fas fa-check-circle"></i></div> <!-- Maintenance -->
+        </div>
+        <a href="signup.html" class="hero-cta-btn" aria-label="Get Started with Top Autocare Services">
+            <i class="fas fa-arrow-right"></i> Get Started
+        </a>
+        
+    </div>
+</section>
+
+<!-- CARS SECTION (Services Overview) -->
+<section class="section" id="cars">
+    <h2 class="section-title">Our Services</h2>
+    <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+        <p style="color: rgba(255, 255, 255, 0.8); font-size: 1.1em; line-height: 1.6;">
+            Explore our comprehensive automotive services including routine maintenance, engine diagnostics, brake repairs, tire services, and more. 
+            Book an appointment to get your vehicle back on the road safely.
+        </p>
+        <div style="margin-top: 30px;">
+            <a href="services.html" style="background: #d4af37; color: #000; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: bold;">View All Services</a>
+        </div>
+    </div>
+</section>
+
+<!-- BILLS SECTION (Appointments & Pricing) -->
+<section class="section" id="bills">
+    <h2 class="section-title">Appointments & Pricing</h2>
+    <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+        <p style="color: rgba(255, 255, 255, 0.8); font-size: 1.1em; line-height: 1.6;">
+            Manage your bookings and view our transparent pricing. We offer competitive rates for all services with no hidden fees.
+        </p>
+        <div style="margin-top: 30px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <a href="book-appointment.html" style="background: #d4af37; color: #000; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">Book Appointment</a>
+            <a href="pricing.html" style="background: transparent; color: #d4af37; border: 2px solid #d4af37; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">View Pricing</a>
+        </div>
+    </div>
+</section>
+
+<!-- BLOG SECTION (New - Loads from Firestore, Recent Posts Preview) -->
+<section class="blog-section" id="blogs">
+    <h2 class="blog-title">Latest Blog Posts</h2>
+    <div class="blogs-container" id="blogsContainer">
+        <!-- Blogs will be loaded dynamically from Firestore -->
+        <div class="blog-loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading latest posts...</p>
+        </div>
+    </div>
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="blog.html" style="background: #d4af37; color: #000; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: bold;">View All Blogs</a>
+    </div>
+</section>
+<!-- MORE SECTION (FAQs) -->
+<section class="section" id="more">
+    <h2 class="section-title">Frequently Asked Questions</h2>
+    <div class="faq-container">
+        <div class="faq-item">
+            <div class="faq-question">
+                What services do you offer?
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+                We offer comprehensive automotive services including routine maintenance, engine diagnostics, brake services, tire rotation, oil changes, and complete vehicle inspections.
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">
+                What are your operating hours?
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+                We're open Monday to Saturday from 8:00 AM to 6:00 PM. Closed on Sundays and public holidays.
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">
+                Do I need an appointment?
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+                While walk-ins are welcome, we recommend booking an appointment to ensure timely service and avoid waiting times.
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">
+                What payment methods do you accept?
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+                We accept cash, M-Pesa, bank transfers, and all major credit/debit cards for your convenience.
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CONTACT SECTION -->
+<section class="section" id="contact">
+    <h2 class="section-title">Contact Us</h2>
+    <div class="contact-container">
+        <div class="contact-info">
+            <div class="contact-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <h3>Location</h3>
+                <p>Kiambu Road<br>Nairobi, Kenya</p>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-phone"></i>
+                <h3>Call Us</h3>
+                <p>+254 757 562 447</p>
+            </div>
+            <div class="contact-item">
+                <i class="fab fa-whatsapp"></i>
+                <h3>WhatsApp</h3>
+                <p>+254 757 562 447</p>
+            </div>
+            <div class="contact-item">
+                <i class="fab fa-twitter"></i>
+                <h3>Twitter</h3>
+                <p>@BrianVags</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- QUICK LINKS SECTION -->
+<section class="section" id="quick-links">
+    <h2 class="section-title">Quick Links</h2>
+    <div class="quick-links-container">
+        <p style="color: rgba(255, 255, 255, 0.8); text-align: center; margin-bottom: 40px; font-size: 1.1em;">
+            Access essential features and resources for your automotive needs.
+        </p>
+        <div class="quick-links-grid">
+            <div class="quick-link-item">
+                <i class="fas fa-calendar-alt"></i>
+                <h3>Book Appointment</h3>
+                <a href="book-appointment.html">Schedule your service online</a>
+            </div>
+            <div class="quick-link-item">
+                <i class="fas fa-car"></i>
+                <h3>View Services</h3>
+                <a href="services.html">Explore all our offerings</a>
+            </div>
+            <div class="quick-link-item">
+                <i class="fas fa-user"></i>
+                <h3>My Account</h3>
+                <a href="signin.html">Sign in to manage appointments</a>
+            </div>
+            <div class="quick-link-item">
+                <i class="fas fa-file-invoice"></i>
+                <h3>View Pricing</h3>
+                <a href="pricing.html">Check our rates and packages</a>
+            </div>
+            <div class="quick-link-item">
+                <i class="fas fa-map"></i>
+                <h3>Directions</h3>
+                <a href="#contact">Get directions to our location</a>
+            </div>
+            <div class="quick-link-item">
+                <i class="fas fa-envelope"></i>
+                <h3>Contact Support</h3>
+                <a href="mailto:info@topautocare.com">Send us a message</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- BOTTOM NAVIGATION (Updated - Blogs instead of Install) -->
+<nav class="bottom-nav">
+    <a href="index.html" class="active">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+    </a>
+    <a href="services.html">
+        <i class="fas fa-tools"></i>
+        <span>Services</span>
+    </a>
+    <a href="blog.html">
+        <i class="fas fa-newspaper"></i>
+        <span>Blogs</span>
+    </a>
+    <a href="myvehicles.html">
+        <i class="fas fa-car"></i>
+        <span>My Vehicles</span>
+    </a>
+    <a href="profile.html">
+        <i class="fas fa-user"></i>
+        <span>ME</span>
+    </a>
+</nav>
+
+<!-- Firebase Scripts (For Auth and Firestore - Blog Loading) -->
+<script type="module">
+    // Import Firebase (Modular)
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { 
+        getAuth, 
+        onAuthStateChanged 
+    } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { 
+        getFirestore, 
+        collection, 
+        query, 
+        orderBy, 
+        limit, 
+        getDocs, 
+        doc, 
+        updateDoc, 
+        deleteDoc, 
+        arrayUnion, 
+        arrayRemove,
+        addDoc,
+        serverTimestamp,
+        getDoc 
+    } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyBkVYS0CaKe1kHPp9GVnURiZz5WP5tE3iM",
+        authDomain: "top-autocare.firebaseapp.com",
+        projectId: "top-autocare",
+        storageBucket: "top-autocare.firebasestorage.app",
+        messagingSenderId: "879247821822",
+        appId: "1:879247821822:web:e6a418395d52aac99a4eaf",
+        measurementId: "G-T5NDM5M33Z"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUser = null;
+
+    // Auth State Observer
+    onAuthStateChanged(auth, (user) => {
+        currentUser = user;
+        loadBlogs(); // Reload blogs to show/hide admin controls
+    });
+
+    // Load Recent Blogs (3 latest, ordered by timestamp desc)
+    async function loadBlogs() {
+        const container = document.getElementById('blogsContainer');
+        const loading = container.querySelector('.blog-loading');
+        if (loading) loading.style.display = 'block';
+
+        try {
+            const q = query(
+                collection(db, 'blogs'),
+                orderBy('timestamp', 'desc'),
+                limit(3)
+            );
+            const querySnapshot = await getDocs(q);
+            container.innerHTML = ''; // Clear loading
+
+            if (querySnapshot.empty) {
+                container.innerHTML = '<div class="no-blogs"><i class="fas fa-newspaper"></i><p>No blog posts yet. Check back soon!</p></div>';
+                return;
+            }
+
+            querySnapshot.forEach(async (docSnap) => {
+                const data = docSnap.data();
+                const postId = docSnap.id;
+                const postDiv = document.createElement('div');
+                postDiv.className = 'blog-post';
+                postDiv.innerHTML = `
+                    ${data.image ? `<img src="${data.image}" alt="${data.title}" class="blog-image" onerror="this.style.display='none'">` : ''}
+                    <div class="blog-content">
+                        <h2 class="blog-title-post">${data.title}</h2>
+                        <div class="blog-body">${data.body.replace(/\n/g, '<br>')}</div>
+                        <div class="blog-actions">
+                            <div class="like-section">
+                                <button class="like-btn ${currentUser && data.likes && data.likes.includes(currentUser.uid) ? 'liked' : ''}" onclick="toggleLike('${postId}', '${currentUser ? currentUser.uid : ''}')">
+                                    <i class="fas fa-heart"></i> Like (${data.likes ? data.likes.length : 0})
+                                </button>
+                            </div>
+                            <div class="comment-section">
+                                <button class="comment-btn" onclick="window.location.href='blog.html?post=${postId}'">
+                                    <i class="fas fa-comment"></i> Comments (${data.comments ? data.comments.length : 0})
+                                </button>
+                            </div>
+                            ${currentUser && currentUser.uid === data.authorId ? `
+                                <div class="admin-controls">
+                                    <button onclick="editPost('${postId}')"><i class="fas fa-edit"></i> Edit</button>
+                                    <button class="delete" onclick="deletePost('${postId}')"><i class="fas fa-trash"></i> Delete</button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(postDiv);
+            });
+
+        } catch (error) {
+            console.error('Error loading blogs:', error);
+            container.innerHTML = '<div class="no-blogs"><i class="fas fa-exclamation-triangle"></i><p>Failed to load blogs. Please try again.</p></div>';
+        } finally {
+            if (loading) loading.style.display = 'none';
+        }
+    }
+
+    // Toggle Like (Update like count in Firestore)
+    window.toggleLike = async function(postId, userId) {
+        if (!currentUser) {
+            alert('Please sign in to like posts.');
+            window.location.href = 'signin.html';
+            return;
+        }
+
+        try {
+            const likeRef = doc(db, 'blogs', postId);
+            const likeDoc = await getDoc(likeRef);
+            if (!likeDoc.exists()) return;
+
+            const data = likeDoc.data();
+            const likesArray = data.likes || [];
+
+            if (likesArray.includes(userId)) {
+                // Unlike
+                await updateDoc(likeRef, { likes: arrayRemove(userId) });
+            } else {
+                // Like
+                await updateDoc(likeRef, { likes: arrayUnion(userId) });
+            }
+
+            loadBlogs(); // Reload to update UI
+        } catch (error) {
+            console.error('Error toggling like:', error);
+            alert('Failed to like post. Please try again.');
+        }
+    };
+
+    // Edit Post (Redirect to admin edit - implement in blog.html or separate)
+    window.editPost = function(postId) {
+        if (!currentUser) {
+            alert('Please sign in to edit posts.');
+            return;
+        }
+        window.location.href = `blog.html?edit=${postId}`;
+    };
+
+    // Delete Post
+    window.deletePost = async function(postId) {
+        if (!currentUser) {
+            alert('Please sign in to delete posts.');
+            return;
+        }
+
+        const postDoc = await getDoc(doc(db, 'blogs', postId));
+        if (!postDoc.exists() || postDoc.data().authorId !== currentUser.uid) {
+            alert('You are not authorized to delete this post.');
+            return;
+        }
+
+        if (confirm('Delete this post? This cannot be undone.')) {
+            try {
+                await deleteDoc(doc(db, 'blogs', postId));
+                loadBlogs(); // Reload
+                alert('Post deleted successfully.');
+            } catch (error) {
+                console.error('Error deleting post:', error);
+                alert('Failed to delete post. Please try again.');
+            }
+        }
+    };
+
+    // Initial Load
+    document.addEventListener('DOMContentLoaded', () => {
+        loadBlogs();
+    });
+</script>
+
+<!-- Firebase Script (Irrelevant for index, but kept as per original) -->
+<script type="module">
+    import { initFirebase, auth, signIn, showMessage, handleFirebaseError } from './assets/js/firebase-config.js';
+         
+    // Init
+    initFirebase();
+         
+    // Example: Login form submit (won't attach if no form exists)
+    document.addEventListener('DOMContentLoaded', () => {
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                try {
+                    await signIn(email, password);
+                    window.location.href = 'dashboard.html'; // Or book-appointment.html
+                } catch (error) {
+                    const messageContainer = document.getElementById('messageContainer');
+                    if (messageContainer) showMessage('messageContainer', handleFirebaseError(error), 'error');
+                }
+            });
+        }
+    });
+</script>
+
+<script>
+    // Header Auto Hide on Scroll
+    let lastScrollTop = 0;
+    const header = document.getElementById('header');
+
+    window.addEventListener('scroll', () => {
+        let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        if (scrollTop > lastScrollTop && scrollTop > 100) {
+            // Scrolling down and past 100px threshold
+            header.classList.add('hidden');
+        } else {
+            // Scrolling up or at top
+            header.classList.remove('hidden');
+        }
+        
+        lastScrollTop = scrollTop;
+    });
+
+    // FAQ Toggle Functionality
+    document.querySelectorAll('.faq-question').forEach(question => {
+        question.addEventListener('click', () => {
+            const faqItem = question.parentElement;
+            const answer = faqItem.querySelector('.faq-answer');
+            const icon = question.querySelector('i');
+
+            // Toggle active class
+            faqItem.classList.toggle('active');
+
+            // Rotate icon
+            if (faqItem.classList.contains('active')) {
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+            }
+
+            // Toggle answer visibility with animation
+            if (faqItem.classList.contains('active')) {
+                answer.style.maxHeight = answer.scrollHeight + 'px';
+                answer.style.opacity = '1';
+            } else {
+                answer.style.maxHeight = '0';
+                answer.style.opacity = '0';
+            }
+        });
+    });
+
+    // PWA Install Prompt Handling - Direct Install (Header Button)
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        // Prevent Chrome 67+ from automatically showing the prompt
+        e.preventDefault();
+        // Stash the event so it can be triggered later
+        deferredPrompt = e;
+        // Button is already visible; just log for debugging
+        console.log('Install prompt available');
+    });
+
+    if (installBtn) {
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                // Show the install prompt directly
+                deferredPrompt.prompt();
+                // Wait for the user to respond to the prompt
+                const { outcome } = await deferredPrompt.userChoice;
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to the install prompt: ${outcome}`);
+                // Clear the deferredPrompt so it can only be used once
+                deferredPrompt = null;
+                // Hide the install button after use
+                installBtn.classList.add('installed');
+            } else {
+                // Fallback for browsers without support
+                alert('Your browser may not support PWA installation. Try adding to home screen from the browser menu.');
+            }
+        });
+    }
+
+    // Hide install button if app is already installed
+    window.addEventListener('appinstalled', () => {
+        console.log('PWA was installed');
+        if (installBtn) {
+            installBtn.classList.add('installed');
+        }
+        deferredPrompt = null;
+    });
+
+    // Bottom Nav Active State Management
+    const bottomNavLinks = document.querySelectorAll('.bottom-nav a');
+    bottomNavLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            // Remove active class from all links
+            bottomNavLinks.forEach(l => l.classList.remove('active'));
+            // Add active class to clicked link
+            link.classList.add('active');
+        });
+    });
+
+    // Quick Links Item Click Handling (Make entire item clickable)
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.quick-link-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const link = item.querySelector('a');
+                if (link && link.href) {
+                    window.location.href = link.href;
+                }
+            });
+        });
+    });
+</script>
+
+<!-- Service Worker Registration for PWA -->
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then((registration) => {
+                    console.log('Service Worker registered successfully:', registration);
+                })
+                .catch((error) => {
+                    console.error('Service Worker registration failed:', error);
+                });
+        });
+    }
+</script>
+
+</body>
+</html>

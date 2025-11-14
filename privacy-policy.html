@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Top Autocare Garage</title>
+    <meta name="description" content="Privacy Policy for Top Autocare Garage. Learn how we collect, use, and protect your personal information when you use our website and services.">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#d4af37">
+
+    <!-- Mobile/PWA Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Top Autocare">
+    <link rel="apple-touch-icon" href="assets/images/app-icon-512.png">
+
+    <!-- Favicon for Browsers -->
+    <link rel="icon" href="assets/images/app-icon-192.png" sizes="192x192" type="image/png">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            line-height: 1.6;
+            padding-bottom: 80px;
+            position: relative;
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/background.png');
+            background-size: cover;
+            background-position: center;
+            filter: blur(4px);
+            z-index: -1;
+        }
+        /* Header Styles */
+        #header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        #header.hidden {
+            transform: translateY(-100%);
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 0 1rem;
+            color: #d4af37;
+        }
+        .logo-container:hover h1 {
+            text-decoration: underline;
+        }
+        .logo-container img {
+            height: 50px;
+            width: auto;
+            margin-right: 0.5rem;
+            border-radius: 50%;
+        }
+        .logo-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            color: #d4af37;
+            text-decoration: none;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding-right: 1rem;
+        }
+        .notification-bell {
+            position: relative;
+            color: #ffffff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .notification-bell:hover {
+            color: #d4af37;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #d4af37;
+            color: #000;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            display: none;
+        }
+        .book-service-btn {
+            background: #d4af37;
+            color: #000;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .book-service-btn:hover {
+            background: #b8962e;
+            transform: translateY(-2px);
+        }
+        @media (max-width: 768px) {
+            #header {
+                padding: 0.5rem;
+                flex-wrap: wrap;
+            }
+            .logo-container {
+                padding: 0 0.5rem;
+            }
+            .logo-title {
+                font-size: 1.25rem;
+            }
+            .header-actions {
+                padding-right: 0.5rem;
+                gap: 0.5rem;
+            }
+            .book-service-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+        .container {
+            max-width: 1200px;
+            margin: 80px auto 20px;
+            padding: 20px;
+        }
+        .policy-content {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(30, 30, 30, 0.85);
+            border-radius: 12px;
+            border: 1px solid #333;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .policy-section {
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #333;
+        }
+        .policy-section:last-child {
+            border-bottom: none;
+        }
+        .policy-section h2 {
+            color: #d4af37;
+            margin-bottom: 1rem;
+            font-size: 1.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+        }
+        .policy-section h3 {
+            color: #d4af37;
+            margin: 1.5rem 0 1rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        .policy-section p, .policy-section li {
+            color: #ffffff;
+            margin-bottom: 1rem;
+            line-height: 1.7;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        .policy-section ul {
+            padding-left: 1.5rem;
+        }
+        .policy-section li {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .policy-section strong {
+            color: #d4af37;
+        }
+        .effective-date {
+            color: #ffffff;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            font-weight: 500;
+            padding: 1rem;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 6px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        .update-info {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 3px solid #d4af37;
+            margin: 1rem 0;
+        }
+        .update-info p {
+            color: #ffffff;
+            font-weight: 500;
+            margin: 0;
+        }
+        .update-info strong {
+            color: #d4af37;
+        }
+        .policy-content a {
+            color: #d4af37;
+            text-decoration: none;
+        }
+        .policy-content a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            .policy-content {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+            .policy-section h2 {
+                font-size: 1.5rem;
+            }
+        }
+        /* Footer */
+        .footer {
+            background: rgba(0, 0, 0, 0.9);
+            color: #ffffff;
+            padding: 2rem 1rem;
+            text-align: center;
+            border-top: 1px solid #333;
+            margin-top: 3rem;
+        }
+        .footer .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        .footer p {
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: #ffffff;
+        }
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .social-links a {
+            color: #d4af37;
+            font-size: 1.25rem;
+            transition: all 0.3s ease;
+        }
+        .social-links a:hover {
+            color: #b8962e;
+            transform: translateY(-2px);
+        }
+        .footer-links {
+            font-size: 0.75rem;
+            color: #ffffff;
+            margin-top: 1rem;
+        }
+        .footer-links a {
+            color: #d4af37;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            margin: 0 0.5rem;
+        }
+        .footer-links a:hover {
+            color: #b8962e;
+        }
+        /* Mobile Bottom Nav */
+        .mobile-nav { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            z-index: 40; 
+            background: rgba(30, 30, 30, 0.85); 
+            border-top: 1px solid #333; 
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.2); 
+            display: none;
+            transition: transform 0.3s ease;
+        }
+        .mobile-nav.hidden {
+            transform: translateY(100%);
+        }
+        @media (max-width: 768px) { .mobile-nav { display: block; } }
+        .nav-grid { 
+            display: grid; 
+            grid-template-columns: repeat(5, 1fr); 
+            padding: 0.5rem 0; 
+            list-style: none;
+        }
+        .nav-item-mobile { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 0.5rem; 
+            text-decoration: none; 
+            color: #ffffff; 
+            font-size: 0.75rem; 
+            transition: all 0.3s ease; 
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .nav-item-mobile:hover {
+            color: #d4af37;
+        }
+        .nav-item-mobile.active { 
+            color: #d4af37; 
+            text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+        }
+        .nav-item-mobile i { 
+            font-size: 1.25rem; 
+            margin-bottom: 0.25rem; 
+            opacity: 0.8; 
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        .nav-item-mobile:hover i {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        .nav-item-mobile.active i { 
+            opacity: 1; 
+            text-shadow: 0 0 6px rgba(212, 175, 55, 0.8);
+            filter: drop-shadow(0 2px 6px rgba(212, 175, 55, 0.4));
+        }
+        .message {
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+        .message.success {
+            background: rgba(0, 255, 0, 0.2);
+            color: #00ff00;
+            border: 1px solid #00ff00;
+        }
+        .message.error {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff0000;
+            border: 1px solid #ff0000;
+        }
+        .message.info {
+            background: rgba(0, 150, 255, 0.2);
+            color: #0096ff;
+            border: 1px solid #0096ff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        <a href="dashboard.html" class="logo-container">
+            <img src="images/logo.png" alt="Top Autocare Logo" style="height: 50px; width: auto;">
+            <h1 class="logo-title">Top Autocare</h1>
+        </a>
+        
+        <div class="header-actions">
+            <a href="book-appointment.html" class="book-service-btn">
+                <i class="fas fa-wrench"></i> Book Service
+            </a>
+            
+            <div class="notification-bell" onclick="window.location.href='notifications.html'">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" style="display: none;">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="policy-content">
+                <div class="effective-date">
+                    <strong>Last Updated:</strong> January 1, 2024
+                </div>
+                
+                <h1 style="color: #d4af37; text-align: center; margin-bottom: 2rem; font-size: 2.5rem; font-weight: 700;">
+                    Privacy Policy
+                </h1>
+                
+                <div class="policy-section">
+                    <h2><i class="fas fa-info-circle"></i> Introduction</h2>
+                    <p>Welcome to Top Autocare Garage ("we," "us," or "our"). We operate the website <strong>topautocare.com</strong> (the "Site") and provide automotive services in Nairobi, Kenya.</p>
+                    <p>Your privacy is important to us. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our Site, use our services (including online booking), or contact us. By using the Site or our services, you consent to the practices described here.</p>
+                    <p>We comply with the <strong>Kenya Data Protection Act, 2019</strong> and other applicable privacy laws. If you have questions, contact us at <a href="mailto:bk560471@gmail.com">bk560471@gmail.com</a> or +254 757 562 447.</p>
+                    <div class="update-info">
+                        <p><strong>Note:</strong> This policy applies to all users, including those booking appointments and managing vehicles online.</p>
+                    </div>
+                </div>
+
+                <div class="policy-section">
+                    <h2><i class="fas fa-user"></i> Information We Collect</h2>
+                    <h3>Personal Information</h3>
+                    <p>We collect information you provide when creating an account, booking services, or contacting us:</p>
+                    <ul>
+                        <li><strong>Account Details:</strong> Name, email address, phone number, and password (hashed).</li>
+                        <li><strong>Vehicle Information:</strong> Make, model, year, VIN (Vehicle Identification Number), color, and license plate.</li>
+                        <li><strong>Appointment Data:</strong> Service type, preferred date/time, notes, and vehicle selection.</li>
+                        <li><strong>Contact Form Submissions:</strong> Name, email, subject, and message from the contact page.</li>
+                        <li><strong>Payment Information:</strong> If integrated (future), we use third-party processors (e.g., M-Pesa) and do not store card details.</li>
+                    </ul>
+
+                    <h3>Automatically Collected Information</h3>
+                    <p>When you visit the Site:</p>
+                    <ul>
+                        <li><strong>Usage Data:</strong> IP address, browser type, device info, pages visited, and time spent (via Firebase Analytics).</li>
+                        <li><strong>Cookies:</strong> Small files for functionality (e.g., session management) and analytics (Google Analytics). We do not use tracking cookies for advertising.</li>
+                        <li><strong>Location Data:</strong> Approximate location from IP for service area relevance (not precise GPS).</li>
+                    </ul>
+                    <p>We do not collect sensitive data (e.g., health, financial) beyond what's necessary for automotive services.</p>
+                </div>
+
+                <div class="policy-section">
+                    <h2><i class="fas fa-cogs"></i> How We Use Your Information</h2>
+                    <p>We use collected information to:</p>
+                    <ul>
+                        <li>Process and manage appointments, vehicle registrations, and service requests.</li>
+                        <li>Send confirmations, reminders, and updates via email/SMS (e.g., appointment status changes).</li>
+                        <li>Improve our services through analytics (e.g., popular services, site usage).</li>
+                        <li>Respond to inquiries and provide customer support.</li>
+                        <li>Customize user experience (e.g., vehicle recommendations based on your fleet).</li>
+                        <li>Comply with legal obligations (e.g., records for Kenyan vehicle regulations).</li>
+                    </ul>
+                    <p>We store data on secure Firebase servers (Google Cloud) with encryption at rest and in transit.</p>
+                </div>
+
+                <div class="policy-section">
+                    <h2><i class="fas fa-share-alt"></i> How We Share Your Information</h2>
+                    <p>We do not sell your personal information. We share it only when necessary:</p>
+                    <ul>
+                        <li><strong>Service Providers:</strong> Firebase/Google for hosting/auth/analytics; SMS providers for notifications (e.g., appointment reminders).</li>
+                        <li><strong>Legal Requirements:</strong> If required by law, court order, or Kenyan authorities (e.g., Traffic Department for vehicle data).</li>
+                        <li><strong>Business Transfers:</strong> In case of merger/acquisition, with notification.</li>
+                        <li><strong>Your Consent:</strong> For marketing (you can opt-out anytime).</li>
+                    </ul>
+                    <p>No sharing with third-party marketers or advertisers without explicit consent.</p>
+                </div>
+
+                <div class="policy-section">
+                    <h2><i class="fas fa-shield-alt"></i> Data Security</h2>
+                    <p>We prioritize your data security:</p>
+                    <ul>
+                        <li><strong>Encryption:</strong> All data transmitted via HTTPS; stored encrypted in Firebase.</li>
+                        <li><strong>Access Controls:</strong> Authenticated users only access their data (admin views anonymized reports).</li>
+                        <li><strong>Firebase Security:</strong> Industry-standard protections; regular audits.</li>
+                        <li><strong>Retention:</strong> Personal data kept as long as your account is active; appointment history for 5 years (legal compliance); deleted upon request.</li>
+                    </ul>
+                    <p>While we use reasonable measures, no online transmission is 100% secure. We cannot guarantee absolute security.</p>
+                </div>
+
+                <div class="policy-section">
+                    <h2><i class="fas fa-user-check"></i> Your Data Protection Rights</h2>
+                    <p>Under Kenyan Data Protection Act and GDPR principles, you have rights:</p>
+                    <ul>
+                        <li><strong>Access:</strong> Request a copy of your data (email us).</li>
+                        <li><strong>Correction:</strong> Update inaccurate info via profile/vehicles pages.</li>
+                        <li><strong>Deletion:</strong> Request account/vehicle deletion (permanently removes data).</li>
+                        <li><strong>Objection:</strong> Opt-out of marketing/emails (unsubscribe links).</li>
+                        <li><strong>Portability:</strong> Export your data in structured format.</li>
+                    </ul>
+                    <p>To exercise rights, email <a href="mailto:bk560471@gmail.com">bk560471@gmail.com</a>. We respond within 30 days.</p>
+                    <p>For Data Protection Officer complaints: Contact Kenya's Office of the Data Protection Commissioner (ODPC).</p>
+                </div>
+
+                <div class="policy-section">
+                    <h2><i class="fas fa-cookie-bite"></i> Cookies and Tracking</h2>
+                    <p>We use:</p>
+                    <ul>
+                        <li><strong>Essential Cookies:</strong> For Site functionality (e.g., login sessions) – cannot be disabled.</li>
+                        <li><strong>Analytics Cookies:</strong> Google Analytics (via Firebase Measurement ID) for usage stats – anonymized IP.</li>
+                        <li><strong>No Advertising Cookies:</strong> We do not track for ads.</li>
+                    </ul>
+                    <p>Manage cookies via browser settings. Disabling may affect Site features. Learn more at <a href="https://policies.google.com/technologies/cookies" target="_blank" rel="noopener">Google's Cookie Policy</a>.</p>
+                </div>
+
+                <div class="policy-section">
+                    <h2><i class="fas fa-edit"></i> Changes to This Privacy Policy</h2>
+                    <p>We may update this policy to reflect changes in practices or law. Significant updates will be emailed to users and posted on the Site with a new "Last Updated" date.</p>
+                    <p>Continued use after changes means acceptance. Check periodically.</p>
+                </div>
+
+                <div class="policy-section">
+                    <h2><i class="fas fa-phone"></i> Contact Us</h2>
+                    <p>If you have privacy concerns:</p>
+                    <ul>
+                        <li><strong>Email:</strong> <a href="mailto:bk560471@gmail.com">bk560471@gmail.com</a></li>
+                        <li><strong>Phone:</strong> <a href="tel:+254757562447">+254 757 562 447</a></li>
+                        <li><strong>Address:</strong> Milestone Business Centre, Total Energies Ridgeways, Kiambu Rd, Nairobi</li>
+                        <li><strong>Website:</strong> <a href="contact.html">Contact Form</a></li>
+                    </ul>
+                    <p>We respond to concerns promptly. For formal complaints, contact Kenya's ODPC.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Top Autocare Garage. All rights reserved. Committed to your privacy and data protection.</p>
+            <div class="social-links">
+                <a href="https://wa.me/254757562447" aria-label="WhatsApp" target="_blank" rel="noopener">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+                <a href="https://twitter.com/BrianVags" aria-label="Twitter" target="_blank" rel="noopener">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" aria-label="Facebook">
+                    <i class="fab fa-facebook"></i>
+                </a>
+                <a href="#" aria-label="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+            </div>
+            <div class="footer-links">
+                <a href="privacy-policy.html">Privacy Policy</a> | 
+                <a href="terms-of-service.html">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-nav">
+        <ul class="nav-grid">
+            <li>
+                <a class="nav-item-mobile" href="myvehicles.html">
+                    <i class="fas fa-car"></i>
+                    <span>Vehicles</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="services.html">
+                    <i class="fas fa-wrench"></i>
+                    <span>Services</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="dashboard.html">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="book-appointment.html">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Appointments</span>
+                </a>
+            </li>
+            <li>
+                <a class="nav-item-mobile" href="profile.html">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Auto-hide Navigation Script -->
+    <script>
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', () => {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const header = document.getElementById('header');
+            const mobileNav = document.querySelector('.mobile-nav');
+            
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                if (header) header.classList.add('hidden');
+                if (mobileNav) mobileNav.classList.add('hidden');
+            } else {
+                if (header) header.classList.remove('hidden');
+                if (mobileNav) mobileNav.classList.remove('hidden');
+            }
+            
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('✅ Service Worker registered');
+                    })
+                    .catch((error) => {
+                        console.error('❌ Service Worker error:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
